@@ -1,6 +1,6 @@
 # Portfolio Web
 
-Astro frontend for Yash Bakshi's portfolio. The site is designed as a mobile-first technical journal, with Vue islands reserved for interactive features such as the portfolio guide.
+Astro frontend for Yash Bakshi's portfolio. The site is designed as a technical journal for desktop and mobile, with Vue islands reserved for interactive features such as the portfolio guide.
 
 ## Project Structure
 
