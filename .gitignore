@@ -1,0 +1,25 @@
+# Local agent and planning context
+AGENTS.md
+**/AGENTS.md
+AGENTS.override.md
+**/AGENTS.override.md
+CLAUDE.md
+**/CLAUDE.md
+GEMINI.md
+**/GEMINI.md
+.agents/
+.codex/
+PORTFOLIO_BRIEF.md
+ASSET_BRIEF.md
+
+# Environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+
+# Logs and temporary output
+*.log
+coverage/
