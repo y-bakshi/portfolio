@@ -1,67 +1,32 @@
 # UI Asset Brief
 
-This is the version-controlled asset specification for contributors. It carries the relevant guidance from the owner's private working brief. Use it with [design language](design-language.md) and the [reference gallery](references/README.md).
+Version-controlled asset specification. Use it with the [design language](design-language.md).
 
-## Art Direction
+## Art direction
 
-Create a readable mid-century technology journal: warm cream paper, faded near-black ink, sparse brick-red annotations, technical line art, fine rules, exhibit labels, and captions. Keep textures subtle. Avoid neon AI imagery, glossy 3D renders, heavy distressing, torn-paper collage, ornate Victorian decoration, and illegible small labels.
+Flat, graphic and restrained: pale grey-green ground, deep green-black ink, cobalt, and amber used sparingly. Hard edges, no gradients, no soft shadows, no 3D, no neon AI imagery. Anything illustrated should look like it belongs next to a pipeline trace.
 
-## Portrait
+## Delivered assets (in `apps/web/public/`)
 
-Source asset is still needed from Yash. Prefer a sharp, minimally processed photo with face and upper torso visible, soft directional light, and an uncluttered background; approximately 2000 px on the shortest side where available. Create an engraved/halftone derivative and validate identity manually. Preserve the approved original separately.
+| Asset | File | Notes |
+| --- | --- | --- |
+| Favicon | `favicon.svg` | Hand-drawn SVG monogram: bold condensed YB with an amber highlighter bar. Based on an owner-generated Nano Banana concept, redrawn as vector so it stays sharp at 16 px. The old scaffold `favicon.ico` has been removed. |
+| Portrait | `portrait.webp` | Halftone engraving derived from the owner's photograph (generated with Nano Banana, owner-approved). Ground made transparent so it sits on the page colour. Source photo is kept outside the repository. |
+| Social preview | `og.png` | 1200×630. Staircase artwork generated with Nano Banana, with name and thesis added as real text (Bahnschrift). `og:image` is relative until a domain exists. |
 
-Draft transformation prompt:
+Record provenance for each generated file: tool (Nano Banana via Gemini CLI), prompt, edits, approval. Prompts used are in this document's history and the session notes; add them here if they should be kept.
 
-> Convert the supplied portrait into a faithful mid-century technology-journal engraving. Preserve identity, proportions, expression, hairstyle, clothing, and pose. Use crisp black crosshatching, stippling, controlled halftone density, and readable contours on a transparent background. No caricature, invented objects, text, border, paper background, photorealism, or digital glow.
+## Still needed
 
-Image generation produces raster artwork; only use SVG when creating or deliberately vectorizing an asset. Export optimized WebP/AVIF plus responsive variants for a raster portrait.
-
-## Project Illustrations
-
-| Project | Exhibit concept |
+| Asset | Status |
 | --- | --- |
-| TestPilot | Repository → retrieved coding standards/defect analysis → generated tests → critique gate. |
-| GuardianAI | Incident map and feeds → database summary path or ReAct reasoning path → safety response. |
-| CityWatch | Social signals → Kinesis/Lambda → vision and LLM classification → department alerts. |
-| Face recognition | Separate detection/recognition inference stages linked by an SQS queue. |
-| CatScript | Source → lexer/parser → AST → type checking → interpreter. |
-| Streaming pipeline | Taxi events → Kafka consumer → Neo4j, coordinated through Kubernetes. |
+| Real project screenshots | Capture from verified builds, secrets removed, consistent dimensions, meaningful alt text. |
+| Case-study diagrams | Verify against each repository before replacing the editorial traces. Generated art must not stand in for architecture. |
+| Icon set | Done: Flaticon UIcons (`@flaticon/flaticon-uicons`, solid rounded plus brands) for the contact links. The Flaticon license is free with credit, so the footer credits Flaticon. Record this if the icon set changes. |
+| Fonts | Currently Google Fonts. Self-host WOFF2 and record licenses before launch. |
+| Résumé | Secondary action. Owner to supply. |
+| Contact links | Done: two email addresses, LinkedIn, GitHub and the 30 minute booking link. |
 
-Verify each diagram against actual project evidence before rendering it as architecture. Use authored SVG for precise system labels and flows; generated art may support composition, not establish technical truth.
+## Delivery rules
 
-Base illustration prompt:
-
-> Mid-century engineering-journal illustration, precise black ink line art, orthographic components, fine measurement ticks, restrained crosshatching and halftones, one muted brick-red path showing primary data flow, clean rectangular composition, transparent background, consistent drafting style. No gradients, 3D rendering, decorative text, logos, neon, or blue.
-
-## Supporting Assets
-
-- Seamless low-contrast paper texture; target under 100 KB if rasterized. Prefer CSS when sufficient.
-- Authored vector rules, stamps, exhibit codes, and technical annotations.
-- One outlined icon family for email, LinkedIn, GitHub, scheduling, microphone, speech, stop, and transcript controls.
-- Bloub integration states: idle, greeting, listening, thinking, speaking, navigating, success, rate-limited, and error. Provide a static reduced-motion state.
-- Original social preview and favicon based on the name masthead or approved monogram.
-- Actual project screenshots with consistent capture dimensions, secrets removed, and meaningful captions.
-
-## Typography
-
-Select a display serif, reading serif, condensed metadata sans, and technical monospace. Actual families and licenses remain undecided. Test numerals, italics, punctuation, weights, fallback metrics, desktop/mobile readability, and load cost. Self-host WOFF2 where permitted.
-
-## Asset Delivery
-
-Use descriptive names such as `testpilot-retrieval-flow.svg`. Put published static assets in `apps/web/public/` or optimized source assets in `apps/web/src/` when implementation chooses a processing path. Keep diagrams/icons in SVG, images in optimized raster formats, and captions in HTML. Declare dimensions, supply useful alt text for evidence, and empty alt text for decoration.
-
-For every final external/generated asset record source, author, license, prompt/model if applicable, edits, and approval status. Keep unfinished source material out of the shipped bundle.
-
-## Outstanding Assets
-
-| Asset | Status / next action |
-| --- | --- |
-| Reference screenshots | Included under `references/`; inspiration only. |
-| Approved source portrait | Owner to supply. |
-| Engraved portrait | Generate after selecting source; approve likeness. |
-| Featured exhibit illustrations | Planned; verify diagrams before production. |
-| Fonts and icons | Select and record licenses. |
-| Paper treatment | Prototype and measure contrast/size. |
-| Bloub | Repository selected; integration not implemented. |
-| Real project screenshots | Capture from verified project builds. |
-| Favicon/social preview | Replace scaffold icons with original identity assets. |
+Descriptive file names. Declare image dimensions. Alt text for evidence images, empty alt for decoration. Keep pipeline diagrams as live markup so text stays selectable. Keep unfinished source material out of the shipped bundle.

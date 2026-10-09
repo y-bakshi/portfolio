@@ -15,6 +15,7 @@
     "format:check": "prettier --check src/App.tsx src/main.tsx src/styles/global.css index.html vite.config.ts tailwind.config.js postcss.config.js tsconfig.json package.json .prettierrc.json"
   },
   "dependencies": {
+    "@flaticon/flaticon-uicons": "^3.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.0"

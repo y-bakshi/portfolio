@@ -4,8 +4,8 @@
 
 ```mermaid
 flowchart TD
-  Home[Masthead and editorial hero] --> About[About and engineering thesis]
-  About --> Featured[Selected project exhibits]
+  Home[Header, thesis and guide console] --> About[Introduction and portrait]
+  About --> Featured[Project rows with traces]
   Featured --> Archive[Filtered project archive]
   Featured --> Case[Case study]
   Archive --> Case
@@ -14,7 +14,7 @@ flowchart TD
   Contact --> Choices[Email / LinkedIn / GitHub / scheduling]
 ```
 
-The masthead is the owner's name, not a fictional publication title. Use the agreed subtitle and an editorial lead about making AI useful through production engineering. Retain the site's cream paper, serif headlines, red annotations, diagram exhibits, and thin rules.
+The header shows the owner's name. The hero leads with the thesis about making AI useful through production engineering, then the guide console. Visual rules are in the [design language](design-language.md).
 
 ## Assistant
 
@@ -36,6 +36,6 @@ The persistent control is dismissible. Desktop uses an inset panel; narrow scree
 
 ## Desktop and Mobile
 
-Desktop supports multiple editorial columns and comfortable line lengths; mobile stacks content in its semantic order. Diagrams get readable summaries and deliberate zoom/scroll affordances if needed. Skill tables become semantic compact rows rather than overflowing. Test mouse, keyboard, touch, orientation, and screen readers.
+Desktop supports two-column rows and comfortable line lengths; mobile stacks content in its semantic order. Traces wrap and shrink rather than scroll. The tools list becomes a single column. Test mouse, keyboard, touch, orientation, and screen readers.
 
 See [design language](design-language.md), [wireframes](wireframes/README.md), and [assistant sequence](sequence-diagrams/assistant.md).

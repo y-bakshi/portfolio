@@ -6,7 +6,7 @@
 - Use `PascalCase` for UI components, `camelCase` for functions/variables, and `kebab-case` for assets and routes.
 - Use React components for page UI and interactive state; keep Vite configuration focused on build and development tooling.
 - Prefer semantic HTML and native controls; include keyboard behavior with the feature.
-- Define CSS tokens for paper, ink, red annotation, spacing, typography, and motion.
+- Define CSS tokens for ground, panel, ink, action, highlight, spacing, typography, and motion.
 - Model assistant status as explicit states; clear timers, audio, subscriptions, and listeners on disposal.
 - Render untrusted answers as text or sanitized restricted markup. Never inject model HTML or execute supplied selectors/scripts.
 

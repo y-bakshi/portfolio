@@ -8,7 +8,7 @@ These screenshots were supplied by the project owner during design discovery. Th
 | [Project exhibits](project-exhibits.png) | Monochrome technical illustrations, exhibit labels, short abstracts, stack tags, red status stamps, case-file links. |
 | [Lab report](lab-report.png) | Ruled skills table, condensed metadata, editorial hierarchy. Use contextual evidence rather than copying arbitrary proficiency rankings. |
 | [Masthead detail](masthead-detail.png) | Large display-serif name and small italic subtitle. Substitute the approved Yash Bakshi identity and subtitle. |
-| [Portfolio journal reference](portfolio-journal-reference.png) | Owner-supplied full-page reference: compact masthead, editorial hero, illustrated exhibit list, ruled skills table, case log, and correspondence panel. |
+| [Portfolio journal reference](portfolio-journal-reference.png) (superseded by [ADR-005](../../decisions/ADR-005-ask-first-design-direction.md)) | Owner-supplied full-page reference: compact masthead, editorial hero, illustrated exhibit list, ruled skills table, case log, and correspondence panel. |
 
 ## External Sources
 

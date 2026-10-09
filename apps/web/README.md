@@ -1,6 +1,6 @@
 # Portfolio Web
 
-React + Vite frontend for Yash Bakshi's responsive technical-journal portfolio. Tailwind CSS handles utility styling, with custom CSS for the editorial visual system and React components for interactive features such as the portfolio guide.
+React + Vite frontend for Yash Bakshi's responsive portfolio. Tailwind CSS handles utility styling, with custom CSS for the visual system in `docs/design/design-language.md` and React components for interactive features such as the portfolio guide.
 
 ## Project Structure
 
