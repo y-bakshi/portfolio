@@ -1,52 +1,42 @@
 # Wireframe Specifications
 
-These text wireframes specify hierarchy; they are not final visual comps. Desktop and mobile carry equivalent content and functionality.
+Text wireframes specify hierarchy; the built page in `apps/web` is the reference for final visuals. Desktop and mobile carry the same content and actions.
 
-## Desktop Homepage
+## Desktop homepage
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│ Location / edition                         current date │
-│                      Yash Bakshi                        │
-│ A Technical Journal of Systems Built and Problems Solved│
+│ Yash Bakshi (sticky)          Projects  History  Contact│
 ├─────────────────────────────────────────────────────────┤
-│ About   Projects   Lab Report   Record        Contact   │
+│ AI becomes useful when                                  │
+│ engineering carries it                                  │
+│ beyond the demo.                                        │
+│ Short introduction                                      │
+│ ┌──────────────────────────────┐   ┌───────────────┐   │
+│ │ Ask about my work  [ Ask ]   │   │               │   │
+│ │ question chips               │   │   portrait    │   │
+│ │ ● status light + text        │   │               │   │
+│ │ answer + "Show …" buttons    │   └───────────────┘   │
+│ └──────────────────────────────┘                        │
 ├─────────────────────────────────────────────────────────┤
-│ Large editorial thesis                                  │
-│ About column      Engraved portrait       Context column │
-│ Contact action                           AI greeting    │
+│ Projects: name + line | detail, role, trace, stack, link│
+│   (repeated rows, open, divided by rules)               │
 ├─────────────────────────────────────────────────────────┤
-│ Selected reports: diagram | abstract | case-study link   │
-│ Project archive and accessible category filters          │
-│ Lab report / professional record / contact desk          │
+│ Work history: dates | role and note                     │
+├─────────────────────────────────────────────────────────┤
+│ What I work with: grouped list                          │
+├─────────────────────────────────────────────────────────┤
+│ ████ Have a problem worth working through? ████████████ │
+│ ████ email, LinkedIn, GitHub, book a 30 minute call ███ │
 └─────────────────────────────────────────────────────────┘
-                          [Assistant launcher / panel]
 ```
 
-## Narrow Homepage
+## Mobile homepage
 
-```text
-┌──────────────────────────┐
-│ Edition / date           │
-│ Yash Bakshi              │
-│ Subtitle                 │
-│ Navigation control       │
-├──────────────────────────┤
-│ Editorial thesis         │
-│ About / portrait / facts │
-│ Contact and guide action │
-│ Selected report          │
-│ Diagram                  │
-│ Abstract / case link     │
-│ Archive filters          │
-│ Skills / record / contact│
-├──────────────────────────┤
-│ Expandable guide control │
-└──────────────────────────┘
-```
+Single column in the same order: header, headline, introduction, portrait, guide console, projects, history, tools, contact. Suggested questions wrap. The Ask button is full width. Rows stack name first, then detail and trace.
 
-## Case Study
+## Case study
 
-Exhibit metadata → headline → standfirst → facts panel → problem → solution → architecture diagram/caption → technology → results → source/demo → related work/contact.
+Back link, headline, standfirst, trace, problem, approach, results (or "evidence pending"), with a facts panel for role, stack, source and demo beside the text on wide screens and below it on narrow screens.
 
-Avoid rigid columns on phones, excessively small metadata, inaccessible custom scroll areas, and generated text inside images. No fake edition dates, availability, awards, or metrics. Reserve portrait space only when a real approved source asset exists.
+Avoid rigid columns on phones, tiny metadata, text baked into images, and any invented dates, availability, awards or metrics.

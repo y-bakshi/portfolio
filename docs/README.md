@@ -1,6 +1,6 @@
 # Technical Documentation
 
-This documentation describes Yash Bakshi's responsive editorial portfolio for desktop and mobile. The application positions AI application engineering first, supported by backend engineering and production delivery.
+This documentation describes Yash Bakshi's responsive portfolio for desktop and mobile. The application positions AI application engineering first, supported by backend engineering and production delivery.
 
 ## Current State
 

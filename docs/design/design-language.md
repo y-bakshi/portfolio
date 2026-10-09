@@ -1,116 +1,81 @@
 # UI Design Language
 
-Status: implementation specification. The editorial direction is agreed; numerical tokens below are proposed starting values to validate in the first visual prototype. Exact font families remain open.
+Status: implemented in `apps/web`. Direction agreed 2026-10-09, replacing the earlier mid-century journal concept (see [ADR-005](../decisions/ADR-005-ask-first-design-direction.md)). Token values below match `apps/web/src/styles/global.css`; change them there and here together.
 
-## Identity and Character
+## Concept
 
-The portfolio reads like a mid-century technology journal: precise, thoughtful, and readable. Use the supplied newspaper references for hierarchy, typography, exhibit diagrams, and annotation marks, while composing original layouts around Yash's work.
+The page is a working surface built around the portfolio guide. The first thing a visitor can do is ask a question about the work. Answers cite real project rows, and the cited row is highlighted in amber on the page. That highlight is the one memorable moment. Everything else stays quiet and plain.
 
-**Masthead:** Yash Bakshi
+The portfolio must stay fully useful without the guide: every project, the work history, tools and contact details are ordinary content that reads and links without JavaScript-driven features.
 
-**Subtitle:** *A Technical Journal of Systems Built and Problems Solved.*
+**Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Working editorial lead:** *AI becomes useful when engineering carries it beyond the demo.*
-
-Desktop and mobile are equally important. The print-inspired aesthetic must support comfortable reading and modern interaction on both. Keep technical implementation details out of visitor-facing copy unless they help explain a project.
+**Lead:** *AI becomes useful when engineering carries it beyond the demo.*
 
 ## Palette
 
-| Token | Initial value | Usage |
+| Token | Value | Usage |
 | --- | --- | --- |
-| `--paper` | `#F4F0E6` | Main reading surface. |
-| `--paper-raised` | `#FFFCF5` | Assistant panel, inset figures, focused surfaces. |
-| `--paper-inset` | `#EAE4D6` | Subtle highlighted rows and facts panels. |
-| `--ink` | `#22201C` | Body copy, headlines, primary button background. |
-| `--ink-muted` | `#625D53` | Captions, dates, secondary metadata. |
-| `--annotation` | `#913C32` | Editorial labels, stamps, selected-state marks. |
-| `--rule` | `#C8C0B1` | Decorative dividers and column separators. |
-| `--control-border` | `#817A6D` | Visible input and control boundaries. |
+| `--ground` | `#EDEFE9` | Page background. |
+| `--panel` | `#F9FAF6` | Guide console, trace panels, facts panel. |
+| `--ink` | `#14211B` | Text, borders, offset shadows, contact block. |
+| `--muted` | `#4A5A52` | Secondary text. About 6:1 on the ground. |
+| `--line` | `#B8C1BA` | Row dividers. |
+| `--action` | `#2440E8` | Primary action fill, trace bars, text links. |
+| `--mark` | `#F5C542` | Citation highlight only, plus selection. Do not use it as decoration. |
 
-Keep red accents sparse; they draw attention to evidence, status, and actions. Do not use pale decorative rules as the only boundary of an input. Focus, selection, and error states require text, outlines, or icons as well as color. Validate contrast on the actual background, including textured and inset surfaces.
+Muted grey drops below 4.5:1 on amber, so text inside a highlighted block switches to full ink.
+
+The status light uses red `#FF4D3D`, yellow `#FFC933` and green `#35D07F` on an ink pill. It always appears with a text label, so colour is never the only signal.
 
 ## Typography
 
-| Role | Treatment | Initial size |
+| Role | Face | Notes |
 | --- | --- | --- |
-| Masthead | High-contrast display serif, regular weight, tight but legible spacing. | `clamp(2.75rem, 8vw, 6rem)` |
-| Editorial headline | Display serif; deliberate short line breaks. | `clamp(2rem, 4.5vw, 4rem)` |
-| Section heading | Serif, clear hierarchy, thin rule above or below. | `clamp(1.75rem, 3vw, 2.5rem)` |
-| Standfirst | Reading serif, slightly larger than article text. | 20–24 px |
-| Article body | Readable serif with 1.6–1.75 line height. | 18 px |
-| Controls | Clear sans serif, labels in sentence case. | 16 px |
-| Metadata | Condensed sans or monospace, restrained tracking. | 12–14 px |
-| Code and measurements | Monospace with tabular numerals where useful. | 14–16 px |
+| Headlines, labels, buttons | Bricolage Grotesque, variable width | Width 75 to 82 percent and weight 800 for display. Letter spacing slightly negative, never so tight that glyphs touch. |
+| Reading text | Source Serif 4 | 17 to 18 px, line height 1.65, measure about 62ch. |
+| Pipeline traces only | JetBrains Mono | Used where the content is literally a pipeline stage list. Not for decorative labels. |
 
-Use italic serif for the subtitle and occasional captions. Reserve uppercase for brief exhibit labels and metadata; paragraphs and long button labels use normal casing. Body text remains left-aligned with a 55–75-character measure; do not force justified columns on screen. Drop caps may introduce one editorial paragraph, not every section.
+Sentence case throughout. No all-caps labels, no eyebrow above every heading, no middle-dot metadata strings. Fonts load from Google Fonts for now; self-hosting subsetted WOFF2 is a pre-launch task.
 
-Select fonts for both visual fit and web licensing. Self-host subsetted WOFF2 where permitted, provide sensible fallbacks, and avoid loading all weights. Use system-serif/sans/monospace fallbacks until actual font selection and layout-shift testing are complete.
+## Layout
 
-## Layout and Spacing
+- Left aligned. Content width up to 1240 px with a fluid gutter of 20 to 72 px.
+- The sticky header spans the full width with the ground colour and a thin rule.
+- Projects are open rows, not cards: name and one line on the left, detail, trace, stack and link on the right. They stack on screens under 820 px.
+- The hero places the guide console and the portrait side by side on wide screens. On narrow screens the portrait comes first, then the console.
+- Spacing is fluid with `clamp()`. Section gaps run roughly 56 to 112 px.
+- Depth comes from hard offset shadows (8 px on the console, 6 px on the facts panel). No soft grey shadows.
 
-Use CSS Grid for page composition and semantic document order for reading. Do not flow unrelated interactive modules through newspaper-style CSS columns.
+## Components
 
-- Reading sheet: maximum width approximately 1200 px, centered, with fluid outside margins.
-- Spacing scale: 4, 8, 12, 16, 24, 32, 48, 64, and 96 px; favor 24–32 px column gutters.
-- Wide layout: masthead, ruled navigation, large lead, then About/portrait/context columns.
-- Intermediate layout: two columns where text and diagram sizes remain comfortable.
-- Narrow layout: one deliberate reading column, approximately 16 px side padding, full-width exhibits and controls where appropriate.
-- Start breakpoint exploration around 640 and 960 px, but switch layouts when content requires it. Verify 320 px through wide desktop.
+- **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (`aria-live`), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
+- **Status light:** red while answering, yellow while thinking, green when ready, with matching text: "Answering, one moment", "Looking through the notes", "Ready for your question".
+- **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
+- **Project row:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
+- **Contact block:** an inverted ink panel with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
+- **Case study:** headline, standfirst, trace, problem, approach, results, with a facts panel for role, stack, source and demo. Results stay "evidence pending" until verified.
 
-Use 1 px rules and slightly stronger section boundaries. Most surfaces have square corners; small radii are reserved for controls where useful. A subtle outer-sheet shadow is optional. Avoid elevated dashboard cards, large pill-shaped containers, and heavy shadows across the publication.
+## Motion
 
-## Component Vocabulary
+- One load sequence: the three headline lines rise in turn.
+- The guide streams its answer word by word. Reduced motion shows the full answer immediately.
+- All jumps (nav links, the name link, skip link, "Show" buttons) use one stylesheet-level smooth scroll. The citation highlight starts after the jump has mostly arrived.
+- No scroll-triggered entrance effects, parallax or hover animation on every card. Reduced motion turns off smooth scroll, the headline animation and the highlight sweep.
 
-### Masthead and Navigation
+## Accessibility and quality floor
 
-Place the name prominently with its italic subtitle. Edition/location/date labels are secondary and must contain accurate data. Desktop navigation uses a ruled row; narrow layouts use an accessible labeled menu or wrapping links. Navigation remains available without assistant activation.
+- Visible 3 px cobalt focus ring with offset. Controls are at least 44 px tall.
+- Skip link, labelled landmarks, and one `h1` per route.
+- Text contrast checked on the ground, panel and amber surfaces.
+- Verify at 320 px through wide desktop, 200 percent text zoom, keyboard only, and with reduced motion.
+- Empty, loading and miss states are designed: the guide says plainly when a question is not in the notes.
 
-### Hero and About
+## Review checklist
 
-The thesis is the lead story. Follow it with concise background, an engraved/halftone portrait derived from a real approved photograph, and selected factual context. Contact is the primary conversion; the guide is a prominent exploration action. Keep the greeting brief and avoid automatically opening an intrusive assistant panel.
+- The guide works with keyboard and touch, and the page is complete without it.
+- Every claim on the page has a source in the content notes; nothing is invented.
+- Placeholders are visibly bracketed until real values exist.
+- No element exists only as decoration.
 
-### Project Exhibits
-
-Use a diagram beside an editorial abstract on wide screens and above it on narrow screens. Each exhibit includes a label, project name, category, short description, restrained technology tags, and clear case-study/source links. Separate entries with rules. Red stamps may indicate verified awards or status; never invent credentials or results for decoration.
-
-Illustrations share black technical line work, sparse red signal paths, fine grids, and captions. Real interface screenshots supplement evidence. Important diagram labels must remain selectable text or authored vector text with accessible explanations.
-
-### Case Studies and Lab Report
-
-Case studies use headline, standfirst, compact facts panel, readable article body, figure captions, and results callouts. Pull quotes must come from genuine project statements. Provide text summaries for detailed diagrams and usable scrolling/zoom where needed.
-
-The lab report presents technologies with contextual evidence and experience categories. It must not imply measured proficiency through arbitrary percentages. Keep table headings and associations accessible when adapting to narrow layouts.
-
-### Buttons, Links, and Forms
-
-Primary button: ink fill with light paper text. Secondary button: paper fill with a visible ink border. Inline links are identifiable without hover, usually by underline. Provide distinct hover, pressed, focus, disabled, loading, and error states. Use a visible 2 px focus outline with offset; target controls at least 44×44 CSS pixels. Forms use persistent labels, clear helper/error text, and adequate input contrast.
-
-## Assistant Visual System
-
-Start with Bloub close to its current form, using ink and paper colors and preserving its attribution. Place the avatar within the same editorial surface vocabulary; avoid a separate futuristic visual theme.
-
-Desktop: compact launcher expanding to a readable inset panel. Mobile: bottom control expanding to a sheet that respects safe areas and the virtual keyboard. Maintain transcript/input/stop/close access and keep underlying page navigation reachable. Apply dialog semantics and focus trapping only when the sheet is actually modal.
-
-Pair each avatar state with a text label: listening, thinking, speaking, navigating, or unavailable. Answers use readable text and source links. A spotlight uses a thin annotation outline and short explanatory label, then settles; it never replaces keyboard focus styling.
-
-Quota and error states use calm text with next steps. Speech is optional, starts after visitor interaction, and has visible mute/stop controls. The assistant should match the journal's tone while adapting technical depth to the question.
-
-## Texture, Motion, and Accessibility
-
-Paper grain is subtle, static, and decorative. Do not distress text or place strong noise behind paragraphs. Use authored SVG for rules, stamps, icons, and architecture diagrams; use optimized raster formats for portraits and screenshots. Keep image dimensions explicit to prevent layout movement.
-
-Use short 120–200 ms control transitions and restrained 200–350 ms panel transitions. Guided scrolling may animate when motion preferences allow; reduced motion uses immediate navigation and a static avatar state. Avoid continuous page-wide motion, parallax, scroll hijacking, and flashing highlights.
-
-Validate keyboard and screen-reader navigation, 200% text zoom, narrow layouts, touch, virtual keyboards, light/dark browser chrome, and orientation changes. The publication's initial palette is light newsprint; a dark theme requires its own design decision rather than automatic color inversion.
-
-## Review Checklist
-
-- Identity and hierarchy follow the masthead, thesis, About, and project narrative.
-- Desktop and mobile retain the same essential content and actions.
-- Body copy, captions, labels, diagrams, and controls are readable at actual device sizes.
-- Contact, filters, and assistant remain operable with keyboard and touch.
-- Decorative paper/ink treatments do not impair contrast or performance.
-- Empty, loading, error, denied-permission, and rate-limited states are designed.
-- Artwork and fonts have recorded provenance/licenses; project claims have evidence.
-
-Related documentation: [UI flow](ui-flow.md), [wireframes](wireframes/README.md), [quality requirements](../requirements/non-functional-requirements.md), and [frontend decision](../decisions/ADR-001-frontend-framework.md).
+Related documentation: [UI flow](ui-flow.md), [wireframes](wireframes/README.md), [asset brief](asset-brief.md), [quality requirements](../requirements/non-functional-requirements.md).

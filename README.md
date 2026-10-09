@@ -1,6 +1,6 @@
 # Yash Bakshi Portfolio
 
-A technical portfolio for desktop and mobile, presented as a mid-century engineering journal. The site will showcase AI application engineering, backend systems, and selected software projects through editorial case studies and an interactive portfolio guide.
+A technical portfolio for desktop and mobile, built around an interactive portfolio guide. The site showcases AI application engineering, backend systems, and selected software projects through project rows with pipeline traces and case studies.
 
 ## Repository Layout
 
