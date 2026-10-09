@@ -9,7 +9,7 @@
 
 ## What Is Ready
 
-The repo includes an Astro/TypeScript/Vue scaffold, lockfile, check/build commands, product requirements, architecture/contracts, visual specifications, reference screenshots, content summary, operational plans, and ADRs. Agent files/private root briefs are ignored and are not needed to interpret the shared specification.
+The repo includes a React/TypeScript/Vite/Tailwind scaffold, lockfile, check/build commands, product requirements, architecture/contracts, visual specifications, reference screenshots, content summary, operational plans, and ADRs. Agent files/private root briefs are ignored and are not needed to interpret the shared specification.
 
 The site still contains a placeholder homepage. No complete editorial UI, published case studies, assistant, API, database, cloud infrastructure, deployment automation, or automated test suite exists. Documentation diagrams show intended architecture rather than provisioned services.
 

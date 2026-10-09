@@ -1,36 +1,40 @@
 # Portfolio Web
 
-Astro frontend for Yash Bakshi's portfolio. The site is designed as a technical journal for desktop and mobile, with Vue islands reserved for interactive features such as the portfolio guide.
+React + Vite frontend for Yash Bakshi's responsive technical-journal portfolio. Tailwind CSS handles utility styling, with custom CSS for the editorial visual system and React components for interactive features such as the portfolio guide.
 
 ## Project Structure
 
-Inside of your Astro project, you'll see the following folders and files:
+The frontend uses Vite to serve and bundle the React application:
 
 ```text
 /
 ├── public/
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── styles/
+│       └── global.css
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Vite serves `index.html` and loads the React application from `src/main.tsx`. Add application routes with React Router as the portfolio grows.
 
-Use `src/components/` for Astro and Vue components. Project and case-study content will live in typed Astro content collections.
+Keep reusable React components in `src/components/`. Store reviewed project and case-study content in typed TypeScript data modules until a content system is selected.
 
 Any static assets, like images, can be placed in the `public/` directory.
 
 ## Commands
 
-All commands are run from the root of the project, from a terminal:
+Run all commands from `apps/web/`:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run check`           | Validate Astro and TypeScript files              |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Command | Action |
+| :--- | :--- |
+| `npm ci` | Installs exact dependencies from the lockfile. |
+| `npm run dev` | Starts the Vite development server. |
+| `npm run check` | Type-checks TypeScript. |
+| `npm run build` | Type-checks and builds production files to `dist/`. |
+| `npm run preview` | Previews your build locally. |
+| `npm run format` | Formats frontend source and configuration with Prettier. |
+| `npm run format:check` | Checks formatting without changing files. |
+
+The development server runs in the foreground; stop it with Ctrl+C. Use `npm run dev -- --host 0.0.0.0` to view the app from another device on your local network.

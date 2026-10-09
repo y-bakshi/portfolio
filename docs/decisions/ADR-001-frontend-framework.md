@@ -1,6 +1,6 @@
 # ADR-001: Frontend Framework
 
-Status: accepted; scaffold implemented. Date: 2026-09-28.
+Status: superseded by [ADR-004](ADR-004-react-vite-frontend.md). Date: 2026-09-28.
 
 ## Context
 

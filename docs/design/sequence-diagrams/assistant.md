@@ -5,7 +5,7 @@ Status: planned. Session bootstrap is separate from each chat request.
 ```mermaid
 sequenceDiagram
   actor Visitor
-  participant UI as Vue guide
+  participant UI as React guide
   participant API as FastAPI / Cloud Run
   participant DB as Firestore
   participant KB as Versioned knowledge

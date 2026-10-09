@@ -2,7 +2,7 @@
 
 ## Implemented and Planned
 
-Implemented: Astro 7 static frontend, TypeScript, Vue integration, placeholder homepage. Planned: editorial content collections, assistant island, FastAPI service, Firestore, provider adapters, App Check, and cloud deployment.
+Implemented: React + TypeScript frontend built with Vite and styled with Tailwind CSS. Planned: reviewed project content, AI guide, FastAPI service, Firestore, provider adapters, App Check, and cloud deployment.
 
 ![Planned architecture: browser reads static publication from Firebase Hosting; assistant calls Cloud Run, which validates access, retrieves verified content, reserves quota in Firestore, and calls model and optional speech providers.](architecture-diagram.png)
 
@@ -10,8 +10,8 @@ The diagram is reproducible with `python3 docs/architecture/render-diagram.py` u
 
 ## Components
 
-- **Publication:** Astro builds HTML, CSS, optimized assets, and a typed project catalog for Firebase Hosting's CDN.
-- **Assistant:** Vue owns transcript, avatar, speech controls, and a validated navigation dispatcher. Other content remains readable without hydration.
+- **Frontend:** Vite bundles the React application, CSS, and optimized assets for Firebase Hosting's CDN.
+- **Assistant:** React owns transcript, avatar, speech controls, and a validated navigation dispatcher. Keep the guide as a focused component and defer loading its heavier features until needed.
 - **API:** FastAPI on Cloud Run handles validation, App Check, anonymous sessions, quotas, retrieval, provider calls, and feedback.
 - **Knowledge artifact:** one versioned content source feeds both rendered pages and backend evidence. Begin with a small deterministic index; introduce embeddings only if evaluations justify them.
 - **Firestore:** distributed counters, budget reservations, bounded cache, redacted questions, and optional feedback. It is not the authoring database.
@@ -25,7 +25,7 @@ Prefer a same-origin `/api/v1/*` Firebase Hosting rewrite to Cloud Run. Keep req
 
 ## State and Navigation
 
-Use stable project IDs and canonical routes. Keep assistant state within one Vue island. If Astro client routing is adopted, preserve that island and rebind section anchors on navigation. For ordinary full-page navigation, restore only safe short-lived UI state; never persist transcripts without an explicit decision.
+Use stable project IDs and canonical routes. Keep assistant state in focused React components. Use React Router for case-study routes and rebind section navigation after route changes. Restore only safe short-lived UI state; never persist transcripts without an explicit decision.
 
 ## Failure Behavior
 

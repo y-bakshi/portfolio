@@ -6,7 +6,7 @@ A technical portfolio for desktop and mobile, presented as a mid-century enginee
 
 ```text
 apps/
-└── web/    Astro frontend with Vue interactive islands
+└── web/    React + Vite frontend styled with Tailwind CSS
 ```
 
 The future FastAPI backend will live in `apps/api/`.
@@ -28,6 +28,7 @@ npm run dev
 Before submitting changes, run:
 
 ```sh
+npm run format:check
 npm run check
 npm run build
 ```

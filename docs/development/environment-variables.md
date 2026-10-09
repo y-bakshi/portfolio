@@ -6,15 +6,15 @@ The current scaffold requires no environment variables. The following names are 
 
 | Variable | Purpose | Classification |
 | --- | --- | --- |
-| `PUBLIC_SITE_URL` | Canonical deployed origin. | Public |
-| `PUBLIC_API_BASE_URL` | Prefer same-origin `/api/v1`; local development override. | Public |
-| `PUBLIC_FIREBASE_API_KEY` | Firebase client project identifier. | Public; restrict API/domain use |
-| `PUBLIC_FIREBASE_PROJECT_ID` | Firebase project selection. | Public |
-| `PUBLIC_FIREBASE_APP_ID` | Registered web application. | Public |
-| `PUBLIC_RECAPTCHA_SITE_KEY` | App Check attestation site key. | Public |
-| `PUBLIC_SCHEDULING_URL` | Approved calendar destination. | Public |
+| `VITE_SITE_URL` | Canonical deployed origin. | Public |
+| `VITE_API_BASE_URL` | Prefer same-origin `/api/v1`; local development override. | Public |
+| `VITE_FIREBASE_API_KEY` | Firebase client project identifier. | Public; restrict API/domain use |
+| `VITE_FIREBASE_PROJECT_ID` | Firebase project selection. | Public |
+| `VITE_FIREBASE_APP_ID` | Registered web application. | Public |
+| `VITE_RECAPTCHA_SITE_KEY` | App Check attestation site key. | Public |
+| `VITE_SCHEDULING_URL` | Approved calendar destination. | Public |
 
-Astro public variables are exposed in the client build. Do not put provider secrets in any `PUBLIC_*` value. Changing build configuration requires rebuilding the static site.
+Vite variables prefixed with `VITE_` are exposed in the client build. Do not put provider secrets in them. Changing build configuration requires rebuilding the static site.
 
 ## Backend Runtime Configuration
 

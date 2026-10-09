@@ -4,7 +4,7 @@ The GitHub repository is public. Build and validate the website privately until 
 
 ## Completed: Scaffold
 
-- Astro, TypeScript, and Vue integration in `apps/web/`.
+- React, TypeScript, Vite, and Tailwind CSS in `apps/web/`.
 - Placeholder homepage; `check` and production `build` scripts.
 - Initial Git commit and GitHub remote.
 - Agent context/private briefs excluded from Git.
@@ -24,7 +24,7 @@ Obtain an approved real portrait and create an engraved/halftone derivative. Pro
 
 ## Phase 4: Text Guide
 
-Create FastAPI backend, versioned evidence artifact, Vue guide, Bloub states, grounded answers, citations, navigation dispatcher, sessions, quota transactions, and provider mocks. Exit: invalid claims/actions are rejected, guidance is controllable, and concurrent budget admission is tested.
+Create FastAPI backend, versioned evidence artifact, React guide, Bloub states, grounded answers, citations, navigation dispatcher, sessions, quota transactions, and provider mocks. Exit: invalid claims/actions are rejected, guidance is controllable, and concurrent budget admission is tested.
 
 ## Phase 5: Voice and Privacy
 

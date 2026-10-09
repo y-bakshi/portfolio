@@ -8,8 +8,8 @@ The scaffold provides `npm run check` and `npm run build` in `apps/web/`. No uni
 
 | Layer | Proposed tooling | Focus |
 | --- | --- | --- |
-| Content validation | Astro schemas and build | Required fields, known project IDs, real routes, evidence metadata. |
-| Frontend units | Vitest / Vue Test Utils | Assistant state transitions, filters, action allowlist, cancellation. |
+| Content validation | TypeScript types and build | Required fields, known project IDs, real routes, evidence metadata. |
+| Frontend units | Vitest / React Testing Library | Assistant state transitions, filters, action allowlist, cancellation. |
 | Backend units | pytest | Quota windows, cost accounting, redaction, citation validation, provider adapters. |
 | Integration | pytest + Firestore emulator | Concurrent reservations, idempotency, settlement, cleanup, fail-closed behavior. |
 | Browser | Playwright | Publication navigation, assistant flows, contact, keyboard, responsive layouts. |

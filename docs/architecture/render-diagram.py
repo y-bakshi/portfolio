@@ -18,7 +18,7 @@ def main():
     ax.axis("off")
     ax.text(0.4, 7.5, "Portfolio / planned system architecture", fontsize=21,
             fontfamily="serif", color="#222222")
-    ax.text(0.4, 7.05, "Static publication + isolated interactive guide • Desktop and mobile",
+    ax.text(0.4, 7.05, "React publication + interactive AI guide • Desktop and mobile",
             fontsize=11, color="#555555")
 
     def box(x, y, title, detail, planned=True, width=3.4):
@@ -37,8 +37,8 @@ def main():
                     (start[1] + end[1]) / 2 + 0.1, label, fontsize=8,
                     color="#7b322a", bbox={"facecolor": "#f4f0e6", "edgecolor": "none", "pad": 2})
 
-    box(0.4, 4.8, "Browser", "Editorial HTML + Vue guide\nText, voice, project navigation")
-    box(5.2, 4.8, "Firebase Hosting", "Astro static output / CDN\nSame-origin API rewrite")
+    box(0.4, 4.8, "Browser", "React portfolio + AI guide\nText, voice, project navigation")
+    box(5.2, 4.8, "Firebase Hosting", "Vite static output / CDN\nSame-origin API rewrite")
     box(10, 4.8, "Cloud Run / FastAPI", "Validate App Check + session\nRetrieve, reserve, call, settle")
     box(0.4, 2.4, "Versioned content", "Projects, articles, claim evidence\nBuild pages + knowledge artifact")
     box(5.2, 2.4, "Firestore", "Atomic quotas / budgets / cache\nRedacted questions + ratings")
@@ -51,7 +51,7 @@ def main():
     arrow((10.1, 4.72), (8.45, 3.68), "reserve / settle")
     arrow((11.7, 4.72), (11.7, 3.68), "inference")
     ax.text(0.4, -0.55,
-            "Current implementation: Astro + TypeScript + Vue scaffold only. Dashed boxes are planned.\n"
+            "Current implementation: React + TypeScript + Vite + Tailwind scaffold. Dashed boxes are planned.\n"
             "Publication remains usable when AI is unavailable. No raw IPs or prompts in application storage/logs.",
             fontsize=9, color="#555555")
     fig.savefig(Path(__file__).with_name("architecture-diagram.png"),

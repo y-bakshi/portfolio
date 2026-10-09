@@ -10,7 +10,7 @@ Repository: [y-bakshi/portfolio](https://github.com/y-bakshi/portfolio). `main` 
 4. Open a pull request describing behavior, evidence, and verification. Include desktop/mobile screenshots for visual changes and linked issues when available.
 5. Merge after review/checks; production deployment remains a separate gated action until launch.
 
-Use concise imperative commit subjects. The initial repository convention is `Initialize Astro portfolio frontend with Vue`; conventional-commit prefixes are optional rather than an enforced rule.
+Use concise imperative commit subjects. The initial repository convention is `Initialize React portfolio frontend with Vite`; conventional-commit prefixes are optional rather than an enforced rule.
 
 ## Excluded Context
 

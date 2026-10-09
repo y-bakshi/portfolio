@@ -11,16 +11,16 @@ npm ci
 npm run dev
 ```
 
-Open the URL reported by Astro, normally `http://localhost:4321`. Commands run from `apps/web/`:
+Open the URL reported by Vite, normally `http://localhost:5173`. Commands run from `apps/web/`:
 
 | Command | Purpose |
 | --- | --- |
 | `npm run dev` | Local development server. |
-| `npm run check` | Astro and TypeScript diagnostics. |
+| `npm run check` | TypeScript diagnostics. |
 | `npm run build` | Static production output in `dist/`. |
 | `npm run preview` | Inspect the production output locally. |
 
-For constrained environments, prefix Astro commands with `ASTRO_TELEMETRY_DISABLED=1` if telemetry configuration cannot be written. Never commit `node_modules/`, `.astro/`, or `dist/`.
+Never commit `node_modules/` or `dist/`. The Vite development server can use `npm run dev -- --host 0.0.0.0` when access from another device on the local network is needed.
 
 ## Planned Backend
 
@@ -30,4 +30,4 @@ Start backend work against mock provider adapters and a local quota store/emulat
 
 ## Content and Documentation
 
-Case studies will use validated content collections; changes should update the public page and backend evidence artifact together. Read [coding standards](coding-standards.md), [environment variables](environment-variables.md), and [roadmap](../roadmap.md) before introducing new services.
+Case studies will use validated typed content modules; changes should update the public page and backend evidence artifact together. Read [coding standards](coding-standards.md), [environment variables](environment-variables.md), and [roadmap](../roadmap.md) before introducing new services.

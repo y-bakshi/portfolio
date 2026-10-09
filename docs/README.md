@@ -4,7 +4,7 @@ This documentation describes Yash Bakshi's responsive editorial portfolio for de
 
 ## Current State
 
-The implemented application is an Astro static scaffold with TypeScript and the official Vue integration in `apps/web/`. It has a placeholder homepage and working `check` and `build` scripts. The backend, assistant, database, automated tests, infrastructure, and deployment workflows are not implemented yet.
+The implemented application is a React + TypeScript frontend built with Vite and styled with Tailwind CSS in `apps/web/`. It has a starter homepage and working `check` and `build` scripts. The backend, AI guide, database, automated tests, infrastructure, and deployment workflows are not implemented yet.
 
 Unless explicitly labeled implemented, contracts and operational settings in these documents are planned. Proposed values are starting points for verification, not measured results. Public source availability does not mean the website has launched.
 
@@ -23,7 +23,7 @@ Unless explicitly labeled implemented, contracts and operational settings in the
 | Local development | [Setup](development/setup.md) |
 | Verification | [Testing strategy](testing/testing-strategy.md) |
 | Operations | [Deployment](deployment/deployment.md), [infrastructure](deployment/infrastructure.md) |
-| Technical decisions | [Frontend](decisions/ADR-001-frontend-framework.md), [database](decisions/ADR-002-database-choice.md), [authentication](decisions/ADR-003-authentication.md) |
+| Technical decisions | [Previous frontend decision](decisions/ADR-001-frontend-framework.md), [current frontend decision](decisions/ADR-004-react-vite-frontend.md), [database](decisions/ADR-002-database-choice.md), [authentication](decisions/ADR-003-authentication.md) |
 | Delivery order | [Roadmap](roadmap.md) |
 
 Keep requirements, diagrams, API contracts, and tests synchronized as implementation progresses. Agent instructions and private working briefs remain excluded from version control; this folder contains the shareable technical specification.
