@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const SPACING = 20;
+const SPACING = 14;
 const RADIUS = 130;
 const BASE_ALPHA = 0.15;
 const PEAK_ALPHA = 0.9;
@@ -70,7 +70,7 @@ export function DotGrid() {
         if (d.b < 0.004) d.b = 0;
         else busy = true;
         const alpha = BASE_ALPHA + (PEAK_ALPHA - BASE_ALPHA) * d.b;
-        const size = 1.4 + d.b * 1.6;
+        const size = 1.2 + d.b * 1.5;
         ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${alpha.toFixed(2)})`;
         ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
       }
