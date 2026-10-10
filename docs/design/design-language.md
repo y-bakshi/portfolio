@@ -42,6 +42,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 
 - Left aligned. Content width up to 1240 px with a fluid gutter of 20 to 72 px.
 - The sticky header spans the full width with the ground colour and a thin rule.
+- Any text that would sit straight on the dot grid goes on a card too: the introduction, each section's heading and lead-in, the small footnotes, and the case-study title and body. There are no text halos or shadows.
 - The tools list is a single card in the same style, with its four groups inside it.
 - Each project and each role is its own card, styled like the guide console: panel fill, 2 px ink border and a hard offset shadow (8 px for projects, 6 px for roles, smaller on phones). Inside a project card the name and one line sit on the left and the detail, trace, stack and link on the right; they stack on screens under 820 px.
 - The hero places the guide console and the portrait side by side on wide screens. On narrow screens the portrait comes first, then the console.

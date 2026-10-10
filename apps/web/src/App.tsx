@@ -229,13 +229,15 @@ export function Home() {
         </section>
 
         <section className="work" id="work" aria-labelledby="work-title">
-          <h2 id="work-title" className="section-title">
-            Projects
-          </h2>
-          <p className="section-lede">
-            Each trace shows the stages in the order the system runs them, drawn from my project
-            notes. Timings are not measured, so none are shown.
-          </p>
+          <div className="section-card">
+            <h2 id="work-title" className="section-title">
+              Projects
+            </h2>
+            <p className="section-lede">
+              Each trace shows the stages in the order the system runs them, drawn from my project
+              notes. Timings are not measured, so none are shown.
+            </p>
+          </div>
           <div className="rows">
             {projects.map((p) => (
               <article
@@ -272,9 +274,11 @@ export function Home() {
         </section>
 
         <section className="record" id="record" aria-labelledby="record-title">
-          <h2 id="record-title" className="section-title">
-            Work history
-          </h2>
+          <div className="section-card">
+            <h2 id="record-title" className="section-title">
+              Work history
+            </h2>
+          </div>
           <ol className="record-list">
             {roles.map((r) => (
               <li
@@ -299,9 +303,11 @@ export function Home() {
         </section>
 
         <section className="tools" aria-labelledby="tools-title">
-          <h2 id="tools-title" className="section-title">
-            What I work with
-          </h2>
+          <div className="section-card">
+            <h2 id="tools-title" className="section-title">
+              What I work with
+            </h2>
+          </div>
           <dl className="tools-list">
             {stackGroups.map((g) => (
               <div key={g.group}>

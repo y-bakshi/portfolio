@@ -14,8 +14,10 @@ export function CaseStudy() {
         <p className="case-back">
           <Link to="/#work">All projects</Link>
         </p>
-        <h1 className="case-title">{project.name}</h1>
-        <p className="case-lede">{project.line}</p>
+        <div className="case-head">
+          <h1 className="case-title">{project.name}</h1>
+          <p className="case-lede">{project.line}</p>
+        </div>
 
         <div className="case-grid">
           <article className="case-text">
