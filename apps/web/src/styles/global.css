@@ -98,10 +98,8 @@ main,
   width: 100%;
   max-width: none;
   padding-inline: max(var(--gutter), calc((100% - 1240px) / 2 + var(--gutter)));
-  /* translucent so the background field shows through; no divider line */
-  background: rgba(237, 239, 233, 0.8);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  /* solid so scrolled content never shows through; the dots are drawn inside it. No divider line. */
+  background: var(--ground);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -940,4 +938,16 @@ main,
   .contact-links {
     margin-top: clamp(8px, 2vw, 16px);
   }
+}
+
+/* the header draws its own slice of the dot grid on top of its solid fill, under its text */
+.dotgrid-header {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.site-header > :not(canvas):not(.skip) {
+  position: relative;
+  z-index: 1;
 }

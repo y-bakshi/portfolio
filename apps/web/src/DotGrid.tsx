@@ -21,7 +21,7 @@ type Dot = { x: number; y: number; b: number };
  * A page-wide dot grid fixed behind the content. The pointer anywhere on the page brightens and
  * enlarges the dots near it, with an eased falloff. Skipped when the visitor prefers reduced motion.
  */
-export function DotGrid() {
+export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -40,16 +40,19 @@ export function DotGrid() {
 
     const build = () => {
       const dpr = window.devicePixelRatio || 1;
-      width = window.innerWidth;
-      height = window.innerHeight;
+      // The page canvas fills the viewport; the header canvas fills just the header strip, which
+      // sits at the top of the viewport, so both draw the same grid in the same place.
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width || window.innerWidth;
+      height = rect.height || window.innerHeight;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       dots = [];
       const cols = Math.floor(width / SPACING) + 2;
       const rows = Math.floor(height / SPACING) + 2;
-      const ox = (width % SPACING) / 2;
-      const oy = (height % SPACING) / 2;
+      const ox = (window.innerWidth % SPACING) / 2;
+      const oy = (window.innerHeight % SPACING) / 2;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++)
           dots.push({ x: ox + c * SPACING, y: oy + r * SPACING, b: 0 });
@@ -96,14 +99,14 @@ export function DotGrid() {
       mouse = null;
       wake();
     };
-    const onResize = () => {
+    const observer = new ResizeObserver(() => {
       build();
       wake();
-    };
+    });
+    observer.observe(canvas);
 
     build();
     paint();
-    window.addEventListener('resize', onResize);
     if (!reduce) {
       window.addEventListener('mousemove', onMove, { passive: true });
       window.addEventListener('touchmove', onTouch, { passive: true });
@@ -114,7 +117,7 @@ export function DotGrid() {
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener('resize', onResize);
+      observer.disconnect();
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('touchmove', onTouch);
       window.removeEventListener('touchend', clear);
@@ -123,5 +126,11 @@ export function DotGrid() {
     };
   }, []);
 
-  return <canvas ref={ref} className="dotgrid" aria-hidden="true" />;
+  return (
+    <canvas
+      ref={ref}
+      className={scope === 'header' ? 'dotgrid dotgrid-header' : 'dotgrid'}
+      aria-hidden="true"
+    />
+  );
 }
