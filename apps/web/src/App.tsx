@@ -119,12 +119,14 @@ export function Home() {
     if (feed) feed.scrollTop = feed.scrollHeight;
   }, [asked, shown, status, history.length, isMobile]);
   useEffect(() => {
-    // in the phone drawer the newest question sits at the top of the log so its answer reads from the first word
+    // on phones the newest question sits at the top of the log so its answer reads from the first word.
+    // Re-pin as the answer grows and when its buttons appear; a pin made only when the question is sent
+    // would be clamped, because nothing exists below the question yet.
     const log = logRef.current;
     const qs = log?.querySelectorAll<HTMLElement>('.msg-user');
     const q = qs && qs[qs.length - 1];
-    if (log && q) log.scrollTop = q.offsetTop;
-  }, [asked, isMobile]);
+    if (log && q) log.scrollTop = Math.max(0, q.offsetTop - 14);
+  }, [asked, shown, status, history.length, isMobile]);
 
   const [closing, setClosing] = useState(false);
   const closeDock = () => {

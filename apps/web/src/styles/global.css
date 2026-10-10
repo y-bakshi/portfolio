@@ -2064,3 +2064,27 @@ html {
 .msg-user::after {
   background: var(--ink);
 }
+
+/* phone chat: the log is a column so the visitor's messages can sit right and the guide's left */
+@media (max-width: 900px) {
+  .dock-log {
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+  }
+
+  .dock-log::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dock-log > .msg-user {
+    align-self: flex-end;
+  }
+
+  .dock-log > .msg-answer,
+  .dock-log > .console-note,
+  .dock-log > .cites,
+  .dock-log > .chips {
+    align-self: flex-start;
+  }
+}
