@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 
 const SPACING = 14;
-const RADIUS = 130;
-const BASE_ALPHA = 0.15;
-const PEAK_ALPHA = 0.9;
+const RADIUS = 120; // how far from the pointer dots are pushed
+const PUSH = 5; // strength of the push
+const DOT_RADIUS = 1.35;
+const DOT_ALPHA = 0.32;
+
 type RGB = [number, number, number];
 
 /** Reads a hex colour token such as --ink from the stylesheet, so the dots follow the design tokens. */
@@ -15,11 +17,12 @@ const token = (name: string, fallback: RGB): RGB => {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 };
 
-type Dot = { x: number; y: number; b: number };
+type Dot = { hx: number; hy: number; ox: number; oy: number; vx: number; vy: number };
 
 /**
- * A page-wide dot grid fixed behind the content. The pointer anywhere on the page brightens and
- * enlarges the dots near it, with an eased falloff. Skipped when the visitor prefers reduced motion.
+ * A page-wide grid of round dots fixed behind the content. Dots near the pointer are pushed away
+ * from it and spring back when it leaves. The loop stops once everything is at rest. Under reduced
+ * motion the grid is drawn once and does not react.
  */
 export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -29,7 +32,7 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    // Dots use --ink, the same colour as the portrait's line work. Lit dots get darker and larger.
+    // Dots use --ink, the same colour as the portrait's line work.
     const INK = token('--ink', [20, 33, 27]);
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let dots: Dot[] = [];
@@ -40,7 +43,7 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
     let lastMove = 0;
 
     const build = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       // The page canvas fills the viewport; the header canvas fills just the header strip, which
       // sits at the top of the viewport, so both draw the same grid in the same place.
       const rect = canvas.getBoundingClientRect();
@@ -55,8 +58,9 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
       const ox = (window.innerWidth % SPACING) / 2;
       const oy = (window.innerHeight % SPACING) / 2;
       for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++)
-          dots.push({ x: ox + c * SPACING, y: oy + r * SPACING, b: 0 });
+        for (let c = 0; c < cols; c++) {
+          dots.push({ hx: ox + c * SPACING, hy: oy + r * SPACING, ox: 0, oy: 0, vx: 0, vy: 0 });
+        }
       }
     };
 
@@ -64,39 +68,40 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
       ctx.clearRect(0, 0, width, height);
       const mx = mouse?.x ?? -99999;
       const my = mouse?.y ?? -99999;
-      let busy = false;
-      const lit: Dot[] = [];
+      let maxDelta = 0;
 
-      // Dots at rest share one style, so they go into a single path and a single fill.
-      ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${BASE_ALPHA})`;
+      // Every dot shares one style, so the whole grid is a single path and a single fill.
+      ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${DOT_ALPHA})`;
       ctx.beginPath();
       for (const d of dots) {
-        const dx = d.x - mx;
-        const dy = d.y - my;
+        const dx = d.hx + d.ox - mx;
+        const dy = d.hy + d.oy - my;
         const dist = Math.hypot(dx, dy);
-        const target = dist < RADIUS ? (1 - dist / RADIUS) ** 1.5 : 0;
-        d.b += (target > d.b ? 0.16 : 0.07) * (target - d.b);
-        if (d.b < 0.004) {
-          d.b = 0;
-          ctx.rect(d.x - 0.6, d.y - 0.6, 1.2, 1.2);
-        } else {
-          busy = true;
-          lit.push(d);
+        if (dist < RADIUS && dist > 0.01) {
+          const f = (1 - dist / RADIUS) ** 2 * PUSH;
+          d.vx += (dx / dist) * f;
+          d.vy += (dy / dist) * f;
         }
+        // damped spring back to the home position
+        const px = d.ox;
+        const py = d.oy;
+        d.ox = (d.ox + d.vx) * 0.9;
+        d.oy = (d.oy + d.vy) * 0.9;
+        d.vx *= 0.78;
+        d.vy *= 0.78;
+        const delta = Math.abs(d.ox - px) + Math.abs(d.oy - py);
+        if (delta > maxDelta) maxDelta = delta;
+        const x = d.hx + d.ox;
+        const y = d.hy + d.oy;
+        ctx.moveTo(x + DOT_RADIUS, y);
+        ctx.arc(x, y, DOT_RADIUS, 0, Math.PI * 2);
       }
       ctx.fill();
 
-      // Only the few dots near the pointer need their own size and opacity.
-      for (const d of lit) {
-        const alpha = BASE_ALPHA + (PEAK_ALPHA - BASE_ALPHA) * d.b;
-        const size = 1.2 + d.b * 1.5;
-        ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${alpha.toFixed(2)})`;
-        ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
-      }
-
-      // Keep animating while the pointer is moving or dots are still fading; then stop.
-      const active = mouse !== null && now - lastMove < 350;
-      frame = active || busy ? requestAnimationFrame(paint) : 0;
+      // Keep animating while the pointer is moving or any dot is still travelling; a pointer that
+      // has stopped leaves the dots where they settled and the loop sleeps.
+      const active = (mouse !== null && now - lastMove < 350) || maxDelta > 0.02;
+      frame = active ? requestAnimationFrame(paint) : 0;
     };
 
     const wake = () => {
