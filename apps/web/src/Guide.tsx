@@ -1,5 +1,4 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Answer, answerFor, education, projects, roles, suggestions } from './content';
 
 export type Status = 'ready' | 'thinking' | 'answering';
@@ -14,11 +13,10 @@ const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * The guide's state and behaviour, shared by the home page and the case study. With `panel` the
- * conversation shows inside the chat itself (a popover on wide screens, as on phones) instead of
- * in the hero.
+ * The guide's state and behaviour. On wide screens the conversation shows in the hero; on phones it
+ * shows inside the chat itself.
  */
-export function useGuide({ panel = false }: { panel?: boolean } = {}) {
+export function useGuide() {
   const [question, setQuestion] = useState('');
   const [asked, setAsked] = useState('');
   /** Finished exchanges, oldest first. The one in progress lives in asked, answer and shown. */
@@ -33,7 +31,6 @@ export function useGuide({ panel = false }: { panel?: boolean } = {}) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const feedRef = useRef<HTMLDivElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches,
   );
@@ -43,8 +40,8 @@ export function useGuide({ panel = false }: { panel?: boolean } = {}) {
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
   }, []);
-  /** Where the conversation shows: phones always use the chat's own log; the panel layout does too. */
-  const showLog = isMobile || panel;
+  /** Phones show the conversation inside the chat; wide screens show it in the hero. */
+  const showLog = isMobile;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -179,11 +176,7 @@ export function useGuide({ panel = false }: { panel?: boolean } = {}) {
 
   const show = (id: string) => {
     const el = document.getElementById(id);
-    if (!el) {
-      // not on this page (the case study): open the home page at that section
-      navigate(`/#${id}`);
-      return;
-    }
+    if (!el) return;
     if (isMobile) setOpen(false);
     // Scroll behavior comes from the stylesheet, so this matches every other jump on the page.
     // a jump of more than a screen and a half is instant; a long smooth scroll just makes people wait
@@ -284,7 +277,6 @@ export function useGuide({ panel = false }: { panel?: boolean } = {}) {
     scrolled,
     isMobile,
     showLog,
-    panel,
     ask,
     onSubmit,
     show,
@@ -311,7 +303,6 @@ export function GuideDock({ g }: { g: Guide }) {
     onDockKey,
     scrolled,
     showLog,
-    panel,
     onSubmit,
     thread,
     chipList,
@@ -321,7 +312,7 @@ export function GuideDock({ g }: { g: Guide }) {
   return (
     <>
     <div className={`dock-scrim${open ? ' is-open' : ''}`} onClick={closeDock} aria-hidden="true" />
-    <aside className={`dock${open ? ' is-open' : ''}${closing ? ' is-closing' : ''}${panel ? ' dock-panelmode' : ''}`} aria-label="Guide chat" onKeyDown={onDockKey}>
+    <aside className={`dock${open ? ' is-open' : ''}${closing ? ' is-closing' : ''}`} aria-label="Guide chat" onKeyDown={onDockKey}>
       <p className="sr-only" aria-live="polite">
         {statusLabel[status]}
       </p>
