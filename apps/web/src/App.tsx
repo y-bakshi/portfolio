@@ -1,6 +1,15 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Answer, answerFor, projects, roles, stackGroups, suggestions } from './content';
+import {
+  Answer,
+  answerFor,
+  education,
+  projects,
+  roles,
+  smallProjects,
+  stackGroups,
+  suggestions,
+} from './content';
 import { DotGrid } from './DotGrid';
 import { MistPortrait } from './MistPortrait';
 import { SiteHeader, Trace } from './parts';
@@ -221,7 +230,8 @@ export function Home() {
   const nameFor = (id: string) =>
     projects.find((p) => p.id === id)?.name ??
     roles.find((r) => r.id === id)?.org ??
-    (id === 'contact' ? 'Contact' : id);
+    education.find((e) => e.id === id)?.org ??
+    (id === 'contact' ? 'Contact' : id === 'tools' ? 'What I work with' : id);
 
   const thread = (
     <>
@@ -356,6 +366,21 @@ export function Home() {
                 </div>
               </article>
             ))}
+            <article className="row row-small" aria-labelledby="small-name">
+              <div className="row-head">
+                <h3 id="small-name">Smaller projects</h3>
+                <p className="row-line">Coursework and experiments.</p>
+              </div>
+              <div className="row-body">
+                <ul className="small-list">
+                  {smallProjects.map((sp) => (
+                    <li key={sp.name}>
+                      <strong>{sp.name}.</strong> {sp.line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
           </div>
         </section>
 
@@ -388,13 +413,43 @@ export function Home() {
           </p>
         </section>
 
+        <section className="record" aria-labelledby="education-title">
+          <div className="section-card">
+            <h2 id="education-title" className="section-title">
+              Education
+            </h2>
+          </div>
+          <ol className="record-list">
+            {education.map((e) => (
+              <li
+                key={e.id}
+                id={e.id}
+                tabIndex={-1}
+                className={`record-item${marked === e.id ? ' is-marked' : ''}`}
+              >
+                <p className="record-when">{e.when}</p>
+                <div>
+                  <h3>
+                    {e.title}, {e.org}
+                  </h3>
+                  <p>{e.note}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
         <section className="tools" aria-labelledby="tools-title">
           <div className="section-card">
             <h2 id="tools-title" className="section-title">
               What I work with
             </h2>
           </div>
-          <dl className="tools-list">
+          <dl
+            className={`tools-list${marked === 'tools' ? ' is-marked' : ''}`}
+            id="tools"
+            tabIndex={-1}
+          >
             {stackGroups.map((g) => (
               <div key={g.group}>
                 <dt>{g.group}</dt>

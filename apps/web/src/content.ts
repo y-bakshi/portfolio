@@ -126,6 +126,74 @@ export const projects: Project[] = [
     ],
     topics: ['streaming', 'kafka', 'graph', 'neo4j', 'kubernetes', 'data'],
   },
+  {
+    id: 'edge-inference',
+    name: 'Edge inference',
+    line: 'Only faces cross the network.',
+    detail:
+      'Face detection runs on an AWS IoT Greengrass edge device. Only the detected faces travel to cloud recognition over MQTT and SQS, so empty frames never leave the device. An EC2 instance stood in for the edge hardware.',
+    role: 'Course project.',
+    stack: ['Python', 'IoT Greengrass', 'MQTT', 'SQS', 'Lambda', 'EC2'],
+    trace: [
+      { label: 'Camera frame', depth: 0 },
+      { label: 'Detect on the edge device', depth: 1 },
+      { label: 'MQTT and SQS', depth: 2 },
+      { label: 'Cloud recognition', depth: 3 },
+    ],
+    topics: ['aws', 'cloud', 'edge', 'iot', 'greengrass', 'mqtt', 'vision', 'hybrid'],
+  },
+  {
+    id: 'procwatch',
+    name: 'ProcWatch',
+    line: 'A process monitor that streams to a browser.',
+    detail:
+      'A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.',
+    role: 'Contribution details to be confirmed.',
+    stack: ['Rust', 'sysinfo', 'clap', 'WebSockets'],
+    trace: [
+      { label: 'Collect metrics', depth: 0 },
+      { label: 'Filter', depth: 1 },
+      { label: 'WebSocket stream', depth: 2 },
+      { label: 'Live dashboard', depth: 3 },
+    ],
+    topics: ['rust', 'systems', 'monitor', 'process', 'websocket', 'dashboard'],
+  },
+  {
+    id: 'story-generator',
+    name: 'Gemini story generator',
+    line: 'Stories and pictures for children.',
+    detail:
+      'A React and Vite interface and a FastAPI service collect a child\u2019s age, theme and characters, then prompt Gemini for a story and matching images, for ages 4 to 12.',
+    role: 'Contribution details to be confirmed.',
+    stack: ['React', 'Vite', 'FastAPI', 'Python', 'Gemini API'],
+    trace: [
+      { label: 'Story preferences', depth: 0 },
+      { label: 'Build the prompt', depth: 1 },
+      { label: 'Gemini', depth: 2 },
+      { label: 'Story and images', depth: 3 },
+    ],
+    topics: ['gemini', 'story', 'children', 'react', 'multimodal', 'prompt', 'llm', 'frontend'],
+  },
+];
+
+/** Shorter write-ups for coursework and experiments. They share one card. */
+export const smallProjects = [
+  {
+    name: 'RocksDB key-value store',
+    line: 'C++17 operations over a 255 MB Reddit dataset of 750,000+ pairs: bulk load with WriteBatch, point lookups, range scans and deletes.',
+  },
+  {
+    name: 'Distributed graph engine',
+    line: 'PageRank and shortest-path analysis on NYC taxi data in a containerised Neo4j with the Graph Data Science plugin.',
+  },
+  {
+    name: 'Prolog semantic evaluator',
+    line: 'A definite clause grammar parser and evaluator in SWI-Prolog, checked against eight test programs.',
+  },
+  {
+    name: 'Supply chain traceability study',
+    line: 'Regression analysis of how record completeness relates to inspection and logistics outcomes, using real data from a cashew processor.',
+  },
 ];
 
 export const roles = [
@@ -159,14 +227,47 @@ export const roles = [
   },
 ];
 
+export const education = [
+  {
+    id: 'asu',
+    title: 'MS, Computer Software Engineering',
+    org: 'Arizona State University',
+    when: 'Jan 2025 to Dec 2026',
+    note: 'GPA 3.85. Statistical machine learning, AI for software engineers, data processing at scale, cloud computing, software project management.',
+  },
+  {
+    id: 'manipal',
+    title: 'Bachelor of Information Technology',
+    org: 'Manipal University Jaipur',
+    when: 'Aug 2017 to Aug 2021',
+    note: 'Data structures and algorithms, databases, computer networks, object-oriented programming. ServiceNow Certified System Administrator and ServiceNow Discovery certifications.',
+  },
+];
+
 export const stackGroups = [
   {
     group: 'AI applications',
-    items: 'Python, FastAPI, RAG, ReAct, retrieval evaluation, model serving',
+    items:
+      'LLM and ReAct orchestration, RAG, prompt engineering, embeddings, pgvector, Ollama, Claude, Gemini API, AWS Bedrock, PyTorch, scikit-learn',
   },
-  { group: 'Data and services', items: 'PostgreSQL, pgvector, REST, WebSockets, Kafka, Kinesis' },
-  { group: 'Cloud and delivery', items: 'AWS, GCP, Docker, Kubernetes, CI/CD, Linux' },
-  { group: 'Languages', items: 'Python, Java, C++, Rust, TypeScript, plus ServiceNow and RHEL at work' },
+  {
+    group: 'Backend and web',
+    items:
+      'Java, Micronaut, Python, FastAPI, Node.js, REST and OpenAPI, WebSockets, React, Next.js, TypeScript, Tailwind CSS',
+  },
+  {
+    group: 'Cloud and delivery',
+    items: 'AWS (Lambda, SQS, Kinesis, Bedrock), GCP (Cloud Run, Pub/Sub), Docker, Kubernetes, Terraform, CircleCI',
+  },
+  { group: 'Data', items: 'PostgreSQL, MongoDB, Neo4j, RocksDB, Kafka, Pandas, NumPy' },
+  {
+    group: 'Systems and testing',
+    items: 'Linux and RHEL, Bash, C++17, Rust, JUnit 5, JMH, K6, Prometheus, Grafana',
+  },
+  {
+    group: 'Platforms and leadership',
+    items: 'ServiceNow (ITSM, ITOM, CMDB), technical leadership, mentoring, code review, Agile',
+  },
 ];
 
 export type Answer = { text: string; cites: string[] };
@@ -179,7 +280,13 @@ export const suggestions = [
 ];
 
 const find = (ids: string[]) =>
-  ids.filter((id) => projects.some((p) => p.id === id) || roles.some((r) => r.id === id));
+  ids.filter(
+    (id) =>
+      projects.some((p) => p.id === id) ||
+      roles.some((r) => r.id === id) ||
+      education.some((e) => e.id === id) ||
+      id === 'tools',
+  );
 
 /** Answers are written from the owner-provided notes only. Anything else gets an honest miss. */
 export function answerFor(question: string): Answer {
@@ -205,6 +312,31 @@ export function answerFor(question: string): Answer {
     return {
       text: 'CityWatch and the face recognition pipeline are both AWS: Kinesis, Lambda, Bedrock and SQS. TestPilot deploys to Cloud Run on GCP.',
       cites: find(['citywatch', 'face-recognition', 'testpilot']),
+    };
+  if (has('edge', 'iot', 'greengrass', 'mqtt', 'hybrid'))
+    return {
+      text: 'The edge inference project runs face detection on an AWS IoT Greengrass device and sends only detected faces to cloud recognition over MQTT and SQS. It pairs with the serverless face recognition pipeline.',
+      cites: find(['edge-inference', 'face-recognition']),
+    };
+  if (has('rust', 'process', 'monitor', 'dashboard'))
+    return {
+      text: 'ProcWatch is a Rust process monitor. It reads metrics with sysinfo and streams CPU and memory updates to a live web dashboard over WebSockets.',
+      cites: find(['procwatch']),
+    };
+  if (has('gemini', 'story', 'children', 'multimodal'))
+    return {
+      text: 'The Gemini story generator takes a child\u2019s age, theme and characters from a React interface, and a FastAPI service prompts Gemini for a story and matching images.',
+      cites: find(['story-generator']),
+    };
+  if (has('education', 'degree', 'school', 'universit', 'study', 'gpa', 'certif', 'asu'))
+    return {
+      text: 'Yash is finishing an MS in Computer Software Engineering at Arizona State University (GPA 3.85), after a Bachelor of Information Technology at Manipal University Jaipur. He holds ServiceNow CSA and Discovery certifications.',
+      cites: find(['asu', 'manipal']),
+    };
+  if (has('skill', 'stack', 'tool', 'technolog'))
+    return {
+      text: 'Day to day: Python and Java, FastAPI and Micronaut, AWS and GCP, Docker and Kubernetes, with Rust, C++ and TypeScript in project work. The full list is further down the page.',
+      cites: find(['tools']),
     };
   if (has('compiler', 'language', 'parser', 'c++', 'systems'))
     return {

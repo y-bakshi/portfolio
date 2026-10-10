@@ -2088,3 +2088,21 @@ html {
     align-self: flex-start;
   }
 }
+
+/* the smaller projects share one card: a plain list, name first */
+.small-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.small-list strong {
+  font-family: var(--display);
+  font-weight: 700;
+}
+
+.is-marked .small-list strong {
+  color: var(--ink);
+}
