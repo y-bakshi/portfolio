@@ -87,6 +87,26 @@ export function Home() {
   }, []);
 
   useEffect(() => {
+    // On phones the on-screen keyboard shrinks the visual viewport but not the layout viewport, so a
+    // fixed drawer would sit behind it. Publish the keyboard height and visible height as CSS variables.
+    const vv = window.visualViewport;
+    if (!vv || !open || !isMobile) return;
+    const root = document.documentElement.style;
+    const update = () => {
+      root.setProperty('--kb', `${Math.max(0, window.innerHeight - vv.height - vv.offsetTop)}px`);
+      root.setProperty('--vvh', `${vv.height}px`);
+    };
+    update();
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+      root.removeProperty('--kb');
+      root.removeProperty('--vvh');
+    };
+  }, [open, isMobile]);
+  useEffect(() => {
     if (open) inputRef.current?.focus({ preventScroll: true });
   }, [open]);
   useEffect(() => {

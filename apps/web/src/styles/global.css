@@ -2030,3 +2030,11 @@ html {
     white-space: nowrap;
   }
 }
+
+/* phones: the drawer rides above the on-screen keyboard and never grows taller than what is visible */
+@media (max-width: 900px) {
+  .dock.is-open {
+    bottom: var(--kb, 0px);
+    height: min(72dvh, 560px, calc(var(--vvh, 100dvh) - 72px));
+  }
+}
