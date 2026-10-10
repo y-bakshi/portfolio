@@ -7,7 +7,6 @@ export type Project = {
   stack: string[];
   /** Pipeline stages in order. `depth` indents a stage under the one before it. */
   trace: { label: string; depth: number }[];
-  topics: string[];
 };
 
 export const projects: Project[] = [
@@ -34,17 +33,6 @@ export const projects: Project[] = [
       { label: 'Critique gate', depth: 3 },
       { label: 'Keep or redraft', depth: 4 },
     ],
-    topics: [
-      'rag',
-      'retrieval',
-      'testing',
-      'tests',
-      'vector',
-      'pgvector',
-      'llm',
-      'defect',
-      'ollama',
-    ],
   },
   {
     id: 'guardianai',
@@ -61,7 +49,6 @@ export const projects: Project[] = [
       { label: 'ReAct path', depth: 2 },
       { label: 'Safety response', depth: 3 },
     ],
-    topics: ['agent', 'react', 'claude', 'safety', 'maps', 'geospatial', 'websocket', 'frontend'],
   },
   {
     id: 'citywatch',
@@ -77,7 +64,6 @@ export const projects: Project[] = [
       { label: 'Vision and LLM classification', depth: 2 },
       { label: 'Department alerts', depth: 3 },
     ],
-    topics: ['aws', 'cloud', 'serverless', 'multimodal', 'bedrock', 'lambda', 'alerts'],
   },
   {
     id: 'face-recognition',
@@ -92,7 +78,6 @@ export const projects: Project[] = [
       { label: 'SQS queue', depth: 1 },
       { label: 'Recognize', depth: 2 },
     ],
-    topics: ['aws', 'cloud', 'serverless', 'vision', 'pytorch', 'queue', 'sqs', 'docker'],
   },
   {
     id: 'catscript',
@@ -109,7 +94,6 @@ export const projects: Project[] = [
       { label: 'Type check', depth: 3 },
       { label: 'Interpret', depth: 4 },
     ],
-    topics: ['compiler', 'language', 'parser', 'c++', 'cpp', 'interpreter', 'systems', 'lead'],
   },
   {
     id: 'streaming-pipeline',
@@ -124,7 +108,6 @@ export const projects: Project[] = [
       { label: 'Kafka consumer', depth: 1 },
       { label: 'Neo4j graph', depth: 2 },
     ],
-    topics: ['streaming', 'kafka', 'graph', 'neo4j', 'kubernetes', 'data'],
   },
   {
     id: 'edge-inference',
@@ -140,7 +123,6 @@ export const projects: Project[] = [
       { label: 'MQTT and SQS', depth: 2 },
       { label: 'Cloud recognition', depth: 3 },
     ],
-    topics: ['aws', 'cloud', 'edge', 'iot', 'greengrass', 'mqtt', 'vision', 'hybrid'],
   },
   {
     id: 'procwatch',
@@ -156,7 +138,6 @@ export const projects: Project[] = [
       { label: 'WebSocket stream', depth: 2 },
       { label: 'Live dashboard', depth: 3 },
     ],
-    topics: ['rust', 'systems', 'monitor', 'process', 'websocket', 'dashboard'],
   },
   {
     id: 'story-generator',
@@ -172,7 +153,6 @@ export const projects: Project[] = [
       { label: 'Gemini', depth: 2 },
       { label: 'Story and images', depth: 3 },
     ],
-    topics: ['gemini', 'story', 'children', 'react', 'multimodal', 'prompt', 'llm', 'frontend'],
   },
 ];
 
@@ -257,7 +237,8 @@ export const stackGroups = [
   },
   {
     group: 'Cloud and delivery',
-    items: 'AWS (Lambda, SQS, Kinesis, Bedrock), GCP (Cloud Run, Pub/Sub), Docker, Kubernetes, Terraform, CircleCI',
+    items:
+      'AWS (Lambda, SQS, Kinesis, Bedrock), GCP (Cloud Run, Pub/Sub), Docker, Kubernetes, Terraform, CircleCI',
   },
   { group: 'Data', items: 'PostgreSQL, MongoDB, Neo4j, RocksDB, Kafka, Pandas, NumPy' },
   {

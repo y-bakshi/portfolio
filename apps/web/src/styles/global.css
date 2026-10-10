@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* strong ease-out for anything that responds to a person */
+  --ease-out: cubic-bezier(
+    0.23,
+    1,
+    0.32,
+    1
+  ); /* strong ease-out for anything that responds to a person */
   color-scheme: light;
   --ground: #e8e0d2; /* ivory */
   --panel: #f4efe5;
@@ -31,7 +36,7 @@ body {
 
 .ask-lede,
 .msg-answer,
-.console-note {
+.chat-note {
   font-weight: 500;
 }
 
@@ -184,15 +189,11 @@ main,
 
 /* ---------- hero + guide ---------- */
 .ask {
-  padding-top: clamp(32px, 7vw, 96px);
   padding-bottom: clamp(56px, 9vw, 120px);
 }
 
 .ask-lede {
-  max-width: 46ch;
   margin-top: clamp(24px, 3vw, 40px);
-  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
-  line-height: 1.55;
 }
 
 @media (hover: hover) {
@@ -256,7 +257,7 @@ main,
   background: #35d07f;
 }
 
-.console-note {
+.chat-note {
   max-width: var(--measure);
   margin-top: 10px;
   color: var(--muted);
@@ -305,8 +306,6 @@ main,
 }
 
 .fineprint {
-  max-width: var(--measure);
-  margin-top: 18px;
   color: var(--muted);
   font-size: 0.95rem;
 }
@@ -316,7 +315,7 @@ main,
   isolation: isolate;
 }
 
-/* the amber sweeps across a layer behind the text */
+/* the gold sweeps across a layer behind the text */
 .is-marked:not(.contact)::before {
   content: '';
   position: absolute;
@@ -326,7 +325,7 @@ main,
   animation: mark-in 420ms var(--ease-out) both;
 }
 
-/* muted greys fall below 4.5:1 on amber, so use full ink inside a marked block */
+/* muted greys fall below 4.5:1 on gold, so use full ink inside a marked block */
 .is-marked .row-line,
 .is-marked .row-role,
 .is-marked .stack-list,
@@ -355,7 +354,7 @@ main,
   margin-top: clamp(24px, 4vw, 48px);
 }
 
-/* each project is its own card, in the same style as the guide console */
+/* each project is its own card, in the same style as the guide chat */
 .row {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -760,8 +759,8 @@ main,
     animation-name: cite-fade;
   }
   .chips button:not(:disabled):active,
-.cites button:active,
-.solid-link:active {
+  .cites button:active,
+  .solid-link:active {
     transform: none;
   }
 }
@@ -841,7 +840,6 @@ main,
 }
 
 @media (max-width: 900px) {
-
   .portrait {
     order: -1;
     max-width: 420px;
@@ -930,7 +928,7 @@ main,
   z-index: 1;
 }
 
-/* project and role cards turn amber on hover, like the guide's citation highlight */
+/* project and role cards turn gold on hover, like the guide's citation highlight */
 .row,
 .record-item {
   transition: background-color 160ms var(--ease-out);
@@ -942,7 +940,7 @@ main,
     background-color: var(--mark);
   }
 
-  /* muted greys and the cobalt link fall below 4.5:1 on amber, so use full ink inside */
+  /* muted text and the link colour fall below 4.5:1 on gold, so use full ink inside */
   .row:hover .row-line,
   .row:hover .row-role,
   .row:hover .stack-list,
@@ -1014,7 +1012,7 @@ main,
 }
 
 /* Text that would otherwise sit straight on the dot grid goes on a card, in the same style as the
-   guide console, project and role cards. */
+   guide chat bubbles, project and role cards. */
 .ask-lede,
 .section-card,
 .fineprint,
@@ -1140,7 +1138,9 @@ main,
   border-bottom: 0;
   background: var(--panel);
   box-shadow: 5px 0 0 var(--shadow);
-  transition: width 280ms var(--ease-out), right 280ms var(--ease-out);
+  transition:
+    width 280ms var(--ease-out),
+    right 280ms var(--ease-out);
 }
 
 .dock.is-open {
@@ -1310,7 +1310,6 @@ main,
   max-width: 85%;
   margin: 0 6px 0 0;
   background: var(--action);
-  box-shadow: 4px 4px 0 var(--shadow);
   color: var(--action-ink);
   font-weight: 600;
 }
@@ -1357,7 +1356,6 @@ main,
   .ask {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(260px, 23rem);
-    align-items: center;
     gap: clamp(24px, 3vw, 48px);
     /* the hero fills the first screen, so Projects starts below the fold */
     min-height: calc(100svh - var(--header-h, 76px));
@@ -1374,7 +1372,6 @@ main,
 
   /* chat output and the navigation buttons live in this column; it scrolls if a long exchange fills it */
   .feed {
-    max-height: calc(100svh - var(--header-h, 76px) - 64px);
     padding: 6px 10px 10px 16px;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -1464,7 +1461,7 @@ main,
     margin: 0;
   }
 
-  /* closed: a bar across the bottom edge. open: a bottom drawer with the conversation inside. */
+  /* closed: a bar across the bottom edge. open: a full-screen chat with the conversation inside. */
   .dock,
   .dock.is-open {
     right: 0;
@@ -1476,10 +1473,7 @@ main,
   }
 
   .dock.is-open {
-    top: auto;
-    height: min(72dvh, 560px);
     border-top-width: 2px;
-    box-shadow: 0 -5px 0 var(--shadow);
     transition: none;
   }
 
@@ -1507,7 +1501,6 @@ main,
   }
 
   .dock-handle {
-    display: block;
     width: 44px;
     height: 5px;
     margin: 8px auto 0;
@@ -1548,7 +1541,7 @@ main,
     margin-top: 12px;
   }
 
-  .dock-log .console-note {
+  .dock-log .chat-note {
     margin-top: 0;
   }
 
@@ -1607,7 +1600,6 @@ main,
 /* desktop: a fixed-height feed that scrolls inside itself, so growing text never moves the page */
 @media (min-width: 901px) {
   .feed {
-    height: calc(100svh - var(--header-h, 76px) - 230px);
     max-height: none;
   }
 
@@ -1639,14 +1631,6 @@ main,
   .ask {
     align-items: start;
     padding-top: 0;
-  }
-
-  .ask .portrait {
-    margin-top: calc(-1 * clamp(0px, 4vw, 56px));
-  }
-
-  .feed {
-    align-self: center;
   }
 }
 
@@ -1704,13 +1688,6 @@ html {
   align-self: flex-end;
 }
 
-.feed .cites,
-.dock-log .cites,
-.exchange .cites {
-  align-self: center;
-  justify-content: center;
-}
-
 .dock-top {
   display: inline-flex;
   flex: 0 0 auto;
@@ -1765,7 +1742,6 @@ html {
   height: 16px;
   border-top: 2px solid var(--ink);
   border-right: 2px solid var(--ink);
-  background: var(--action);
   transform: rotate(45deg);
 }
 
@@ -1777,11 +1753,6 @@ html {
 /* the visitor's bubble casts its shadow to the left, away from its tail */
 .msg-user {
   box-shadow: -4px 4px 0 var(--shadow);
-}
-
-.feed .msg-user,
-.dock-log .msg-user {
-  margin-left: 8px;
 }
 
 /* Bubbles cast their hard shadow with a drop-shadow filter, so the tail is shadowed too, on whichever
@@ -1875,7 +1846,7 @@ html {
   }
 }
 
-/* phone drawer: after the first question the suggestions become one row above the input that scrolls
+/* phone chat: after the first question the suggestions become one row above the input that scrolls
    sideways with the scrollbar hidden */
 @media (max-width: 900px) {
   .dock-open .chips-strip {
@@ -1955,7 +1926,7 @@ html {
   }
 
   .dock-log > .msg-answer,
-  .dock-log > .console-note,
+  .dock-log > .chat-note,
   .dock-log > .cites,
   .dock-log > .chips {
     align-self: flex-start;
@@ -1982,163 +1953,4 @@ html {
 
 .dock-form input::placeholder {
   color: #5a6288;
-}
-
-/* ---------- panel layout: the chat as a bottom-right popover on wide screens (case study) ----------
-   Reuses the phone chat's inner rules, scoped to .dock-panelmode. */
-@media (min-width: 901px) {
-  .dock-panelmode .dock-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 12px 10px 16px;
-    border-bottom: 2px solid var(--ink);
-  }
-
-  .dock-panelmode .dock-head h2 {
-    flex: 1 1 auto;
-    margin: 0;
-    font-family: var(--display);
-    font-size: 1.1rem;
-    line-height: 1.2;
-  }
-
-  .dock-panelmode .dock-head .dock-state {
-    display: block;
-  }
-
-  .dock-panelmode .dock-log {
-    position: relative;
-    flex: 1 1 auto;
-    min-height: 0;
-    padding: 14px 16px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-
-  .dock-panelmode .dock-log > * + * {
-    margin-top: 12px;
-  }
-
-  .dock-panelmode .dock-log .console-note {
-    margin-top: 0;
-  }
-
-  .dock-panelmode .dock-log .chips {
-    flex-wrap: wrap;
-    margin: 12px 0 0;
-    overflow: visible;
-  }
-
-  .dock-panelmode .dock-log .msg-user {
-    margin-right: 0;
-  }
-
-  .dock-panelmode .dock-log .ask-lede,
-  .dock-panelmode .dock-log .msg-answer {
-    max-width: none;
-    margin: 0;
-    padding: 12px 14px;
-    font-size: 1rem;
-    line-height: 1.5;
-    text-align: left;
-    box-shadow: 4px 4px 0 var(--shadow);
-  }
-
-  .dock-panelmode .dock-log .msg-answer {
-    margin-top: 12px;
-  }
-
-  .dock-panelmode .dock-log .cites {
-    margin-top: 12px;
-  }
-
-  .dock-panelmode .dock-form {
-    padding: 10px 12px 12px;
-    border-top: 2px solid var(--ink);
-  }
-
-  .dock-panelmode .dock-open .chips-strip {
-    flex: 0 0 auto;
-    padding: 8px 12px 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .dock-panelmode .dock-open .chips-strip::-webkit-scrollbar {
-    display: none;
-  }
-
-  .dock-panelmode .dock-open .chips-strip .chips {
-    flex-wrap: nowrap;
-    margin: 0;
-    padding-bottom: 8px;
-    overflow: visible;
-  }
-
-  .dock-panelmode .dock-open .chips-strip .chips li {
-    flex: 0 0 auto;
-  }
-
-  .dock-panelmode .dock-open .chips-strip .chips button {
-    white-space: nowrap;
-  }
-
-  .dock-panelmode .dock-log {
-    display: flex;
-    flex-direction: column;
-    scrollbar-width: none;
-  }
-
-  .dock-panelmode .dock-log::-webkit-scrollbar {
-    display: none;
-  }
-
-  .dock-panelmode .dock-log > .msg-user {
-    align-self: flex-end;
-  }
-
-  .dock-panelmode .dock-log > .msg-answer,
-  .dock-panelmode .dock-log > .console-note,
-  .dock-panelmode .dock-log > .cites,
-  .dock-panelmode .dock-log > .chips {
-    align-self: flex-start;
-  }
-
-  .dock.dock-panelmode,
-  .dock.dock-panelmode.is-open {
-    right: 16px;
-    left: auto;
-    width: min(400px, calc(100vw - 32px));
-    border: 2px solid var(--ink);
-    border-bottom: 0;
-    background: var(--panel);
-    box-shadow: 5px 0 0 var(--shadow);
-    clip-path: none;
-    transition: none;
-  }
-
-  .dock-panelmode .dock-bar {
-    width: 100%;
-    margin: 0;
-    border: 0;
-    box-shadow: none;
-  }
-
-  .dock.dock-panelmode.is-open {
-    height: min(560px, 75vh);
-  }
-
-  .dock-panelmode.is-open .dock-open {
-    display: flex;
-    flex-direction: column;
-    width: auto;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  .dock-panelmode .dock-head {
-    padding-top: 10px;
-  }
 }

@@ -17,7 +17,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 | Token | Value | Usage |
 | --- | --- | --- |
 | `--ground` | `#E8E0D2` | Page background (ivory). |
-| `--panel` | `#F4EFE5` | Guide console, trace panels, facts panel. |
+| `--panel` | `#F4EFE5` | Cards, chat bubbles, trace panels, facts panel. |
 | `--ink` | `#0E1D61` | Text, borders, offset shadows, contact block, portrait and dot grid (deep atlas navy). |
 | `--shadow` | `#040720` | Every hard offset shadow: near-black navy, darker than the ink so shadows separate from navy fills and borders. |
 | `--muted` | `#4B547F` | Secondary text. 5.6:1 on the ground, 6.4:1 on the panel. |
@@ -60,7 +60,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 - **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
 - **Project card:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
 - **Contact block:** a full-width ink band attached to the bottom of the page (the footer continues it), with the heading on the left and the links on the right on wide screens, stacked on narrow ones, with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
-- **Case study:** headline, standfirst, trace, problem, approach, results, with a facts panel for role, stack, source and demo. Results stay "evidence pending" until verified. It has the same guide as the home page, shown as a bottom-right popover on wide screens (the conversation lives inside the chat, as on phones); its buttons open the home page at the cited section.
+- **Case study:** headline, standfirst, trace, problem, approach, results, with a facts panel for role, stack, source and demo. Results stay "evidence pending" until verified. It deliberately has no guide: it is a reading page, and a floating chat would cover the text. The guide lives on the home page only.
 - **Home sections:** hero, projects (full cards for the main projects and one shared "Smaller projects" card), work history, education (degrees and certifications), and a grouped skills list. The guide can cite any of them, including the skills list and the education entries.
 
 ## Motion
