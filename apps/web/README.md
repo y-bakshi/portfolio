@@ -1,6 +1,6 @@
 # Portfolio Web
 
-React + Vite frontend for Yash Bakshi's responsive portfolio. Tailwind CSS handles utility styling, with custom CSS for the visual system in `docs/design/design-language.md` and React components for interactive features such as the portfolio guide.
+React + Vite frontend for Yash Bakshi's responsive portfolio. The visual system in `docs/design/design-language.md` is hand-written CSS in `src/styles/global.css`; Tailwind CSS is in the build only for its base reset. React components handle the interactive parts such as the portfolio guide.
 
 ## Project Structure
 
@@ -8,10 +8,17 @@ The frontend uses Vite to serve and bundle the React application:
 
 ```text
 /
-├── public/
+├── public/                 favicon, portrait and social preview
 ├── src/
-│   ├── App.tsx
-│   ├── main.tsx
+│   ├── main.tsx            entry, routes, fonts
+│   ├── App.tsx             home page
+│   ├── CaseStudy.tsx       TestPilot case study
+│   ├── Guide.tsx           the guide's state (useGuide) and chat bar (GuideDock)
+│   ├── content.ts          projects, roles, education, skills and the guide's answers
+│   ├── parts.tsx           header and pipeline trace
+│   ├── DotGrid.tsx         the pointer-reactive dot background
+│   ├── MistPortrait.tsx    the portrait that condenses from particles
+│   ├── pointerPush.ts      the push radius both effects share
 │   └── styles/
 │       └── global.css
 └── package.json
@@ -19,7 +26,7 @@ The frontend uses Vite to serve and bundle the React application:
 
 Vite serves `index.html` and loads the React application from `src/main.tsx`. Add application routes with React Router as the portfolio grows.
 
-Keep reusable React components in `src/components/`. Store reviewed project and case-study content in typed TypeScript data modules until a content system is selected.
+Reviewed project and case-study content lives in the typed module `src/content.ts` until a content system is selected. Fonts are self-hosted through Fontsource packages imported in `src/main.tsx`.
 
 Any static assets, like images, can be placed in the `public/` directory.
 

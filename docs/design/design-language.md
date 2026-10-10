@@ -17,7 +17,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 | Token | Value | Usage |
 | --- | --- | --- |
 | `--ground` | `#E8E0D2` | Page background (ivory). |
-| `--panel` | `#F4EFE5` | Guide console, trace panels, facts panel. |
+| `--panel` | `#F4EFE5` | Cards, chat bubbles, trace panels, facts panel. |
 | `--ink` | `#0E1D61` | Text, borders, offset shadows, contact block, portrait and dot grid (deep atlas navy). |
 | `--shadow` | `#040720` | Every hard offset shadow: near-black navy, darker than the ink so shadows separate from navy fills and borders. |
 | `--muted` | `#4B547F` | Secondary text. 5.6:1 on the ground, 6.4:1 on the panel. |

@@ -36,7 +36,7 @@ body {
 
 .ask-lede,
 .msg-answer,
-.console-note {
+.chat-note {
   font-weight: 500;
 }
 
@@ -257,7 +257,7 @@ main,
   background: #35d07f;
 }
 
-.console-note {
+.chat-note {
   max-width: var(--measure);
   margin-top: 10px;
   color: var(--muted);
@@ -315,7 +315,7 @@ main,
   isolation: isolate;
 }
 
-/* the amber sweeps across a layer behind the text */
+/* the gold sweeps across a layer behind the text */
 .is-marked:not(.contact)::before {
   content: '';
   position: absolute;
@@ -325,7 +325,7 @@ main,
   animation: mark-in 420ms var(--ease-out) both;
 }
 
-/* muted greys fall below 4.5:1 on amber, so use full ink inside a marked block */
+/* muted greys fall below 4.5:1 on gold, so use full ink inside a marked block */
 .is-marked .row-line,
 .is-marked .row-role,
 .is-marked .stack-list,
@@ -354,7 +354,7 @@ main,
   margin-top: clamp(24px, 4vw, 48px);
 }
 
-/* each project is its own card, in the same style as the guide console */
+/* each project is its own card, in the same style as the guide chat */
 .row {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -928,7 +928,7 @@ main,
   z-index: 1;
 }
 
-/* project and role cards turn amber on hover, like the guide's citation highlight */
+/* project and role cards turn gold on hover, like the guide's citation highlight */
 .row,
 .record-item {
   transition: background-color 160ms var(--ease-out);
@@ -940,7 +940,7 @@ main,
     background-color: var(--mark);
   }
 
-  /* muted greys and the cobalt link fall below 4.5:1 on amber, so use full ink inside */
+  /* muted text and the link colour fall below 4.5:1 on gold, so use full ink inside */
   .row:hover .row-line,
   .row:hover .row-role,
   .row:hover .stack-list,
@@ -1012,7 +1012,7 @@ main,
 }
 
 /* Text that would otherwise sit straight on the dot grid goes on a card, in the same style as the
-   guide console, project and role cards. */
+   guide chat bubbles, project and role cards. */
 .ask-lede,
 .section-card,
 .fineprint,
@@ -1461,7 +1461,7 @@ main,
     margin: 0;
   }
 
-  /* closed: a bar across the bottom edge. open: a bottom drawer with the conversation inside. */
+  /* closed: a bar across the bottom edge. open: a full-screen chat with the conversation inside. */
   .dock,
   .dock.is-open {
     right: 0;
@@ -1541,7 +1541,7 @@ main,
     margin-top: 12px;
   }
 
-  .dock-log .console-note {
+  .dock-log .chat-note {
     margin-top: 0;
   }
 
@@ -1846,7 +1846,7 @@ html {
   }
 }
 
-/* phone drawer: after the first question the suggestions become one row above the input that scrolls
+/* phone chat: after the first question the suggestions become one row above the input that scrolls
    sideways with the scrollbar hidden */
 @media (max-width: 900px) {
   .dock-open .chips-strip {
@@ -1926,7 +1926,7 @@ html {
   }
 
   .dock-log > .msg-answer,
-  .dock-log > .console-note,
+  .dock-log > .chat-note,
   .dock-log > .cites,
   .dock-log > .chips {
     align-self: flex-start;

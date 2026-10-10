@@ -59,7 +59,7 @@ export function useGuide() {
 
   useEffect(() => {
     // On phones the on-screen keyboard shrinks the visual viewport but not the layout viewport, so a
-    // fixed drawer would sit behind it. Publish the visible area's top and height as CSS variables.
+    // fixed chat would sit behind it. Publish the visible area's top and height as CSS variables.
     const vv = window.visualViewport;
     if (!vv || !open || !isMobile) return;
     const root = document.documentElement.style;
@@ -196,27 +196,31 @@ export function useGuide() {
     education.find((e) => e.id === id)?.org ??
     (id === 'contact' ? 'Contact' : id === 'tools' ? 'What I work with' : id);
 
+  /** The buttons under an answer that jump to the sections it draws on. */
+  const citeList = (ids: string[]) =>
+    ids.length > 0 && (
+      <ul className="cites" aria-label="Sources on this page">
+        {ids.map((id) => (
+          <li key={id}>
+            <button
+              type="button"
+              aria-label={`Show ${nameFor(id)} on the page`}
+              onClick={() => show(id)}
+            >
+              {nameFor(id)}
+            </button>
+          </li>
+        ))}
+      </ul>
+    );
+
   const thread = (
     <>
       {history.map((h, i) => (
         <div className="exchange" key={i}>
           <p className="msg msg-user">{h.q}</p>
           <p className="ask-lede msg-answer">{h.text}</p>
-          {h.cites.length > 0 && (
-            <ul className="cites" aria-label="Sources on this page">
-              {h.cites.map((id) => (
-                <li key={id}>
-                  <button
-                    type="button"
-                    aria-label={`Show ${nameFor(id)} on the page`}
-                    onClick={() => show(id)}
-                  >
-                    {nameFor(id)}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          {citeList(h.cites)}
         </div>
       ))}
       {asked && <p className="msg msg-user">{asked}</p>}
@@ -230,21 +234,7 @@ export function useGuide() {
           {shown}
         </p>
       )}
-      {answer && status === 'ready' && answer.cites.length > 0 && (
-        <ul className="cites" aria-label="Sources on this page">
-          {answer.cites.map((id) => (
-            <li key={id}>
-              <button
-                type="button"
-                aria-label={`Show ${nameFor(id)} on the page`}
-                onClick={() => show(id)}
-              >
-                {nameFor(id)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {answer && status === 'ready' && citeList(answer.cites)}
     </>
   );
 
@@ -288,6 +278,17 @@ export function useGuide() {
 }
 
 export type Guide = ReturnType<typeof useGuide>;
+
+/** The red, yellow and green light; the words beside it say the same thing. */
+function StatusLight({ status }: { status: Status }) {
+  return (
+    <span className={`light light-${status}`} aria-hidden="true">
+      <i />
+      <i />
+      <i />
+    </span>
+  );
+}
 
 /** The bar at the bottom right and the chat it opens. */
 export function GuideDock({ g }: { g: Guide }) {
@@ -342,11 +343,7 @@ export function GuideDock({ g }: { g: Guide }) {
             Ask the guide
             <span className="dock-state">{statusLabel[status]}</span>
           </span>
-          <span className={`light light-${status}`} aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
+          <StatusLight status={status} />
           <i className="fi fi-sr-comment-alt-dots dock-chevron" aria-hidden="true" />
         </button>
         <div id="dock-open" className="dock-open" {...(open ? {} : ({ inert: '' } as object))}>
@@ -354,11 +351,7 @@ export function GuideDock({ g }: { g: Guide }) {
             <>
               <span className="dock-handle" aria-hidden="true" />
               <div className="dock-head">
-                <span className={`light light-${status}`} aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                </span>
+                <StatusLight status={status} />
                 <h2>
                   Ask the guide
                   <span className="dock-state">{statusLabel[status]}</span>
@@ -375,7 +368,7 @@ export function GuideDock({ g }: { g: Guide }) {
               <div className="dock-log" ref={refs.logRef}>
                 {!asked && (
                   <>
-                    <p className="console-note">
+                    <p className="chat-note">
                       I answer from Yash’s project notes. The full version is still in development.
                     </p>
                     {chipList}
@@ -388,11 +381,7 @@ export function GuideDock({ g }: { g: Guide }) {
           )}
           {!showLog && chipList}
           <form className="dock-form" onSubmit={onSubmit}>
-            <span className={`light light-${status}`} aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
+            <StatusLight status={status} />
             <label htmlFor="ask-input" className="sr-only">
               Ask the guide about Yash’s work
             </label>
