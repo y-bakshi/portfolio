@@ -951,3 +951,44 @@ main,
   position: relative;
   z-index: 1;
 }
+
+/* project and role cards turn amber on hover, like the guide's citation highlight */
+.row,
+.record-item {
+  transition: background-color 150ms ease;
+}
+
+@media (hover: hover) {
+  .row:hover,
+  .record-item:hover {
+    background-color: var(--mark);
+  }
+
+  /* muted greys and the cobalt link fall below 4.5:1 on amber, so use full ink inside */
+  .row:hover .row-line,
+  .row:hover .row-role,
+  .row:hover .stack-list,
+  .row:hover .row-pending,
+  .record-item:hover .record-when {
+    color: var(--ink);
+  }
+
+  .row:hover .row-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+.is-marked .row-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .record-item {
+    transition: none;
+  }
+}

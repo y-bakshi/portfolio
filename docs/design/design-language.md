@@ -22,9 +22,9 @@ The portfolio must stay fully useful without the guide: every project, the work 
 | `--muted` | `#4A5A52` | Secondary text. About 6:1 on the ground. |
 | `--line` | `#B8C1BA` | Row dividers. |
 | `--action` | `#2440E8` | Primary action fill, trace bars, text links. |
-| `--mark` | `#F5C542` | Citation highlight only, plus selection. Do not use it as decoration. |
+| `--mark` | `#F5C542` | Citation highlight, card hover, and text selection. Do not use it as decoration elsewhere. |
 
-Muted grey drops below 4.5:1 on amber, so text inside a highlighted block switches to full ink.
+Muted grey and the cobalt link drop below 4.5:1 on amber, so text inside a highlighted or hovered card switches to full ink (the link also gets an underline). Hover applies only on devices that can hover.
 
 The status light uses red `#FF4D3D`, yellow `#FFC933` and green `#35D07F` on an ink pill. It always appears with a text label, so colour is never the only signal.
 
