@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import { projects } from './content';
 import { DotGrid } from './DotGrid';
+import { GuideDock, useGuide } from './Guide';
 import { SiteHeader, Trace } from './parts';
 
 const project = projects.find((p) => p.id === 'testpilot')!;
 
 export function CaseStudy() {
+  const guide = useGuide({ panel: true });
   return (
     <>
       <DotGrid />
@@ -64,6 +66,7 @@ export function CaseStudy() {
           </aside>
         </div>
       </main>
+      <GuideDock g={guide} />
     </>
   );
 }

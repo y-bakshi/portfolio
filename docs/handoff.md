@@ -27,7 +27,7 @@ The site has a built homepage and a TestPilot case-study page (see [ADR-005](dec
 
 ## Open Decisions and Owner Inputs
 
-Self-hosted fonts and licenses, domain (needed for an absolute `og:image`), résumé PDF, verified project URLs/metrics, featured order, final model/voice providers, and quotas. These are explicit outstanding inputs, not assumptions for a contributor to invent. Static layout/content schema work can proceed while they are resolved.
+Domain (needed for an absolute `og:image`), résumé PDF, verified project URLs/metrics, featured order, final model/voice providers, and quotas. These are explicit outstanding inputs, not assumptions for a contributor to invent. Static layout/content schema work can proceed while they are resolved.
 
 ## Completion Criteria
 

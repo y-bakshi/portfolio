@@ -19,7 +19,7 @@ Full tokens and component rules are in [design-language.md](../design/design-lan
 - The earlier reference screenshots and the Bloub avatar are no longer part of the visual direction. The guide is presented with a status light and text instead of an avatar. Revisit an avatar only if the owner wants one.
 - The guide currently answers from a small keyword-matched set in `apps/web/src/content.ts`, grounded in the content snapshot. It is a stand-in for the planned grounded backend, and it says so on the page.
 - The portrait effect samples the image on load, so it is chunked, uses fewer particles on phones, and drops to half density if frames run slow. It has been measured only in a desktop browser; test on real phones.
-- Fonts load from Google Fonts. Self-host before launch and record licenses.
+- Fonts are self-hosted with Fontsource: Instrument Sans, Geist and Geist Mono, all SIL Open Font License 1.1. No request goes to a font CDN.
 - Icons come from Flaticon UIcons (npm package). The free license requires crediting Flaticon, done in the footer.
 
 ## Alternatives

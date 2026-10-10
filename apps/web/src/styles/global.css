@@ -1983,3 +1983,162 @@ html {
 .dock-form input::placeholder {
   color: #5a6288;
 }
+
+/* ---------- panel layout: the chat as a bottom-right popover on wide screens (case study) ----------
+   Reuses the phone chat's inner rules, scoped to .dock-panelmode. */
+@media (min-width: 901px) {
+  .dock-panelmode .dock-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 12px 10px 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .dock-panelmode .dock-head h2 {
+    flex: 1 1 auto;
+    margin: 0;
+    font-family: var(--display);
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .dock-panelmode .dock-head .dock-state {
+    display: block;
+  }
+
+  .dock-panelmode .dock-log {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 14px 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dock-panelmode .dock-log > * + * {
+    margin-top: 12px;
+  }
+
+  .dock-panelmode .dock-log .console-note {
+    margin-top: 0;
+  }
+
+  .dock-panelmode .dock-log .chips {
+    flex-wrap: wrap;
+    margin: 12px 0 0;
+    overflow: visible;
+  }
+
+  .dock-panelmode .dock-log .msg-user {
+    margin-right: 0;
+  }
+
+  .dock-panelmode .dock-log .ask-lede,
+  .dock-panelmode .dock-log .msg-answer {
+    max-width: none;
+    margin: 0;
+    padding: 12px 14px;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: 4px 4px 0 var(--shadow);
+  }
+
+  .dock-panelmode .dock-log .msg-answer {
+    margin-top: 12px;
+  }
+
+  .dock-panelmode .dock-log .cites {
+    margin-top: 12px;
+  }
+
+  .dock-panelmode .dock-form {
+    padding: 10px 12px 12px;
+    border-top: 2px solid var(--ink);
+  }
+
+  .dock-panelmode .dock-open .chips-strip {
+    flex: 0 0 auto;
+    padding: 8px 12px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .dock-panelmode .dock-open .chips-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dock-panelmode .dock-open .chips-strip .chips {
+    flex-wrap: nowrap;
+    margin: 0;
+    padding-bottom: 8px;
+    overflow: visible;
+  }
+
+  .dock-panelmode .dock-open .chips-strip .chips li {
+    flex: 0 0 auto;
+  }
+
+  .dock-panelmode .dock-open .chips-strip .chips button {
+    white-space: nowrap;
+  }
+
+  .dock-panelmode .dock-log {
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+  }
+
+  .dock-panelmode .dock-log::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dock-panelmode .dock-log > .msg-user {
+    align-self: flex-end;
+  }
+
+  .dock-panelmode .dock-log > .msg-answer,
+  .dock-panelmode .dock-log > .console-note,
+  .dock-panelmode .dock-log > .cites,
+  .dock-panelmode .dock-log > .chips {
+    align-self: flex-start;
+  }
+
+  .dock.dock-panelmode,
+  .dock.dock-panelmode.is-open {
+    right: 16px;
+    left: auto;
+    width: min(400px, calc(100vw - 32px));
+    border: 2px solid var(--ink);
+    border-bottom: 0;
+    background: var(--panel);
+    box-shadow: 5px 0 0 var(--shadow);
+    clip-path: none;
+    transition: none;
+  }
+
+  .dock-panelmode .dock-bar {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .dock.dock-panelmode.is-open {
+    height: min(560px, 75vh);
+  }
+
+  .dock-panelmode.is-open .dock-open {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .dock-panelmode .dock-head {
+    padding-top: 10px;
+  }
+}
