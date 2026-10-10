@@ -105,9 +105,11 @@ export function MistPortrait({
       for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
           const i = (y * w + x) * 4;
-          if (data[i + 3] < 128) continue;
+          const a = data[i + 3] / 255;
+          if (a < 0.05) continue;
           const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-          const d = Math.min(1, Math.max(0, (232 - lum) / 200));
+          // soft, feathered edges in the image carry through as fewer particles near them
+          const d = Math.min(1, Math.max(0, (232 - lum) / 200)) * a;
           if (d > 0.1) cand.push({ x, y, d });
         }
       }
