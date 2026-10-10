@@ -139,11 +139,17 @@ export function Home() {
       <SiteHeader />
       <main id="main">
         <section className="ask" aria-labelledby="ask-title">
-          <h1 id="ask-title" className="ask-headline">
-            <span>I build the part of AI</span>
-            <span>that keeps working</span>
-            <span>after the demo.</span>
+          <h1 id="ask-title" className="sr-only">
+            Yash Bakshi, software engineer
           </h1>
+          <figure className="portrait">
+            <MistPortrait
+              src="/portrait.webp"
+              width={1100}
+              height={1075}
+              alt="Illustrated portrait of Yash Bakshi in a beanie and sunglasses, looking down"
+            />
+          </figure>
           <p className="ask-lede">
             I’m Yash Bakshi, a software engineer working across AI applications, backend services
             and cloud delivery. The guide below is an assistant that answers questions about my
@@ -219,14 +225,6 @@ export function Home() {
                 )}
               </div>
             </div>
-            <figure className="portrait">
-              <MistPortrait
-                src="/portrait.webp"
-                width={1100}
-                height={1075}
-                alt="Illustrated portrait of Yash Bakshi in a beanie and sunglasses, looking down"
-              />
-            </figure>
           </div>
         </section>
 

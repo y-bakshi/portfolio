@@ -160,26 +160,6 @@ main,
   padding-bottom: clamp(56px, 9vw, 120px);
 }
 
-.ask-headline {
-  font-family: var(--display);
-  font-weight: 800;
-  font-stretch: 82%;
-  font-size: clamp(2.8rem, 9vw, 8rem);
-  line-height: 0.95;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
-}
-
-.ask-headline span {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.06em;
-}
-
-.ask-headline span::after {
-  content: none;
-}
-
 .ask-lede {
   max-width: 46ch;
   margin-top: clamp(24px, 3vw, 40px);
@@ -757,29 +737,11 @@ main,
   background: var(--ink);
 }
 
-/* ---------- motion: one load sequence ---------- */
+/* ---------- motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
   /* one smooth-scroll setting for nav links, the name link, skip link and the guide's "Show" buttons */
   html {
     scroll-behavior: smooth;
-  }
-
-  .ask-headline span {
-    animation: line-up 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-  .ask-headline span:nth-child(2) {
-    animation-delay: 110ms;
-  }
-  .ask-headline span:nth-child(3) {
-    animation-delay: 220ms;
-  }
-  @keyframes line-up {
-    from {
-      transform: translateY(105%);
-    }
-    to {
-      transform: none;
-    }
   }
 }
 
@@ -1039,4 +1001,30 @@ main,
   .tools-list {
     transition: none;
   }
+}
+
+/* ---------- hero: large centred portrait, then the introduction, then the guide ---------- */
+.ask {
+  padding-top: clamp(8px, 2vw, 24px);
+  text-align: center;
+}
+
+.ask .portrait {
+  width: min(100%, 680px);
+  max-width: none;
+  margin-inline: auto;
+}
+
+.ask-lede {
+  max-width: 44ch;
+  margin: clamp(20px, 3vw, 36px) auto 0;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1.5;
+}
+
+.ask-body {
+  display: block;
+  max-width: 820px;
+  margin: clamp(32px, 5vw, 56px) auto 0;
+  text-align: left;
 }

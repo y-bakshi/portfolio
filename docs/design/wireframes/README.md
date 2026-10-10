@@ -8,10 +8,8 @@ Text wireframes specify hierarchy; the built page in `apps/web` is the reference
 ┌─────────────────────────────────────────────────────────┐
 │ Yash Bakshi (sticky)          Projects  History  Contact│
 ├─────────────────────────────────────────────────────────┤
-│ I build the part of AI                                  │
-│ that keeps working                                      │
-│ after the demo.                                         │
-│ Short introduction                                      │
+│              large centred portrait                     │
+│              short introduction                         │
 │ ┌──────────────────────────────┐   ┌───────────────┐   │
 │ │ Ask about my work  [ Ask ]   │   │               │   │
 │ │ question chips               │   │   portrait    │   │
@@ -33,7 +31,7 @@ Text wireframes specify hierarchy; the built page in `apps/web` is the reference
 
 ## Mobile homepage
 
-Single column in the same order: header, headline, introduction, portrait, guide console, projects, history, tools, contact. Suggested questions wrap. The Ask button is full width. Rows stack name first, then detail and trace.
+Single column in the same order: header, portrait, introduction, guide console, projects, history, tools, contact. Suggested questions wrap. The Ask button is full width. Rows stack name first, then detail and trace.
 
 ## Case study
 

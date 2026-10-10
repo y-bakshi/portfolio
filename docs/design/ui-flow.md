@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart TD
-  Home[Header, thesis and guide console] --> About[Introduction and portrait]
+  Home[Header, portrait and introduction] --> About[Introduction and portrait]
   About --> Featured[Project cards with traces]
   Featured --> Archive[Filtered project archive]
   Featured --> Case[Case study]
@@ -14,7 +14,7 @@ flowchart TD
   Contact --> Choices[Email / LinkedIn / GitHub / scheduling]
 ```
 
-The header shows the owner's name. The hero leads with the thesis about making AI useful through production engineering, then the guide console. Visual rules are in the [design language](design-language.md).
+The header shows the owner's name. The hero leads with a large centred portrait and a short introduction, then the guide console. Visual rules are in the [design language](design-language.md).
 
 ## Assistant
 
