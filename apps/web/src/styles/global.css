@@ -5,14 +5,14 @@
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* strong ease-out for anything that responds to a person */
   color-scheme: light;
-  --ground: #edefe9;
-  --panel: #f9faf6;
-  --ink: #14211b;
-  --muted: #4a5a52;
-  --line: #b8c1ba;
-  --action: #2440e8;
-  --action-ink: #ffffff;
-  --mark: #f5c542;
+  --ground: #e8e0d2; /* ivory */
+  --panel: #f4efe5;
+  --ink: #0e1d61; /* deep atlas navy */
+  --muted: #4b547f;
+  --line: #bdb09a;
+  --action: #1a2e8a;
+  --action-ink: #f4efe5;
+  --mark: #b89a5a; /* gold */
 
   --display: 'Instrument Sans', 'Arial Narrow', Arial, sans-serif;
   --text: 'Geist', system-ui, sans-serif;
@@ -223,12 +223,12 @@ main,
   padding: 0 14px;
   border: 2px solid var(--ink);
   border-radius: 0;
-  background: #fff;
+  background: #fbf8f1;
   font-size: 1.125rem;
 }
 
 .console-row input::placeholder {
-  color: #6b7a72;
+  color: #5a6288;
 }
 
 .console-row button {
@@ -310,7 +310,7 @@ main,
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #3b4a43;
+  background: #2a3568;
   transition: background-color 160ms var(--ease-out);
 }
 
@@ -1353,7 +1353,7 @@ main,
   padding: 0 14px;
   border: 2px solid var(--ink);
   border-radius: 0;
-  background: #fff;
+  background: #fbf8f1;
   font-size: 1.05rem;
 }
 
@@ -1620,7 +1620,7 @@ main,
     inset: 0;
     z-index: 29;
     display: block;
-    background: rgba(20, 33, 27, 0.35);
+    background: rgba(14, 29, 97, 0.35);
     opacity: 0;
     pointer-events: none;
     transition: opacity 200ms var(--ease-out);

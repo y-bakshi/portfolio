@@ -34,7 +34,7 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
     if (!canvas || !ctx) return;
 
     // Dots use --ink, the same colour as the portrait's line work.
-    const INK = token('--ink', [20, 33, 27]);
+    const INK = token('--ink', [14, 29, 97]);
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let dots: Dot[] = [];
     let width = 0;

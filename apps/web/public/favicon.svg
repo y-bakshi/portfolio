@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="YB">
-  <rect width="64" height="64" rx="12" fill="#edefe9"/>
-  <rect x="5" y="34" width="54" height="20" fill="#f5c542"/>
-  <polygon fill="#14211b" points="8,12 17,12 19,24 21,12 30,12 24,33 24,52 14,52 14,33"/>
-  <path fill="#14211b" fill-rule="evenodd" d="M33 12H48Q56 12 56 21Q56 28 50 30Q57 32 57 41Q57 52 48 52H33ZM41 19V26H46Q48 26 48 22.5Q48 19 46 19ZM41 34V45H47Q49 45 49 39.5Q49 34 47 34Z"/>
+  <rect width="64" height="64" rx="12" fill="#e8e0d2"/>
+  <rect x="5" y="34" width="54" height="20" fill="#b89a5a"/>
+  <polygon fill="#0e1d61" points="8,12 17,12 19,24 21,12 30,12 24,33 24,52 14,52 14,33"/>
+  <path fill="#0e1d61" fill-rule="evenodd" d="M33 12H48Q56 12 56 21Q56 28 50 30Q57 32 57 41Q57 52 48 52H33ZM41 19V26H46Q48 26 48 22.5Q48 19 46 19ZM41 34V45H47Q49 45 49 39.5Q49 34 47 34Z"/>
 </svg>

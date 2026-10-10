@@ -18,7 +18,7 @@ The site has a built homepage and a TestPilot case-study page (see [ADR-005](dec
 - Recruiters/hiring managers and developer collaborators are the audiences.
 - AI application engineering leads; backend engineering supplies depth.
 - The site is a working surface built around the guide: ask first, answers cite project rows, the cited row is highlighted.
-- Pale grey-green, ink, cobalt and amber visual system (supersedes the mid-century journal concept); desktop and mobile have equal functionality.
+- Ivory, navy and gold visual system (supersedes the mid-century journal concept); desktop and mobile have equal functionality.
 - Full project catalog with stronger AI/SDE emphasis, pipeline traces per project, case studies.
 - Contact options: email, LinkedIn, GitHub, and scheduling (30 minute Google Calendar booking link is set); résumé secondary.
 - Text/optional voice guide is shown with a status light and text (no avatar for now), explains verified work, and offers controlled navigation.
