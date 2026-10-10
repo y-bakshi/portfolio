@@ -10,7 +10,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 
 **Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Lead:** *AI becomes useful when engineering carries it beyond the demo.*
+**Lead:** *I build the part of AI that keeps working after the demo.*
 
 ## Palette
 

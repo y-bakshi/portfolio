@@ -8,9 +8,9 @@ Text wireframes specify hierarchy; the built page in `apps/web` is the reference
 ┌─────────────────────────────────────────────────────────┐
 │ Yash Bakshi (sticky)          Projects  History  Contact│
 ├─────────────────────────────────────────────────────────┤
-│ AI becomes useful when                                  │
-│ engineering carries it                                  │
-│ beyond the demo.                                        │
+│ I build the part of AI                                  │
+│ that keeps working                                      │
+│ after the demo.                                         │
 │ Short introduction                                      │
 │ ┌──────────────────────────────┐   ┌───────────────┐   │
 │ │ Ask about my work  [ Ask ]   │   │               │   │

@@ -139,14 +139,14 @@ export function Home() {
       <main id="main">
         <section className="ask" aria-labelledby="ask-title">
           <h1 id="ask-title" className="ask-headline">
-            <span>AI becomes useful when</span>
-            <span>engineering carries it</span>
-            <span>beyond the demo.</span>
+            <span>I build the part of AI</span>
+            <span>that keeps working</span>
+            <span>after the demo.</span>
           </h1>
           <p className="ask-lede">
-            I’m Yash Bakshi, a software engineer who builds AI applications and the backend, cloud
-            and delivery work around them. The guide below is an assistant that answers questions
-            about my projects from my own notes.
+            I’m Yash Bakshi, a software engineer working across AI applications, backend services
+            and cloud delivery. The guide below is an assistant that answers questions about my
+            projects from my own notes.
           </p>
 
           <div className="ask-body">
