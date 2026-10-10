@@ -8,11 +8,13 @@ const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
 const FORM_MS = 3600;
 const STAGGER = 0.38;
 const REPEL_RADIUS = 80;
-// The finished engraving is drawn as small tiles so the pointer can push the picture itself aside.
-const TILE = 5;
+// Where the pointer pushes the finished engraving it comes apart into small round specks of the
+// picture's own tone, which spring back into place. Only tiles near the pointer are ever active.
+const TILE = 4;
 const TILE_PUSH = 5.5;
 // Particles are drawn in a few alpha buckets, one path each, instead of one style change per particle.
 const BUCKETS = 16;
+const SPECK_BUCKETS = 8;
 
 const token = (name: string, fallback: RGB): RGB => {
   const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -85,6 +87,13 @@ export function MistPortrait({
     let tilesX = 0;
     let tilesY = 0;
     let tileState = new Float32Array(0); // ox, oy, vx, vy per tile
+    let tileActive = new Uint8Array(0);
+    let tileDark = new Float32Array(0); // tone of each tile, 0 = ground, 1 = full ink
+    let activeTiles: number[] = [];
+    const specks = Array.from({ length: SPECK_BUCKETS }, () => ({
+      x: [] as number[],
+      y: [] as number[],
+    }));
     const buckets = Array.from({ length: BUCKETS }, () => ({
       x: [] as number[],
       y: [] as number[],
@@ -156,6 +165,23 @@ export function MistPortrait({
       tilesX = Math.ceil(cw / TILE);
       tilesY = Math.ceil(ch / TILE);
       tileState = new Float32Array(tilesX * tilesY * 4);
+      tileActive = new Uint8Array(tilesX * tilesY);
+      activeTiles = [];
+      tileDark = new Float32Array(tilesX * tilesY);
+      if (portrait) {
+        const off = document.createElement('canvas');
+        off.width = tilesX;
+        off.height = tilesY;
+        const octx = off.getContext('2d', { willReadFrequently: true })!;
+        octx.imageSmoothingQuality = 'high';
+        octx.drawImage(portrait, 0, 0, tilesX, tilesY);
+        const data = octx.getImageData(0, 0, tilesX, tilesY).data;
+        for (let k = 0; k < tileDark.length; k++) {
+          const lum = 0.299 * data[k * 4] + 0.587 * data[k * 4 + 1] + 0.114 * data[k * 4 + 2];
+          const tone = Math.min(1, Math.max(0, (232 - lum) / 200));
+          tileDark[k] = tone * (data[k * 4 + 3] / 255);
+        }
+      }
     };
 
     const paint = (now: number) => {
@@ -174,69 +200,98 @@ export function MistPortrait({
       const my = mouse?.y ?? -9999;
       let moving = false;
 
-      // 1. the finished engraving fades in under the particles, drawn as tiles the pointer can push
+      // 1. the finished engraving fades in under the particles; the pointer breaks it into specks
       const resolve = Math.min(1, Math.max(0, (t - 0.68) / 0.32));
       if (portrait && resolve > 0) {
-        let tilesMoving = false;
-        for (let j = 0; j < tilesY; j++) {
-          for (let i = 0; i < tilesX; i++) {
-            const k = (j * tilesX + i) * 4;
-            const x = (i + 0.5) * TILE + tileState[k];
-            const y = (j + 0.5) * TILE + tileState[k + 1];
-            const dx = x - mx;
-            const dy = y - my;
-            const dist = Math.hypot(dx, dy);
-            if (dist < REPEL_RADIUS && dist > 0.01) {
-              const f = (1 - dist / REPEL_RADIUS) ** 2 * TILE_PUSH;
-              tileState[k + 2] += (dx / dist) * f;
-              tileState[k + 3] += (dy / dist) * f;
-            }
-            tileState[k] = (tileState[k] + tileState[k + 2]) * 0.93;
-            tileState[k + 1] = (tileState[k + 1] + tileState[k + 3]) * 0.93;
-            tileState[k + 2] *= 0.8;
-            tileState[k + 3] *= 0.8;
-            if (Math.abs(tileState[k]) > 0.25 || Math.abs(tileState[k + 1]) > 0.25) {
-              tilesMoving = true;
-            }
-          }
-        }
-        if (tilesMoving) moving = true;
-
         const imageAlpha = resolve * resolve * (3 - 2 * resolve);
-        ctx.globalAlpha = imageAlpha;
-        // The whole picture goes down in one call; only tiles that have been pushed are cut out and
-        // redrawn at their displaced position, so a stir touches hundreds of tiles, not thousands.
-        ctx.drawImage(portrait, 0, 0, cw, ch);
-        if (tilesMoving) {
-          const sx = portrait.naturalWidth / cw;
-          const sy = portrait.naturalHeight / ch;
-          const pushed: number[] = [];
-          ctx.globalAlpha = 1;
-          for (let j = 0; j < tilesY; j++) {
-            for (let i = 0; i < tilesX; i++) {
-              const k = (j * tilesX + i) * 4;
-              if (Math.abs(tileState[k]) > 0.25 || Math.abs(tileState[k + 1]) > 0.25) {
-                ctx.clearRect(i * TILE - 0.3, j * TILE - 0.3, TILE + 0.6, TILE + 0.6);
-                pushed.push(i, j);
+
+        // wake the tiles under the pointer
+        if (mouse) {
+          const reach = REPEL_RADIUS;
+          const i0 = Math.max(0, Math.floor((mx - reach) / TILE));
+          const i1 = Math.min(tilesX - 1, Math.ceil((mx + reach) / TILE));
+          const j0 = Math.max(0, Math.floor((my - reach) / TILE));
+          const j1 = Math.min(tilesY - 1, Math.ceil((my + reach) / TILE));
+          for (let j = j0; j <= j1; j++) {
+            for (let i = i0; i <= i1; i++) {
+              const k = j * tilesX + i;
+              if (tileActive[k]) continue;
+              if (Math.hypot((i + 0.5) * TILE - mx, (j + 0.5) * TILE - my) < reach) {
+                tileActive[k] = 1;
+                activeTiles.push(k);
               }
             }
           }
-          ctx.globalAlpha = imageAlpha;
-          for (let n = 0; n < pushed.length; n += 2) {
-            const i = pushed[n];
-            const j = pushed[n + 1];
-            const k = (j * tilesX + i) * 4;
-            ctx.drawImage(
-              portrait,
-              i * TILE * sx,
-              j * TILE * sy,
-              TILE * sx,
-              TILE * sy,
-              i * TILE + tileState[k],
-              j * TILE + tileState[k + 1],
-              TILE + 0.6,
-              TILE + 0.6,
-            );
+        }
+
+        // spring the active tiles; tiles that have come to rest go back to sleep
+        for (let n = activeTiles.length - 1; n >= 0; n--) {
+          const k = activeTiles[n];
+          const b = k * 4;
+          const i = k % tilesX;
+          const j = (k / tilesX) | 0;
+          const dx = (i + 0.5) * TILE + tileState[b] - mx;
+          const dy = (j + 0.5) * TILE + tileState[b + 1] - my;
+          const dist = Math.hypot(dx, dy);
+          if (dist < REPEL_RADIUS && dist > 0.01) {
+            const f = (1 - dist / REPEL_RADIUS) ** 2 * TILE_PUSH;
+            tileState[b + 2] += (dx / dist) * f;
+            tileState[b + 3] += (dy / dist) * f;
+          }
+          tileState[b] = (tileState[b] + tileState[b + 2]) * 0.93;
+          tileState[b + 1] = (tileState[b + 1] + tileState[b + 3]) * 0.93;
+          tileState[b + 2] *= 0.8;
+          tileState[b + 3] *= 0.8;
+          if (
+            Math.abs(tileState[b]) < 0.25 &&
+            Math.abs(tileState[b + 1]) < 0.25 &&
+            Math.abs(tileState[b + 2]) < 0.1 &&
+            Math.abs(tileState[b + 3]) < 0.1
+          ) {
+            tileState[b] = tileState[b + 1] = tileState[b + 2] = tileState[b + 3] = 0;
+            tileActive[k] = 0;
+            activeTiles[n] = activeTiles[activeTiles.length - 1];
+            activeTiles.pop();
+          }
+        }
+        if (activeTiles.length) moving = true;
+
+        // the whole picture goes down in one call, then pushed tiles are cut out of it
+        ctx.globalAlpha = imageAlpha;
+        ctx.drawImage(portrait, 0, 0, cw, ch);
+        if (activeTiles.length) {
+          ctx.globalAlpha = 1;
+          for (const k of activeTiles) {
+            const i = k % tilesX;
+            const j = (k / tilesX) | 0;
+            ctx.clearRect(i * TILE - 0.3, j * TILE - 0.3, TILE + 0.6, TILE + 0.6);
+          }
+          // ...and redrawn as round specks, grouped by tone so each group is one path and one fill
+          for (const sb of specks) {
+            sb.x.length = 0;
+            sb.y.length = 0;
+          }
+          for (const k of activeTiles) {
+            const dark = tileDark[k];
+            if (dark < 0.06) continue;
+            const i = k % tilesX;
+            const j = (k / tilesX) | 0;
+            const sb = specks[Math.min(SPECK_BUCKETS - 1, (dark * SPECK_BUCKETS) | 0)];
+            sb.x.push((i + 0.5) * TILE + tileState[k * 4]);
+            sb.y.push((j + 0.5) * TILE + tileState[k * 4 + 1]);
+          }
+          const r = TILE * 0.6;
+          for (let b = 0; b < SPECK_BUCKETS; b++) {
+            const sb = specks[b];
+            if (!sb.x.length) continue;
+            ctx.globalAlpha = imageAlpha;
+            ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${Math.min(1, ((b + 0.5) / SPECK_BUCKETS) * 1.25).toFixed(3)})`;
+            ctx.beginPath();
+            for (let n = 0; n < sb.x.length; n++) {
+              ctx.moveTo(sb.x[n] + r, sb.y[n]);
+              ctx.arc(sb.x[n], sb.y[n], r, 0, Math.PI * 2);
+            }
+            ctx.fill();
           }
         }
         ctx.globalAlpha = 1;
