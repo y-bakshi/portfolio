@@ -49,7 +49,8 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 
 ## Components
 
-- **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (`aria-live`), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
+- **Guide voice:** the page speaks as Yash in first person; the guide is introduced as an assistant that answers from his project notes and refers to him in the third person. It never claims to be him.
+- **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (status text is a polite live region; streamed text is hidden from assistive tech until done, then announced once), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
 - **Status light:** red while answering, yellow while thinking, green when ready, with matching text: "Answering, one moment", "Looking through the notes", "Ready for your question".
 - **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
 - **Project row:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
@@ -59,6 +60,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 ## Motion
 
 - One load sequence: the three headline lines rise in turn.
+- A quiet dot grid is fixed behind the whole page. Dots near the pointer, wherever it is on the page, grow and darken to full ink, the same colour as the portrait's line work, then ease back. It is decoration only (`aria-hidden`) and is skipped under reduced motion. Panels with a solid background cover it, and the portrait is opaque inside the figure so no dots show through the face.
 - The guide streams its answer word by word. Reduced motion shows the full answer immediately.
 - All jumps (nav links, the name link, skip link, "Show" buttons) use one stylesheet-level smooth scroll. The citation highlight starts after the jump has mostly arrived.
 - No scroll-triggered entrance effects, parallax or hover animation on every card. Reduced motion turns off smooth scroll, the headline animation and the highlight sweep.

@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Answer, answerFor, projects, roles, stackGroups, suggestions } from './content';
+import { DotGrid } from './DotGrid';
 import { SiteHeader, Trace } from './parts';
 
 const contactLinks = [
@@ -46,6 +47,7 @@ export function Home() {
   const [asked, setAsked] = useState('');
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [shown, setShown] = useState('');
+  const [announce, setAnnounce] = useState('');
   const [status, setStatus] = useState<Status>('ready');
   const [marked, setMarked] = useState<string | null>(null);
   const timers = useRef<number[]>([]);
@@ -69,6 +71,7 @@ export function Home() {
     setQuestion('');
     setAnswer(null);
     setShown('');
+    setAnnounce('');
     setMarked(null);
     setStatus('thinking');
 
@@ -81,6 +84,7 @@ export function Home() {
           setStatus('answering');
           if (reduce) {
             setShown(result.text);
+            setAnnounce(result.text);
             setStatus('ready');
             return;
           }
@@ -90,7 +94,10 @@ export function Home() {
             i += 1;
             setShown(words.slice(0, i).join(' '));
             if (i < words.length) timers.current.push(window.setTimeout(tick, 28));
-            else setStatus('ready');
+            else {
+              setStatus('ready');
+              setAnnounce(result.text);
+            }
           };
           tick();
         },
@@ -113,6 +120,8 @@ export function Home() {
     if (!el) return;
     // Scroll behavior comes from the stylesheet, so this matches every other jump on the page.
     el.scrollIntoView({ block: 'start' });
+    // Move keyboard and screen reader focus to the target as well.
+    el.focus({ preventScroll: true });
     const wait = prefersReducedMotion() ? 0 : 500;
     timers.current.push(window.setTimeout(() => setMarked(id), wait));
     timers.current.push(window.setTimeout(() => setMarked(null), wait + 4000));
@@ -125,6 +134,7 @@ export function Home() {
 
   return (
     <>
+      <DotGrid />
       <SiteHeader />
       <main id="main">
         <section className="ask" aria-labelledby="ask-title">
@@ -135,14 +145,15 @@ export function Home() {
           </h1>
           <p className="ask-lede">
             I’m Yash Bakshi, a software engineer who builds AI applications and the backend, cloud
-            and delivery work around them. Ask the guide about anything I’ve shipped.
+            and delivery work around them. The guide below is an assistant that answers questions
+            about my projects from my own notes.
           </p>
 
           <div className="ask-body">
             <div className="console">
               <form className="console-form" onSubmit={onSubmit}>
                 <label htmlFor="ask-input" className="console-label">
-                  Ask about my work
+                  Ask the guide about Yash’s work
                 </label>
                 <div className="console-row">
                   <input
@@ -151,7 +162,7 @@ export function Home() {
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="What have you built with RAG?"
+                    placeholder="What has Yash built with RAG?"
                     autoComplete="off"
                   />
                   <button type="submit" disabled={status !== 'ready'}>
@@ -170,8 +181,8 @@ export function Home() {
                 ))}
               </ul>
 
-              <div className="console-out" aria-live="polite">
-                <p className="console-status">
+              <div className="console-out">
+                <p className="console-status" aria-live="polite">
                   <span className={`light light-${status}`} aria-hidden="true">
                     <i />
                     <i />
@@ -180,7 +191,14 @@ export function Home() {
                   {statusLabel[status]}
                 </p>
                 {asked && <p className="console-q">{asked}</p>}
-                {shown && <p className="console-a">{shown}</p>}
+                {shown && (
+                  <p className="console-a" aria-hidden={status !== 'ready'}>
+                    {shown}
+                  </p>
+                )}
+                <p className="sr-only" role="status">
+                  {announce}
+                </p>
                 {answer && status === 'ready' && answer.cites.length > 0 && (
                   <ul className="cites" aria-label="Sources on this page">
                     {answer.cites.map((id) => (
@@ -194,8 +212,8 @@ export function Home() {
                 )}
                 {!asked && (
                   <p className="console-note">
-                    Answers are written from my own project notes. The full assistant is still in
-                    development.
+                    The guide is an assistant that answers from Yash’s project notes. The full
+                    version is still in development.
                   </p>
                 )}
               </div>
@@ -224,6 +242,7 @@ export function Home() {
               <article
                 key={p.id}
                 id={p.id}
+                tabIndex={-1}
                 className={`row${marked === p.id ? ' is-marked' : ''}`}
                 aria-labelledby={`${p.id}-name`}
               >
@@ -262,6 +281,7 @@ export function Home() {
               <li
                 key={r.id}
                 id={r.id}
+                tabIndex={-1}
                 className={`record-item${marked === r.id ? ' is-marked' : ''}`}
               >
                 <p className="record-when">{r.when}</p>
@@ -296,6 +316,7 @@ export function Home() {
         <section
           className={`contact${marked === 'contact' ? ' is-marked' : ''}`}
           id="contact"
+          tabIndex={-1}
           aria-labelledby="contact-title"
         >
           <h2 id="contact-title" className="contact-title">

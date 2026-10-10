@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { projects } from './content';
+import { DotGrid } from './DotGrid';
 import { SiteHeader, Trace } from './parts';
 
 const project = projects.find((p) => p.id === 'testpilot')!;
@@ -7,6 +8,7 @@ const project = projects.find((p) => p.id === 'testpilot')!;
 export function CaseStudy() {
   return (
     <>
+      <DotGrid />
       <SiteHeader />
       <main id="main" className="case">
         <p className="case-back">
