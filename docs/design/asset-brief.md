@@ -11,8 +11,8 @@ Flat, graphic and restrained: pale grey-green ground, deep green-black ink, coba
 | Asset | File | Notes |
 | --- | --- | --- |
 | Favicon | `favicon.svg` | Hand-drawn SVG monogram: bold condensed YB with an amber highlighter bar. Based on an owner-generated Nano Banana concept, redrawn as vector so it stays sharp at 16 px. The old scaffold `favicon.ico` has been removed. |
-| Portrait | `portrait.webp` | Halftone engraving derived from the owner's photograph (generated with Nano Banana, owner-approved). Ground made transparent so it sits on the page colour. Source photo is kept outside the repository. |
-| Social preview | `og.png` | 1200×630. Staircase artwork generated with Nano Banana, with name and thesis added as real text (Bahnschrift). `og:image` is relative until a domain exists. |
+| Portrait | `portrait.webp` | Halftone engraving derived from the owner's photograph (generated with Nano Banana, owner-approved). The outside ground is transparent and the left, right and bottom edges are feathered so the cropped engraving dissolves into the page instead of ending in a hard line. Source photo is kept outside the repository. |
+| Social preview | `og.png` | 1200×630. Staircase artwork generated with Nano Banana, with the name and a one-line description added as real text (Bahnschrift). `og:image` is relative until a domain exists. |
 
 Record provenance for each generated file: tool (Nano Banana via Gemini CLI), prompt, edits, approval. Prompts used are in this document's history and the session notes; add them here if they should be kept.
 

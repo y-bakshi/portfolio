@@ -4,7 +4,7 @@ Status: planned, except the frontend scaffold. IDs are stable references for imp
 
 | ID | Requirement | Acceptance criteria |
 | --- | --- | --- |
-| FR-01 | Editorial identity | Header and footer read “Yash Bakshi”; the hero headline is the thesis. Hero communicates production engineering for useful AI. |
+| FR-01 | Editorial identity | Header and footer read “Yash Bakshi”; the hero shows the portrait and a short introduction. Hero communicates AI application engineering backed by backend and cloud delivery. |
 | FR-02 | About and professional record | Show verified experience, education, contribution boundaries, and current focus; no invented metrics or credentials. |
 | FR-03 | Project catalog | Include the broader project catalog, emphasize AI and SDE work, and filter by category without losing keyboard access or empty-state feedback. |
 | FR-04 | Editorial case studies | Each published case study includes problem, solution, technology, results, a diagram, and available source/demo links. Distinguish measured, estimated, and planned outcomes. |

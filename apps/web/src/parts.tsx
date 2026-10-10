@@ -1,5 +1,6 @@
 import type { MouseEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { DotGrid } from './DotGrid';
 
 export function SiteHeader() {
   const { pathname } = useLocation();
@@ -14,6 +15,7 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
+      <DotGrid scope="header" />
       <a className="skip" href="#main">
         Skip to content
       </a>

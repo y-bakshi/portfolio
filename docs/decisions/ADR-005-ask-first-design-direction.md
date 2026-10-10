@@ -8,7 +8,7 @@ The first implementation followed the documented mid-century journal concept: cr
 
 ## Decision
 
-Retire the journal concept. Build the page as a working surface around the guide: an input and suggested questions open the page, answers cite project rows, and the cited row is highlighted. Use a pale grey-green ground, deep green-black ink, cobalt for actions and amber only for the citation highlight. Use Bricolage Grotesque for headlines, Source Serif 4 for reading and JetBrains Mono only inside pipeline traces. Present projects as open rows with a waterfall trace of each pipeline instead of illustrated exhibit cards. Replace the lab-report skills table with a plain grouped list.
+Retire the journal concept. Build the page as a working surface around the guide: an input and suggested questions open the page, answers cite project rows, and the cited row is highlighted. Use a pale grey-green ground, deep green-black ink, cobalt for actions and amber only for the citation highlight. Use Bricolage Grotesque for headlines, Source Serif 4 for reading and JetBrains Mono only inside pipeline traces. Present each project and role as a card in the guide console's style, with a waterfall trace of each pipeline in place of illustrated exhibits. Replace the lab-report skills table with a plain grouped list.
 
 Full tokens and component rules are in [design-language.md](../design/design-language.md).
 

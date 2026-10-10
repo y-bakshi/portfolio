@@ -172,10 +172,10 @@ export const stackGroups = [
 export type Answer = { text: string; cites: string[] };
 
 export const suggestions = [
-  'What have you built with RAG?',
-  'Show me your backend experience',
-  'Have you worked with agents?',
-  'What cloud work have you done?',
+  'What has Yash built with RAG?',
+  'Show me his backend experience',
+  'Has he worked with agents?',
+  'What cloud work has he done?',
 ];
 
 const find = (ids: string[]) =>

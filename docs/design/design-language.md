@@ -10,7 +10,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 
 **Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Lead:** *AI becomes useful when engineering carries it beyond the demo.*
+**Hero:** a large centred portrait that forms out of mist, then a short introduction ("I'm Yash Bakshi, a software engineer working across AI applications, backend services and cloud delivery..."), then the guide console. There is no display headline; the page's `h1` is visually hidden text naming the person.
 
 ## Palette
 
@@ -22,9 +22,9 @@ The portfolio must stay fully useful without the guide: every project, the work 
 | `--muted` | `#4A5A52` | Secondary text. About 6:1 on the ground. |
 | `--line` | `#B8C1BA` | Row dividers. |
 | `--action` | `#2440E8` | Primary action fill, trace bars, text links. |
-| `--mark` | `#F5C542` | Citation highlight only, plus selection. Do not use it as decoration. |
+| `--mark` | `#F5C542` | Citation highlight, card hover, and text selection. Do not use it as decoration elsewhere. |
 
-Muted grey drops below 4.5:1 on amber, so text inside a highlighted block switches to full ink.
+Muted grey and the cobalt link drop below 4.5:1 on amber, so text inside a highlighted or hovered card switches to full ink (the link also gets an underline). Hover applies only on devices that can hover.
 
 The status light uses red `#FF4D3D`, yellow `#FFC933` and green `#35D07F` on an ink pill. It always appears with a text label, so colour is never the only signal.
 
@@ -42,26 +42,30 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 
 - Left aligned. Content width up to 1240 px with a fluid gutter of 20 to 72 px.
 - The sticky header spans the full width with the ground colour and a thin rule.
-- Projects are open rows, not cards: name and one line on the left, detail, trace, stack and link on the right. They stack on screens under 820 px.
+- Any text that would sit straight on the dot grid goes on a card too: the introduction, each section's heading and lead-in, the small footnotes, and the case-study title and body. There are no text halos or shadows.
+- The tools list is a single card in the same style, with its four groups inside it.
+- Each project and each role is its own card, styled like the guide console: panel fill, 2 px ink border and a hard offset shadow (8 px for projects, 6 px for roles, smaller on phones). Inside a project card the name and one line sit on the left and the detail, trace, stack and link on the right; they stack on screens under 820 px.
 - The hero places the guide console and the portrait side by side on wide screens. On narrow screens the portrait comes first, then the console.
 - Spacing is fluid with `clamp()`. Section gaps run roughly 56 to 112 px.
 - Depth comes from hard offset shadows (8 px on the console, 6 px on the facts panel). No soft grey shadows.
 
 ## Components
 
-- **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (`aria-live`), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
+- **Guide voice:** the page speaks as Yash in first person; the guide is introduced as an assistant that answers from his project notes and refers to him in the third person. It never claims to be him.
+- **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (status text is a polite live region; streamed text is hidden from assistive tech until done, then announced once), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
 - **Status light:** red while answering, yellow while thinking, green when ready, with matching text: "Answering, one moment", "Looking through the notes", "Ready for your question".
 - **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
-- **Project row:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
-- **Contact block:** an inverted ink panel with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
+- **Project card:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
+- **Contact block:** a full-width ink band attached to the bottom of the page (the footer continues it), with the heading on the left and the links on the right on wide screens, stacked on narrow ones, with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
 - **Case study:** headline, standfirst, trace, problem, approach, results, with a facts panel for role, stack, source and demo. Results stay "evidence pending" until verified.
 
 ## Motion
 
-- One load sequence: the three headline lines rise in turn.
+- A grid of round ink dots is fixed behind the whole page, 14 px apart, clearly visible but quiet. Dots near the pointer, wherever it is on the page, are pushed away from it (the push radius, 100 px, is one shared constant in `pointerPush.ts`, used by the portrait too so both clear the same-sized gap) and spring back when it moves on, so the cursor parts the grid. The loop sleeps once the pointer stops and the dots settle. It is decoration only (`aria-hidden`), drawn once and static under reduced motion. Panels with a solid background cover it, and the portrait is opaque inside the figure so no dots show through the face.
+- The portrait forms out of a rotating sphere of suspended ink particles when it scrolls into view (about 3.6 seconds, once). The face region gets extra particles so it stays recognisable while forming, and in the last stretch the engraving itself fades in under the particles so the finished face is crisp. The pointer pushes particles aside and they drift back. Reduced motion, or a failed image load, shows the finished picture instead. The animation loop stops once the portrait is formed and at rest, particles are drawn in alpha buckets (one path each), a stir wakes only the tiles near the pointer and redraws them as small round specks of the picture's own tone, never squares, phones get fewer particles, the portrait is sampled in small slices that yield to the browser so the page never blocks on it, and if frames run slower than about 25 fps it draws every other particle. The page and header dot grids likewise stop when the pointer stops.
 - The guide streams its answer word by word. Reduced motion shows the full answer immediately.
 - All jumps (nav links, the name link, skip link, "Show" buttons) use one stylesheet-level smooth scroll. The citation highlight starts after the jump has mostly arrived.
-- No scroll-triggered entrance effects, parallax or hover animation on every card. Reduced motion turns off smooth scroll, the headline animation and the highlight sweep.
+- No scroll-triggered entrance effects, parallax or hover animation on every card. Reduced motion turns off smooth scroll, the portrait animation and the highlight sweep.
 
 ## Accessibility and quality floor
 
