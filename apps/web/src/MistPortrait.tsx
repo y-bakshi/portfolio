@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 type RGB = [number, number, number];
 
-const PARTICLES = 24000;
 const SAMPLE_WIDTH = 420;
 // where the face sits in the portrait, so it gets more particles and stays recognisable
 const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
@@ -12,6 +11,8 @@ const REPEL_RADIUS = 80;
 // The finished engraving is drawn as small tiles so the pointer can push the picture itself aside.
 const TILE = 5;
 const TILE_PUSH = 5.5;
+// Particles are drawn in a few alpha buckets, one path each, instead of one style change per particle.
+const BUCKETS = 16;
 
 const token = (name: string, fallback: RGB): RGB => {
   const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -24,12 +25,10 @@ const token = (name: string, fallback: RGB): RGB => {
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 type P = {
-  // sphere position on the unit sphere
-  sx: number;
+  sx: number; // position on the unit sphere
   sy: number;
   sz: number;
-  // target in image space, 0..1
-  tx: number;
+  tx: number; // target in image space, 0..1
   ty: number;
   dark: number;
   delay: number;
@@ -42,8 +41,9 @@ type P = {
 
 /**
  * The portrait condenses out of a rotating sphere of suspended particles when it scrolls into view.
- * The pointer pushes particles aside and they drift back. With reduced motion the finished image is
- * shown as a plain picture instead.
+ * The pointer pushes particles and the picture itself aside and they spring back. Once the portrait
+ * is formed and nothing is moving the animation loop stops, so it costs nothing while idle. With
+ * reduced motion the finished image is shown as a plain picture instead.
  */
 export function MistPortrait({
   src,
@@ -70,6 +70,9 @@ export function MistPortrait({
     if (!canvas || !ctx) return;
 
     const INK = token('--ink', [20, 33, 27]);
+    const small = window.innerWidth < 700;
+    const count = small ? 9000 : 24000;
+
     let particles: P[] = [];
     let cw = 0;
     let ch = 0;
@@ -78,10 +81,15 @@ export function MistPortrait({
     let visible = false;
     let mouse: { x: number; y: number } | null = null;
     let dead = false;
+    let portrait: HTMLImageElement | null = null;
     let tilesX = 0;
     let tilesY = 0;
     let tileState = new Float32Array(0); // ox, oy, vx, vy per tile
-    let portrait: HTMLImageElement | null = null;
+    const buckets = Array.from({ length: BUCKETS }, () => ({
+      x: [] as number[],
+      y: [] as number[],
+      s: [] as number[],
+    }));
 
     const sampleImage = (img: HTMLImageElement) => {
       const w = SAMPLE_WIDTH;
@@ -93,7 +101,6 @@ export function MistPortrait({
       octx.drawImage(img, 0, 0, w, h);
       const data = octx.getImageData(0, 0, w, h).data;
 
-      // darkness 0..1 per pixel, only where the portrait has pixels
       const cand: { x: number; y: number; d: number }[] = [];
       for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
@@ -108,14 +115,14 @@ export function MistPortrait({
       const out: P[] = [];
       const golden = Math.PI * (3 - Math.sqrt(5));
       let guard = 0;
-      while (out.length < PARTICLES && guard++ < PARTICLES * 60) {
+      while (out.length < count && guard++ < count * 60) {
         const c = cand[(Math.random() * cand.length) | 0];
         const fx = (c.x / w - FACE.cx) / FACE.rx;
         const fy = (c.y / h - FACE.cy) / FACE.ry;
         const face = Math.exp(-(fx * fx + fy * fy));
         if (Math.random() > c.d ** 0.7 * (0.22 + 0.78 * face)) continue;
         const k = out.length;
-        const yy = 1 - (k / (PARTICLES - 1)) * 2;
+        const yy = 1 - (k / (count - 1)) * 2;
         const rr = Math.sqrt(1 - yy * yy);
         const th = golden * k;
         out.push({
@@ -138,7 +145,7 @@ export function MistPortrait({
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       cw = rect.width;
       ch = rect.height;
       canvas.width = Math.round(cw * dpr);
@@ -153,21 +160,22 @@ export function MistPortrait({
       frame = 0;
       if (dead) return;
       ctx.clearRect(0, 0, cw, ch);
-      const t = started ? Math.min(1, (now - started) / FORM_MS) : 0;
+      const t = started ? Math.min(1, Math.max(0, (now - started) / FORM_MS)) : 0;
+      const formed = t >= 1;
       const spin = now * 0.00035;
       const cos = Math.cos(spin);
       const sin = Math.sin(spin);
       const R = Math.min(cw, ch) * 0.36;
       const cx = cw / 2;
       const cy = ch / 2;
-      // In the last stretch the real engraving fades in under the particles so the face resolves.
-      const resolve = Math.min(1, Math.max(0, (t - 0.68) / 0.32));
       const mx = mouse?.x ?? -9999;
       const my = mouse?.y ?? -9999;
+      let moving = false;
 
+      // 1. the finished engraving fades in under the particles, drawn as tiles the pointer can push
+      const resolve = Math.min(1, Math.max(0, (t - 0.68) / 0.32));
       if (portrait && resolve > 0) {
-        // Push tiles of the engraving away from the pointer; they spring back.
-        let moving = false;
+        let tilesMoving = false;
         for (let j = 0; j < tilesY; j++) {
           for (let i = 0; i < tilesX; i++) {
             const k = (j * tilesX + i) * 4;
@@ -185,43 +193,66 @@ export function MistPortrait({
             tileState[k + 1] = (tileState[k + 1] + tileState[k + 3]) * 0.93;
             tileState[k + 2] *= 0.8;
             tileState[k + 3] *= 0.8;
-            if (Math.abs(tileState[k]) > 0.25 || Math.abs(tileState[k + 1]) > 0.25) moving = true;
+            if (Math.abs(tileState[k]) > 0.25 || Math.abs(tileState[k + 1]) > 0.25) {
+              tilesMoving = true;
+            }
           }
         }
+        if (tilesMoving) moving = true;
 
-        ctx.globalAlpha = resolve * resolve * (3 - 2 * resolve);
-        if (!moving) {
-          ctx.drawImage(portrait, 0, 0, cw, ch);
-        } else {
+        const imageAlpha = resolve * resolve * (3 - 2 * resolve);
+        ctx.globalAlpha = imageAlpha;
+        // The whole picture goes down in one call; only tiles that have been pushed are cut out and
+        // redrawn at their displaced position, so a stir touches hundreds of tiles, not thousands.
+        ctx.drawImage(portrait, 0, 0, cw, ch);
+        if (tilesMoving) {
           const sx = portrait.naturalWidth / cw;
           const sy = portrait.naturalHeight / ch;
+          const pushed: number[] = [];
+          ctx.globalAlpha = 1;
           for (let j = 0; j < tilesY; j++) {
             for (let i = 0; i < tilesX; i++) {
               const k = (j * tilesX + i) * 4;
-              ctx.drawImage(
-                portrait,
-                i * TILE * sx,
-                j * TILE * sy,
-                TILE * sx,
-                TILE * sy,
-                i * TILE + tileState[k],
-                j * TILE + tileState[k + 1],
-                TILE + 0.6,
-                TILE + 0.6,
-              );
+              if (Math.abs(tileState[k]) > 0.25 || Math.abs(tileState[k + 1]) > 0.25) {
+                ctx.clearRect(i * TILE - 0.3, j * TILE - 0.3, TILE + 0.6, TILE + 0.6);
+                pushed.push(i, j);
+              }
             }
+          }
+          ctx.globalAlpha = imageAlpha;
+          for (let n = 0; n < pushed.length; n += 2) {
+            const i = pushed[n];
+            const j = pushed[n + 1];
+            const k = (j * tilesX + i) * 4;
+            ctx.drawImage(
+              portrait,
+              i * TILE * sx,
+              j * TILE * sy,
+              TILE * sx,
+              TILE * sy,
+              i * TILE + tileState[k],
+              j * TILE + tileState[k + 1],
+              TILE + 0.6,
+              TILE + 0.6,
+            );
           }
         }
         ctx.globalAlpha = 1;
       }
-      const grain = 1 - 0.6 * resolve;
 
+      // 2. particles, sorted into alpha buckets so each bucket is one path and one fill
+      const grain = 1 - 0.6 * resolve;
+      for (const b of buckets) {
+        b.x.length = 0;
+        b.y.length = 0;
+        b.s.length = 0;
+      }
       for (const p of particles) {
         const local = Math.min(1, Math.max(0, (t - p.delay) / (1 - STAGGER)));
         const e = ease(local);
 
-        // rotating sphere with a slow suspended drift
-        const mist = 7 * (1 - e) + 0.5;
+        // a rotating sphere with a slow suspended drift that dies away as the portrait forms
+        const mist = 7.5 * (1 - e);
         const rx = p.sx * cos + p.sz * sin;
         const rz = -p.sx * sin + p.sz * cos;
         const persp = 1 / (1 - rz * 0.28);
@@ -233,7 +264,7 @@ export function MistPortrait({
         let x = spx + (tx - spx) * e;
         let y = spy + (ty - spy) * e;
 
-        // pointer pushes nearby particles aside; they spring back
+        // the pointer pushes nearby particles aside; they spring back
         const dx = x + p.ox - mx;
         const dy = y + p.oy - my;
         const dist = Math.hypot(dx, dy);
@@ -242,12 +273,11 @@ export function MistPortrait({
           p.vx += (dx / dist) * f;
           p.vy += (dy / dist) * f;
         }
-        p.ox += p.vx;
-        p.oy += p.vy;
+        p.ox = (p.ox + p.vx) * 0.92;
+        p.oy = (p.oy + p.vy) * 0.92;
         p.vx *= 0.8;
         p.vy *= 0.8;
-        p.ox *= 0.92;
-        p.oy *= 0.92;
+        if (Math.abs(p.ox) > 0.05 || Math.abs(p.oy) > 0.05) moving = true;
         x += p.ox;
         y += p.oy;
 
@@ -257,11 +287,23 @@ export function MistPortrait({
         const portraitAlpha = 0.45 + 0.5 * p.dark;
         const alpha = (mistAlpha + (portraitAlpha - mistAlpha) * e) * grain;
         const size = (1 + depth * 0.7) * (1 - e) + (1.1 + p.dark * 0.8) * e;
-        ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${alpha.toFixed(2)})`;
-        ctx.fillRect(x - size / 2, y - size / 2, size, size);
+        const bucket = buckets[Math.min(BUCKETS - 1, Math.max(0, (alpha * BUCKETS) | 0))];
+        bucket.x.push(x);
+        bucket.y.push(y);
+        bucket.s.push(size);
+      }
+      for (let b = 0; b < BUCKETS; b++) {
+        const { x, y, s } = buckets[b];
+        if (!x.length) continue;
+        ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${((b + 0.5) / BUCKETS).toFixed(3)})`;
+        ctx.beginPath();
+        for (let i = 0; i < x.length; i++) ctx.rect(x[i] - s[i] / 2, y[i] - s[i] / 2, s[i], s[i]);
+        ctx.fill();
       }
 
-      if (visible) frame = requestAnimationFrame(paint);
+      // Keep animating while forming, while the pointer is over the portrait, or while anything is
+      // still springing back. Once formed and at rest, stop and draw nothing until the next move.
+      if (visible && (!formed || mouse || moving)) frame = requestAnimationFrame(paint);
     };
 
     const wake = () => {
@@ -282,9 +324,11 @@ export function MistPortrait({
     const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
       mouse = { x: e.clientX - r.left, y: e.clientY - r.top };
+      wake();
     };
     const onLeave = () => {
       mouse = null;
+      wake();
     };
 
     const ro = new ResizeObserver(() => {

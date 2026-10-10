@@ -37,6 +37,7 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
     let height = 0;
     let mouse: { x: number; y: number } | null = null;
     let frame = 0;
+    let lastMove = 0;
 
     const build = () => {
       const dpr = window.devicePixelRatio || 1;
@@ -59,26 +60,43 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
       }
     };
 
-    const paint = () => {
+    const paint = (now: number = performance.now()) => {
       ctx.clearRect(0, 0, width, height);
       const mx = mouse?.x ?? -99999;
       const my = mouse?.y ?? -99999;
       let busy = false;
+      const lit: Dot[] = [];
+
+      // Dots at rest share one style, so they go into a single path and a single fill.
+      ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${BASE_ALPHA})`;
+      ctx.beginPath();
       for (const d of dots) {
         const dx = d.x - mx;
         const dy = d.y - my;
         const dist = Math.hypot(dx, dy);
         const target = dist < RADIUS ? (1 - dist / RADIUS) ** 1.5 : 0;
         d.b += (target > d.b ? 0.16 : 0.07) * (target - d.b);
-        if (d.b < 0.004) d.b = 0;
-        else busy = true;
+        if (d.b < 0.004) {
+          d.b = 0;
+          ctx.rect(d.x - 0.6, d.y - 0.6, 1.2, 1.2);
+        } else {
+          busy = true;
+          lit.push(d);
+        }
+      }
+      ctx.fill();
+
+      // Only the few dots near the pointer need their own size and opacity.
+      for (const d of lit) {
         const alpha = BASE_ALPHA + (PEAK_ALPHA - BASE_ALPHA) * d.b;
         const size = 1.2 + d.b * 1.5;
         ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${alpha.toFixed(2)})`;
         ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
       }
-      // Keep animating while the pointer is down on the page or dots are still fading.
-      frame = mouse || busy ? requestAnimationFrame(paint) : 0;
+
+      // Keep animating while the pointer is moving or dots are still fading; then stop.
+      const active = mouse !== null && now - lastMove < 350;
+      frame = active || busy ? requestAnimationFrame(paint) : 0;
     };
 
     const wake = () => {
@@ -86,12 +104,14 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
     };
     const onMove = (e: MouseEvent) => {
       mouse = { x: e.clientX, y: e.clientY };
+      lastMove = performance.now();
       wake();
     };
     const onTouch = (e: TouchEvent) => {
       const t = e.touches[0];
       if (t) {
         mouse = { x: t.clientX, y: t.clientY };
+        lastMove = performance.now();
         wake();
       }
     };
