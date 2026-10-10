@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 type RGB = [number, number, number];
 
-const PARTICLES = 17000;
-const SAMPLE_WIDTH = 260;
+const PARTICLES = 24000;
+const SAMPLE_WIDTH = 420;
+// where the face sits in the portrait, so it gets more particles and stays recognisable
+const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
 const FORM_MS = 3600;
 const STAGGER = 0.38;
 const REPEL_RADIUS = 80;
@@ -73,6 +75,7 @@ export function MistPortrait({
     let visible = false;
     let mouse: { x: number; y: number } | null = null;
     let dead = false;
+    let portrait: HTMLImageElement | null = null;
 
     const sampleImage = (img: HTMLImageElement) => {
       const w = SAMPLE_WIDTH;
@@ -101,7 +104,10 @@ export function MistPortrait({
       let guard = 0;
       while (out.length < PARTICLES && guard++ < PARTICLES * 60) {
         const c = cand[(Math.random() * cand.length) | 0];
-        if (Math.random() > c.d ** 0.7) continue;
+        const fx = (c.x / w - FACE.cx) / FACE.rx;
+        const fy = (c.y / h - FACE.cy) / FACE.ry;
+        const face = Math.exp(-(fx * fx + fy * fy));
+        if (Math.random() > c.d ** 0.7 * (0.22 + 0.78 * face)) continue;
         const k = out.length;
         const yy = 1 - (k / (PARTICLES - 1)) * 2;
         const rr = Math.sqrt(1 - yy * yy);
@@ -145,6 +151,14 @@ export function MistPortrait({
       const R = Math.min(cw, ch) * 0.36;
       const cx = cw / 2;
       const cy = ch / 2;
+      // In the last stretch the real engraving fades in under the particles so the face resolves.
+      const resolve = Math.min(1, Math.max(0, (t - 0.68) / 0.32));
+      if (portrait && resolve > 0) {
+        ctx.globalAlpha = resolve * resolve * (3 - 2 * resolve);
+        ctx.drawImage(portrait, 0, 0, cw, ch);
+        ctx.globalAlpha = 1;
+      }
+      const grain = 1 - 0.6 * resolve;
       const mx = mouse?.x ?? -9999;
       const my = mouse?.y ?? -9999;
 
@@ -187,8 +201,8 @@ export function MistPortrait({
         const depth = 0.5 + 0.5 * rz;
         const mistAlpha = 0.18 + 0.5 * depth;
         const portraitAlpha = 0.45 + 0.5 * p.dark;
-        const alpha = mistAlpha + (portraitAlpha - mistAlpha) * e;
-        const size = (1 + depth * 0.7) * (1 - e) + (1.3 + p.dark * 0.9) * e;
+        const alpha = (mistAlpha + (portraitAlpha - mistAlpha) * e) * grain;
+        const size = (1 + depth * 0.7) * (1 - e) + (1.1 + p.dark * 0.8) * e;
         ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${alpha.toFixed(2)})`;
         ctx.fillRect(x - size / 2, y - size / 2, size, size);
       }
@@ -227,6 +241,7 @@ export function MistPortrait({
     const img = new Image();
     img.onload = () => {
       if (dead) return;
+      portrait = img;
       sampleImage(img);
       resize();
       ro.observe(canvas);

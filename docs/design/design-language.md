@@ -62,7 +62,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 
 - One load sequence: the three headline lines rise in turn.
 - A quiet dot grid is fixed behind the whole page. Dots near the pointer, wherever it is on the page, grow and darken to full ink, the same colour as the portrait's line work, then ease back. It is decoration only (`aria-hidden`) and is skipped under reduced motion. Panels with a solid background cover it, and the portrait is opaque inside the figure so no dots show through the face.
-- The portrait forms out of a rotating sphere of suspended ink particles when it scrolls into view (about 3.6 seconds, once). The pointer pushes particles aside and they drift back. Reduced motion, or a failed image load, shows the finished picture instead.
+- The portrait forms out of a rotating sphere of suspended ink particles when it scrolls into view (about 3.6 seconds, once). The face region gets extra particles so it stays recognisable while forming, and in the last stretch the engraving itself fades in under the particles so the finished face is crisp. The pointer pushes particles aside and they drift back. Reduced motion, or a failed image load, shows the finished picture instead.
 - The guide streams its answer word by word. Reduced motion shows the full answer immediately.
 - All jumps (nav links, the name link, skip link, "Show" buttons) use one stylesheet-level smooth scroll. The citation highlight starts after the jump has mostly arrived.
 - No scroll-triggered entrance effects, parallax or hover animation on every card. Reduced motion turns off smooth scroll, the headline animation and the highlight sweep.
