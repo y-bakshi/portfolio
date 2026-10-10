@@ -195,63 +195,9 @@ main,
   line-height: 1.55;
 }
 
-.console {
-  max-width: 820px;
-  margin-top: clamp(32px, 5vw, 56px);
-  padding: clamp(18px, 3vw, 28px);
-  border: 2px solid var(--ink);
-  background: var(--panel);
-  box-shadow: 8px 8px 0 var(--shadow);
-}
-
-.console-label {
-  display: block;
-  margin-bottom: 8px;
-  font-family: var(--display);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.console-row {
-  display: flex;
-  gap: 10px;
-}
-
-.console-row input {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 52px;
-  padding: 0 14px;
-  border: 2px solid var(--ink);
-  border-radius: 0;
-  background: #fbf8f1;
-  font-size: 1.125rem;
-}
-
-.console-row input::placeholder {
-  color: #5a6288;
-}
-
-.console-row button {
-  min-height: 52px;
-  padding: 0 26px;
-  border: 2px solid var(--ink);
-  border-radius: 0;
-  background: var(--action);
-  color: var(--action-ink);
-  font-family: var(--display);
-  font-size: 1.05rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
 @media (hover: hover) {
-  .console-row button:hover:not(:disabled) {
-    background: var(--ink);
-  }
 }
 
-.console-row button:disabled,
 .chips button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -278,23 +224,6 @@ main,
   .chips button:hover:not(:disabled) {
     background: var(--mark);
   }
-}
-
-.console-out {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  min-height: 7.5rem;
-}
-
-.console-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  font-family: var(--display);
-  font-size: 0.95rem;
-  font-weight: 500;
 }
 
 /* traffic light: red = answering, yellow = thinking, green = ready. The label beside it says the same in words. */
@@ -325,18 +254,6 @@ main,
 
 .light-ready i:nth-child(3) {
   background: #35d07f;
-}
-
-.console-q {
-  margin-top: 12px;
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.console-a {
-  max-width: var(--measure);
-  margin-top: 6px;
 }
 
 .console-note {
@@ -786,7 +703,6 @@ main,
 
 /* ---------- motion ---------- */
 /* controls answer a press and give colour changes a short ease so hovering across them is not a snap */
-.console-row button,
 .chips button,
 .cites button,
 .solid-link,
@@ -799,7 +715,6 @@ main,
     transform 140ms var(--ease-out);
 }
 
-.console-row button:not(:disabled):active,
 .chips button:not(:disabled):active,
 .cites button:active,
 .solid-link:active {
@@ -844,10 +759,9 @@ main,
   .cites button {
     animation-name: cite-fade;
   }
-  .console-row button:not(:disabled):active,
   .chips button:not(:disabled):active,
-  .cites button:active,
-  .solid-link:active {
+.cites button:active,
+.solid-link:active {
     transform: none;
   }
 }
@@ -869,23 +783,11 @@ main,
   .tools-list {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .console {
-    box-shadow: 5px 5px 0 var(--shadow);
-  }
 }
 
 @media (max-width: 520px) {
   body {
     font-size: 1.0625rem;
-  }
-
-  .console-row {
-    flex-direction: column;
-  }
-
-  .console-row button {
-    width: 100%;
   }
 
   .site-header {
@@ -907,18 +809,6 @@ main,
 }
 
 /* ---------- portrait beside the guide ---------- */
-.ask-body {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  align-items: end;
-  gap: clamp(24px, 4vw, 56px);
-  margin-top: clamp(32px, 5vw, 56px);
-}
-
-.ask-body .console {
-  max-width: none;
-  margin-top: 0;
-}
 
 .portrait {
   margin: 0;
@@ -951,9 +841,6 @@ main,
 }
 
 @media (max-width: 900px) {
-  .ask-body {
-    grid-template-columns: minmax(0, 1fr);
-  }
 
   .portrait {
     order: -1;
@@ -1126,13 +1013,6 @@ main,
   line-height: 1.5;
 }
 
-.ask-body {
-  display: block;
-  max-width: 820px;
-  margin: clamp(32px, 5vw, 56px) auto 0;
-  text-align: left;
-}
-
 /* Text that would otherwise sit straight on the dot grid goes on a card, in the same style as the
    guide console, project and role cards. */
 .ask-lede,
@@ -1249,10 +1129,6 @@ main,
 }
 
 /* ---------- guide chat: a bar bottom right that widens leftward into a wide input bar ---------- */
-.ask-body,
-.console {
-  display: none;
-}
 
 .dock {
   position: fixed;
@@ -1529,8 +1405,6 @@ main,
   }
 }
 
-
-
 /* ---------- phones and small tablets ---------- */
 @media (max-width: 900px) {
   /* the header stays on one row: name left, links right */
@@ -1759,7 +1633,6 @@ main,
     padding-inline: clamp(16px, 2.5vw, 40px);
   }
 }
-
 
 /* desktop: pull the portrait up under the header; the conversation stays centred beside it */
 @media (min-width: 901px) {
@@ -2105,4 +1978,8 @@ html {
 
 .is-marked .small-list strong {
   color: var(--ink);
+}
+
+.dock-form input::placeholder {
+  color: #5a6288;
 }
