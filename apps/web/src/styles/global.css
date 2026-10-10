@@ -15,9 +15,9 @@
   --mark: #b89a5a; /* gold */
   --shadow: #040720; /* hard shadows: near-black navy, darker than the ink so they separate from navy fills */
 
-  --display: 'Instrument Sans', 'Arial Narrow', Arial, sans-serif;
-  --text: 'Geist', system-ui, sans-serif;
-  --code: 'Geist Mono', Consolas, monospace;
+  --display: 'Instrument Sans Variable', 'Arial Narrow', Arial, sans-serif;
+  --text: 'Geist Variable', system-ui, sans-serif;
+  --code: 'Geist Mono Variable', Consolas, monospace;
 
   --gutter: clamp(20px, 5vw, 72px);
   --measure: 62ch;

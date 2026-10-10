@@ -6,6 +6,9 @@ import Home from './App';
 import CaseStudy from './CaseStudy';
 import '@flaticon/flaticon-uicons/css/solid/rounded.css';
 import '@flaticon/flaticon-uicons/css/brands/all.css';
+import '@fontsource-variable/instrument-sans/wdth.css';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
 import './styles/global.css';
 
 /** A new page opens at the top, unless the link points at a section. */
