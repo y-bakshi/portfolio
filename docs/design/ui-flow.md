@@ -14,7 +14,7 @@ flowchart TD
   Contact --> Choices[Email / LinkedIn / GitHub / scheduling]
 ```
 
-The header shows the owner's name. The hero leads with a large centred portrait and a short introduction, then the guide console. Visual rules are in the [design language](design-language.md).
+The header shows the owner's name. On desktop the hero puts the portrait on the left and the conversation on the right, with a guide chat: a bar at the bottom right that widens into an input bar (a bottom drawer on phones); answers appear beside the portrait. Visual rules are in the [design language](design-language.md).
 
 ## Assistant
 

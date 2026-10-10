@@ -31,7 +31,7 @@ Text wireframes specify hierarchy; the built page in `apps/web` is the reference
 
 ## Mobile homepage
 
-Single column in the same order: header, portrait, introduction, guide console, projects, history, tools, contact. Suggested questions wrap. The Ask button is full width. Rows stack name first, then detail and trace.
+Single column in the same order: header, portrait, introduction, projects, history, tools, contact. The guide bar spans the bottom of the screen and opens a bottom drawer at 72 percent of the height, holding the conversation. Rows stack name first, then detail and trace.
 
 ## Case study
 

@@ -16,7 +16,7 @@ export const projects: Project[] = [
     name: 'TestPilot',
     line: 'Writes tests, then argues with them.',
     detail:
-      'Generates tests and predicts defects. It retrieves your coding standards first, drafts the tests against them, and an LLM critique loop decides which ones survive.',
+      'Generates pytest, Jest and JUnit tests and ranks defect-prone files in public GitHub repositories. It retrieves the five most relevant coding-standard chunks first, drafts the tests against them, and an LLM critique loop regenerates anything scoring below 0.6.',
     role: 'Built every non-frontend part of a four-person team project.',
     stack: [
       'FastAPI',
@@ -51,7 +51,7 @@ export const projects: Project[] = [
     name: 'GuardianAI',
     line: 'Two ways to answer a safety question.',
     detail:
-      'A neighborhood safety assistant. Questions about known incidents take a cheap path through database summaries. Open-ended ones go to a ReAct agent that can look things up.',
+      'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed.',
     role: 'Contributed within a four-person team.',
     stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
     trace: [
@@ -68,8 +68,8 @@ export const projects: Project[] = [
     name: 'CityWatch',
     line: 'Turns noisy public signals into alerts for the right department.',
     detail:
-      'A multimodal pipeline on AWS. Social posts come in through a stream, vision and language models classify them, and the result is routed to the department that should see it.',
-    role: 'Team project. Contribution details to be confirmed.',
+      'A serverless pipeline on AWS that turns social-media signals into department alerts within 15 seconds. Kinesis ingests, Lambda and Rekognition analyse, Bedrock classifies, and EventBridge routes each alert. Won the AWS Ideathon 2026.',
+    role: 'Designed the pipeline and its scaling model. Won the AWS Ideathon 2026.',
     stack: ['Kinesis', 'Lambda', 'Rekognition', 'Bedrock', 'EventBridge'],
     trace: [
       { label: 'Social signals', depth: 0 },
@@ -84,7 +84,7 @@ export const projects: Project[] = [
     name: 'Serverless face recognition',
     line: 'Detection and recognition as separate stages with a queue between them.',
     detail:
-      'Detection and recognition run as independent inference stages on Lambda, joined by an SQS queue, packaged as containers.',
+      'MTCNN detection and FaceNet recognition run as separate Lambda functions joined by SQS. Under 100 concurrent requests it reached 99% accuracy at 3.75 seconds average latency, after shrinking a 10 GB container to fit Lambda.',
     role: 'Course project.',
     stack: ['PyTorch', 'MTCNN', 'FaceNet', 'Lambda', 'SQS', 'ECR', 'Docker'],
     trace: [
@@ -99,7 +99,7 @@ export const projects: Project[] = [
     name: 'CatScript',
     line: 'A small programming language, lexer to interpreter.',
     detail:
-      'A C++17 implementation with a lexer and parser, an AST, a type checker with scoping, and a tree-walking interpreter.',
+      'A C++17 language with a lexer, a 400-line grammar, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.',
     role: 'Led a four-person team.',
     stack: ['C++17', 'Flex', 'Bison', 'Make'],
     trace: [
@@ -116,7 +116,7 @@ export const projects: Project[] = [
     name: 'Streaming data pipeline',
     line: 'NYC taxi events flowing into a graph database.',
     detail:
-      'A producer and consumer on Kafka write taxi trip events into Neo4j, coordinated on Kubernetes.',
+      'A producer and a custom consumer move NYC taxi records through Kafka into Neo4j as nodes and relationships, with Zookeeper and Kubernetes coordinating the pieces.',
     role: 'Course project.',
     stack: ['Kafka', 'Zookeeper', 'Neo4j', 'Kubernetes', 'Docker'],
     trace: [
@@ -134,28 +134,28 @@ export const roles = [
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
-    note: 'Java and Micronaut service releases, gated CircleCI promotion, hermetic performance tests, API compatibility and schema checks, production-readiness docs.',
+    note: 'Independent deployment for five Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.',
   },
   {
     id: 'insight',
     title: 'Technical team lead',
     org: 'InfoCenter, an Insight Company',
     when: 'Jun to Dec 2024',
-    note: 'Led ServiceNow delivery: mentoring, code review, testing and stakeholder coordination.',
+    note: 'Led eight people across five ServiceNow projects and mentored 12 developers. Zero critical post-deployment defects. Best Team Award among 30+ teams.',
   },
   {
     id: 'tcs-dev',
     title: 'ServiceNow developer',
     org: 'Tata Consultancy Services',
     when: 'Sep 2022 to May 2024',
-    note: 'Python and LLDP discovery, CMDB automation, portals, monitoring integrations, runbooks.',
+    note: 'Python and LLDP discovery that kept a CMDB of 10,000+ devices current, 100+ portals and forms, monitoring integrations, runbooks that cut onboarding from two weeks to five days.',
   },
   {
     id: 'tcs-ase',
     title: 'Assistant systems engineer',
     org: 'Tata Consultancy Services',
     when: 'Nov 2021 to Sep 2022',
-    note: 'RHEL, Docker, HPC and LSF operations, monitoring, deployment validation.',
+    note: 'RHEL, Docker and HPC operations with IBM Spectrum LSF, monitoring, and 99.9% documented uptime.',
   },
 ];
 
@@ -166,7 +166,7 @@ export const stackGroups = [
   },
   { group: 'Data and services', items: 'PostgreSQL, pgvector, REST, WebSockets, Kafka, Kinesis' },
   { group: 'Cloud and delivery', items: 'AWS, GCP, Docker, Kubernetes, CI/CD, Linux' },
-  { group: 'Languages', items: 'Python, Java, C++, Rust, plus ServiceNow and RHEL at work' },
+  { group: 'Languages', items: 'Python, Java, C++, Rust, TypeScript, plus ServiceNow and RHEL at work' },
 ];
 
 export type Answer = { text: string; cites: string[] };
@@ -223,11 +223,11 @@ export function answerFor(question: string): Answer {
     };
   if (has('contact', 'hire', 'email', 'reach', 'talk'))
     return {
-      text: 'The contact links are still placeholders on this draft. They are at the bottom of the page.',
+      text: 'Email, LinkedIn, GitHub and a 30 minute booking link are at the bottom of the page.',
       cites: ['contact'],
     };
   return {
-    text: 'That is not in the notes this page draws on yet. Try one of the questions above, or browse the projects below.',
+    text: 'That is not in the notes this page draws on yet. Try one of the suggested questions, or browse the projects below.',
     cites: [],
   };
 }

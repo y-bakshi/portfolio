@@ -12,7 +12,7 @@ The GitHub repository is public. Build and validate the website privately until 
 
 ## Phase 1: Foundation
 
-Define design tokens, licensed fonts, layout primitives, content schemas, routes, header, hero with guide console, and About. Largely built; fonts and content schemas remain. Exit: responsive structure works across desktop/touch layouts, keyboard access works, and content builds from validated records.
+Define design tokens, licensed fonts, layout primitives, content schemas, routes, header, hero with docked guide chat, and About. Largely built; fonts and content schemas remain. Exit: responsive structure works across desktop/touch layouts, keyboard access works, and content builds from validated records.
 
 ## Phase 2: Publication and Evidence
 

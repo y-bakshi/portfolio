@@ -10,7 +10,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 
 **Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Hero:** a large centred portrait that forms out of mist, then a short introduction ("I'm Yash Bakshi, a software engineer working across AI applications, backend services and cloud delivery..."), then the guide console. There is no display headline; the page's `h1` is visually hidden text naming the person.
+**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (cobalt bubble) and answer (panel bubble) with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the bottom drawer. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
 
 ## Palette
 
@@ -32,9 +32,11 @@ The status light uses red `#FF4D3D`, yellow `#FFC933` and green `#35D07F` on an 
 
 | Role | Face | Notes |
 | --- | --- | --- |
-| Headlines, labels, buttons | Bricolage Grotesque, variable width | Width 75 to 82 percent and weight 800 for display. Letter spacing slightly negative, never so tight that glyphs touch. |
-| Reading text | Source Serif 4 | 17 to 18 px, line height 1.65, measure about 62ch. |
-| Pipeline traces only | JetBrains Mono | Used where the content is literally a pipeline stage list. Not for decorative labels. |
+| Headlines, labels, buttons | Instrument Sans, variable width | Width 75 to 80 percent and the heaviest weight (700) for display. Letter spacing slightly negative, never so tight that glyphs touch. |
+| Reading text, chat bubbles, card descriptions | Geist | 17 to 18 px, line height 1.55 to 1.65, measure about 62ch. Body text is weight 450 and card descriptions and bubbles weight 500, because Geist's regular weight looks thin beside the heavy borders and shadows. |
+| Pipeline traces only | Geist Mono | Used where the content is literally a pipeline stage list. Not for decorative labels. |
+
+Fonts load from Google Fonts. Self-host subsetted files and record licences before launch.
 
 Sentence case throughout. No all-caps labels, no eyebrow above every heading, no middle-dot metadata strings. Fonts load from Google Fonts for now; self-hosting subsetted WOFF2 is a pre-launch task.
 
@@ -44,15 +46,15 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 - The sticky header spans the full width with the ground colour and a thin rule.
 - Any text that would sit straight on the dot grid goes on a card too: the introduction, each section's heading and lead-in, the small footnotes, and the case-study title and body. There are no text halos or shadows.
 - The tools list is a single card in the same style, with its four groups inside it.
-- Each project and each role is its own card, styled like the guide console: panel fill, 2 px ink border and a hard offset shadow (8 px for projects, 6 px for roles, smaller on phones). Inside a project card the name and one line sit on the left and the detail, trace, stack and link on the right; they stack on screens under 820 px.
-- The hero places the guide console and the portrait side by side on wide screens. On narrow screens the portrait comes first, then the console.
+- Each project and each role is its own card, styled like the guide dock: panel fill, 2 px ink border and a hard offset shadow (8 px for projects, 6 px for roles, smaller on phones). Inside a project card the name and one line sit on the left and the detail, trace, stack and link on the right; they stack on screens under 820 px.
+- The hero is the portrait and the introduction card, centred. The guide is a docked chat fixed to the bottom right and minimised to a bar on load (see the guide dock component).
 - Spacing is fluid with `clamp()`. Section gaps run roughly 56 to 112 px.
-- Depth comes from hard offset shadows (8 px on the console, 6 px on the facts panel). No soft grey shadows.
+- Depth comes from hard offset shadows (8 px on project cards, 6 px on the facts panel). No soft grey shadows.
 
 ## Components
 
 - **Guide voice:** the page speaks as Yash in first person; the guide is introduced as an assistant that answers from his project notes and refers to him in the third person. It never claims to be him.
-- **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (status text is a polite live region; streamed text is hidden from assistive tech until done, then announced once), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
+- **Guide chat:** closed, a small bar fixed at the bottom right ("Ask the guide", status text, status light, chevron). On desktop, clicking it widens the bar into an input bar along the bottom (suggested-question chips in a scrolling row above the input, the status light, Ask and a close button); on desktop the open bar spans the full window width, answers appear in the hero's right column, not in the bar, earlier exchanges stay above the newest one, the column is a fixed height with no scrollbar and no manual scrolling: the newest message stays in view, older ones fade out at the top, and streaming text never moves the page, and the page scrolls the conversation into view above the bar. On phones (900 px and under) the bar spans the bottom edge and opens a bottom drawer, 72 percent of the height, with a handle, a header with status and close button, the conversation (newest question pinned to the top, chips until the first question) and the input at the bottom, over a light scrim; Show closes the drawer so the cited card is visible. Escape or the close button dismisses it and returns focus to the bar, and asking a question opens it. The panel is `inert` while closed. It uses the elements below: labelled input, Ask button, suggested-question chips, status light with text, answer text (streamed text is hidden from assistive tech until done, then announced once through a polite live region, and the status text is a separate live region), and navigation buttons that jump to a cited card (visibly just the project or role name, centred under the answer; the accessible name says "Show … on the page"). Guide messages align left, the visitor's right. Asking a new question scrolls the page back to the conversation, and a "Back to top" button appears in the open bar once the page is scrolled. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
 - **Status light:** red while answering, yellow while thinking, green when ready, with matching text: "Answering, one moment", "Looking through the notes", "Ready for your question".
 - **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
 - **Project card:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
