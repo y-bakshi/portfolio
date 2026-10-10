@@ -91,6 +91,11 @@ export function MistPortrait({
     let tileActive = new Uint8Array(0);
     let tileDark = new Float32Array(0); // tone of each tile, 0 = ground, 1 = full ink
     let activeTiles: number[] = [];
+    let ready = false; // particles sampled
+    let stride = 1; // draw every Nth particle; raised if frames run long
+    let lastNow = 0;
+    let smoothedDt = 16.7;
+    let measured = 0;
     const specks = Array.from({ length: SPECK_BUCKETS }, () => ({
       x: [] as number[],
       y: [] as number[],
@@ -101,7 +106,10 @@ export function MistPortrait({
       s: [] as number[],
     }));
 
-    const sampleImage = (img: HTMLImageElement) => {
+    // Sampling is cut into small slices that yield to the browser, so the page never blocks on it.
+    const yieldToBrowser = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+    const sampleImage = async (img: HTMLImageElement) => {
       const w = SAMPLE_WIDTH;
       const h = Math.round((SAMPLE_WIDTH * img.naturalHeight) / img.naturalWidth);
       const off = document.createElement('canvas');
@@ -122,35 +130,43 @@ export function MistPortrait({
           const d = Math.min(1, Math.max(0, (232 - lum) / 200)) * a;
           if (d > 0.1) cand.push({ x, y, d });
         }
+        if (y % 48 === 47) {
+          await yieldToBrowser();
+          if (dead) return;
+        }
       }
 
       const out: P[] = [];
       const golden = Math.PI * (3 - Math.sqrt(5));
       let guard = 0;
-      while (out.length < count && guard++ < count * 60) {
-        const c = cand[(Math.random() * cand.length) | 0];
-        const fx = (c.x / w - FACE.cx) / FACE.rx;
-        const fy = (c.y / h - FACE.cy) / FACE.ry;
-        const face = Math.exp(-(fx * fx + fy * fy));
-        if (Math.random() > c.d ** 0.7 * (0.22 + 0.78 * face)) continue;
-        const k = out.length;
-        const yy = 1 - (k / (count - 1)) * 2;
-        const rr = Math.sqrt(1 - yy * yy);
-        const th = golden * k;
-        out.push({
-          sx: Math.cos(th) * rr,
-          sy: yy,
-          sz: Math.sin(th) * rr,
-          tx: (c.x + Math.random()) / w,
-          ty: (c.y + Math.random()) / h,
-          dark: c.d,
-          delay: Math.random() * STAGGER,
-          seed: Math.random() * 1000,
-          ox: 0,
-          oy: 0,
-          vx: 0,
-          vy: 0,
-        });
+      while (out.length < count && guard < count * 60) {
+        for (let tries = 0; tries < 12000 && out.length < count; tries++, guard++) {
+          const c = cand[(Math.random() * cand.length) | 0];
+          const fx = (c.x / w - FACE.cx) / FACE.rx;
+          const fy = (c.y / h - FACE.cy) / FACE.ry;
+          const face = Math.exp(-(fx * fx + fy * fy));
+          if (Math.random() > c.d ** 0.7 * (0.22 + 0.78 * face)) continue;
+          const k = out.length;
+          const yy = 1 - (k / (count - 1)) * 2;
+          const rr = Math.sqrt(1 - yy * yy);
+          const th = golden * k;
+          out.push({
+            sx: Math.cos(th) * rr,
+            sy: yy,
+            sz: Math.sin(th) * rr,
+            tx: (c.x + Math.random()) / w,
+            ty: (c.y + Math.random()) / h,
+            dark: c.d,
+            delay: Math.random() * STAGGER,
+            seed: Math.random() * 1000,
+            ox: 0,
+            oy: 0,
+            vx: 0,
+            vy: 0,
+          });
+        }
+        await yieldToBrowser();
+        if (dead) return;
       }
       particles = out;
     };
@@ -188,6 +204,13 @@ export function MistPortrait({
     const paint = (now: number) => {
       frame = 0;
       if (dead) return;
+
+      // If frames are running long, draw every other particle so slower devices stay smooth.
+      if (lastNow && now - lastNow < 100) {
+        smoothedDt = smoothedDt * 0.9 + (now - lastNow) * 0.1;
+        if (++measured > 30 && smoothedDt > 40 && stride === 1) stride = 2; // under about 25 fps
+      }
+      lastNow = now;
       ctx.clearRect(0, 0, cw, ch);
       const t = started ? Math.min(1, Math.max(0, (now - started) / FORM_MS)) : 0;
       const formed = t >= 1;
@@ -217,7 +240,7 @@ export function MistPortrait({
             for (let i = i0; i <= i1; i++) {
               const k = j * tilesX + i;
               if (tileActive[k]) continue;
-              if (Math.hypot((i + 0.5) * TILE - mx, (j + 0.5) * TILE - my) < reach) {
+              if (((i + 0.5) * TILE - mx) ** 2 + ((j + 0.5) * TILE - my) ** 2 < reach * reach) {
                 tileActive[k] = 1;
                 activeTiles.push(k);
               }
@@ -233,7 +256,7 @@ export function MistPortrait({
           const j = (k / tilesX) | 0;
           const dx = (i + 0.5) * TILE + tileState[b] - mx;
           const dy = (j + 0.5) * TILE + tileState[b + 1] - my;
-          const dist = Math.hypot(dx, dy);
+          const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < REPEL_RADIUS && dist > 0.01) {
             const f = (1 - dist / REPEL_RADIUS) ** 2 * TILE_PUSH;
             tileState[b + 2] += (dx / dist) * f;
@@ -305,7 +328,8 @@ export function MistPortrait({
         b.y.length = 0;
         b.s.length = 0;
       }
-      for (const p of particles) {
+      for (let n = 0; n < particles.length; n += stride) {
+        const p = particles[n];
         const local = Math.min(1, Math.max(0, (t - p.delay) / (1 - STAGGER)));
         const e = ease(local);
 
@@ -325,7 +349,7 @@ export function MistPortrait({
         // the pointer pushes nearby particles aside; they spring back
         const dx = x + p.ox - mx;
         const dy = y + p.oy - my;
-        const dist = Math.hypot(dx, dy);
+        const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < REPEL_RADIUS && dist > 0.01) {
           const f = (1 - dist / REPEL_RADIUS) ** 2 * 3.2;
           p.vx += (dx / dist) * f;
@@ -344,7 +368,8 @@ export function MistPortrait({
         const mistAlpha = 0.18 + 0.5 * depth;
         const portraitAlpha = 0.45 + 0.5 * p.dark;
         const alpha = (mistAlpha + (portraitAlpha - mistAlpha) * e) * grain;
-        const size = (1 + depth * 0.7) * (1 - e) + (1.1 + p.dark * 0.8) * e;
+        const size =
+          ((1 + depth * 0.7) * (1 - e) + (1.1 + p.dark * 0.8) * e) * (1 + (stride - 1) * 0.35);
         const bucket = buckets[Math.min(BUCKETS - 1, Math.max(0, (alpha * BUCKETS) | 0))];
         bucket.x.push(x);
         bucket.y.push(y);
@@ -372,7 +397,7 @@ export function MistPortrait({
       ([entry]) => {
         visible = entry.isIntersecting;
         if (visible) {
-          if (!started) started = performance.now() + 250;
+          if (ready && !started) started = performance.now() + 250;
           wake();
         }
       },
@@ -398,13 +423,17 @@ export function MistPortrait({
     img.onload = () => {
       if (dead) return;
       portrait = img;
-      sampleImage(img);
       resize();
       ro.observe(canvas);
       observer.observe(canvas);
       canvas.addEventListener('pointermove', onMove);
       canvas.addEventListener('pointerleave', onLeave);
-      wake();
+      sampleImage(img).then(() => {
+        if (dead) return;
+        ready = true;
+        if (visible && !started) started = performance.now() + 250;
+        wake();
+      });
     };
     img.onerror = () => setStill(true);
     img.src = src;
