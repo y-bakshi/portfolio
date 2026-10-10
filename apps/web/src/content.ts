@@ -272,7 +272,14 @@ const find = (ids: string[]) =>
 /** Answers are written from the owner-provided notes only. Anything else gets an honest miss. */
 export function answerFor(question: string): Answer {
   const q = question.toLowerCase();
-  const has = (...words: string[]) => words.some((w) => q.includes(w));
+  // A keyword matches at the start of a word ("retriev" finds "retrieval"); short ones must be whole
+  // words, so "ci" does not match inside "specific" and "story" does not match inside "history".
+  const has = (...words: string[]) =>
+    words.some((w) => {
+      const body = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const end = w.length <= 3 && /\w$/.test(w) ? '\\b' : '';
+      return new RegExp(`\\b${body}${end}`).test(q);
+    });
 
   if (has('rag', 'retriev', 'vector', 'embedding'))
     return {
@@ -304,7 +311,7 @@ export function answerFor(question: string): Answer {
       text: 'ProcWatch is a Rust process monitor. It reads metrics with sysinfo and streams CPU and memory updates to a live web dashboard over WebSockets.',
       cites: find(['procwatch']),
     };
-  if (has('gemini', 'story', 'children', 'multimodal'))
+  if (has('gemini', 'story', 'stories', 'children', 'multimodal'))
     return {
       text: 'The Gemini story generator takes a child\u2019s age, theme and characters from a React interface, and a FastAPI service prompts Gemini for a story and matching images.',
       cites: find(['story-generator']),

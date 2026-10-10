@@ -1,0 +1,119 @@
+/* Case study page. */
+
+.case {
+  padding-bottom: clamp(56px, 9vw, 112px);
+}
+
+.case-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--display);
+  font-weight: 600;
+}
+
+.case-title {
+  margin-top: 12px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 75%;
+  font-size: clamp(3.2rem, 11vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.case-lede {
+  max-width: 28ch;
+  margin-top: 16px;
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+  line-height: 1.35;
+}
+
+.case-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: clamp(28px, 5vw, 72px);
+  margin-top: clamp(32px, 5vw, 64px);
+}
+
+.case-text h2 {
+  margin-top: 40px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 80%;
+  font-size: 1.9rem;
+  letter-spacing: -0.02em;
+}
+
+.case-text h2:first-child {
+  margin-top: 0;
+}
+
+.case-text > p {
+  max-width: var(--measure);
+  margin-top: 10px;
+}
+
+.case-pending {
+  padding: 14px 16px;
+  border: 1.5px dashed var(--ink);
+}
+
+.case-facts {
+  align-self: start;
+  padding: 22px;
+  border: 2px solid var(--ink);
+  background: var(--panel);
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+
+.case-facts dl {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.case-facts dt {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.case-facts dd {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.solid-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 22px;
+  background: var(--action);
+  color: var(--action-ink);
+  font-family: var(--display);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .solid-link:hover {
+    background: var(--ink);
+  }
+}
+
+.case-text {
+  padding: clamp(20px, 3.5vw, 36px);
+}
+
+.case-back a {
+  padding: 0 18px;
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+
+.case-head {
+  margin-top: 20px;
+}

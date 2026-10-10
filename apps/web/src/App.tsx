@@ -112,7 +112,7 @@ export function Home() {
                 </div>
               </article>
             ))}
-            <article className="row row-small" aria-labelledby="small-name">
+            <article className="row" aria-labelledby="small-name">
               <div className="row-head">
                 <h3 id="small-name">Smaller projects</h3>
                 <p className="row-line">Coursework and experiments.</p>

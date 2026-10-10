@@ -1,6 +1,6 @@
 # Portfolio Web
 
-React + Vite frontend for Yash Bakshi's responsive portfolio. The visual system in `docs/design/design-language.md` is hand-written CSS in `src/styles/global.css`; Tailwind CSS is in the build only for its base reset. React components handle the interactive parts such as the portfolio guide.
+React + Vite frontend for Yash Bakshi's responsive portfolio. The visual system in `docs/design/design-language.md` is hand-written CSS in `src/styles/` (one file per area, imported in order by `index.css`); Tailwind CSS is in the build only for its base reset. React components handle the interactive parts such as the portfolio guide.
 
 ## Project Structure
 
@@ -19,8 +19,8 @@ The frontend uses Vite to serve and bundle the React application:
 │   ├── DotGrid.tsx         the pointer-reactive dot background
 │   ├── MistPortrait.tsx    the portrait that condenses from particles
 │   ├── pointerPush.ts      the push radius both effects share
-│   └── styles/
-│       └── global.css
+│   └── styles/             tokens, base, header, hero, conversation, dock, projects, history,
+│                           tools, trace, contact, case, cards and others; index.css imports them in order
 └── package.json
 ```
 
@@ -39,6 +39,8 @@ Run all commands from `apps/web/`:
 | `npm ci` | Installs exact dependencies from the lockfile. |
 | `npm run dev` | Starts the Vite development server. |
 | `npm run check` | Type-checks TypeScript. |
+| `npm test` | Runs the unit and component tests once (Vitest). |
+| `npm run test:watch` | Re-runs the tests as files change. |
 | `npm run build` | Type-checks and builds production files to `dist/`. |
 | `npm run preview` | Previews your build locally. |
 | `npm run format` | Formats frontend source and configuration with Prettier. |

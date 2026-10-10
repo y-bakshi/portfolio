@@ -450,7 +450,7 @@ export function MistPortrait({
   }, [src, still]);
 
   if (still) {
-    return <img className="mist-fallback" src={src} width={width} height={height} alt={alt} />;
+    return <img src={src} width={width} height={height} alt={alt} />;
   }
 
   return (

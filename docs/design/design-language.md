@@ -1,6 +1,6 @@
 # UI Design Language
 
-Status: implemented in `apps/web`. Direction agreed 2026-10-09, replacing the earlier mid-century journal concept (see [ADR-005](../decisions/ADR-005-ask-first-design-direction.md)). Token values below match `apps/web/src/styles/global.css`; change them there and here together.
+Status: implemented in `apps/web`. Direction agreed 2026-10-09, replacing the earlier mid-century journal concept (see [ADR-005](../decisions/ADR-005-ask-first-design-direction.md)). Token values below match `apps/web/src/styles/` (see `index.css` for the file order); change them there and here together.
 
 ## Concept
 
