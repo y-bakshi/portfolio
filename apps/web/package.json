@@ -11,8 +11,8 @@
     "build": "tsc --noEmit && vite build",
     "check": "tsc --noEmit",
     "preview": "vite preview",
-    "format": "prettier --write src/App.tsx src/main.tsx src/styles/global.css index.html vite.config.ts tailwind.config.js postcss.config.js tsconfig.json package.json .prettierrc.json",
-    "format:check": "prettier --check src/App.tsx src/main.tsx src/styles/global.css index.html vite.config.ts tailwind.config.js postcss.config.js tsconfig.json package.json .prettierrc.json"
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" index.html vite.config.ts tailwind.config.js postcss.config.js tsconfig.json package.json .prettierrc.json",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" index.html vite.config.ts tailwind.config.js postcss.config.js tsconfig.json package.json .prettierrc.json"
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.3.1",

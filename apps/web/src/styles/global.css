@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* strong ease-out for anything that responds to a person */
+  --ease-out: cubic-bezier(
+    0.23,
+    1,
+    0.32,
+    1
+  ); /* strong ease-out for anything that responds to a person */
   color-scheme: light;
   --ground: #e8e0d2; /* ivory */
   --panel: #f4efe5;
@@ -184,15 +189,11 @@ main,
 
 /* ---------- hero + guide ---------- */
 .ask {
-  padding-top: clamp(32px, 7vw, 96px);
   padding-bottom: clamp(56px, 9vw, 120px);
 }
 
 .ask-lede {
-  max-width: 46ch;
   margin-top: clamp(24px, 3vw, 40px);
-  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
-  line-height: 1.55;
 }
 
 @media (hover: hover) {
@@ -305,8 +306,6 @@ main,
 }
 
 .fineprint {
-  max-width: var(--measure);
-  margin-top: 18px;
   color: var(--muted);
   font-size: 0.95rem;
 }
@@ -760,8 +759,8 @@ main,
     animation-name: cite-fade;
   }
   .chips button:not(:disabled):active,
-.cites button:active,
-.solid-link:active {
+  .cites button:active,
+  .solid-link:active {
     transform: none;
   }
 }
@@ -841,7 +840,6 @@ main,
 }
 
 @media (max-width: 900px) {
-
   .portrait {
     order: -1;
     max-width: 420px;
@@ -1140,7 +1138,9 @@ main,
   border-bottom: 0;
   background: var(--panel);
   box-shadow: 5px 0 0 var(--shadow);
-  transition: width 280ms var(--ease-out), right 280ms var(--ease-out);
+  transition:
+    width 280ms var(--ease-out),
+    right 280ms var(--ease-out);
 }
 
 .dock.is-open {
@@ -1310,7 +1310,6 @@ main,
   max-width: 85%;
   margin: 0 6px 0 0;
   background: var(--action);
-  box-shadow: 4px 4px 0 var(--shadow);
   color: var(--action-ink);
   font-weight: 600;
 }
@@ -1357,7 +1356,6 @@ main,
   .ask {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(260px, 23rem);
-    align-items: center;
     gap: clamp(24px, 3vw, 48px);
     /* the hero fills the first screen, so Projects starts below the fold */
     min-height: calc(100svh - var(--header-h, 76px));
@@ -1374,7 +1372,6 @@ main,
 
   /* chat output and the navigation buttons live in this column; it scrolls if a long exchange fills it */
   .feed {
-    max-height: calc(100svh - var(--header-h, 76px) - 64px);
     padding: 6px 10px 10px 16px;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -1476,10 +1473,7 @@ main,
   }
 
   .dock.is-open {
-    top: auto;
-    height: min(72dvh, 560px);
     border-top-width: 2px;
-    box-shadow: 0 -5px 0 var(--shadow);
     transition: none;
   }
 
@@ -1507,7 +1501,6 @@ main,
   }
 
   .dock-handle {
-    display: block;
     width: 44px;
     height: 5px;
     margin: 8px auto 0;
@@ -1607,7 +1600,6 @@ main,
 /* desktop: a fixed-height feed that scrolls inside itself, so growing text never moves the page */
 @media (min-width: 901px) {
   .feed {
-    height: calc(100svh - var(--header-h, 76px) - 230px);
     max-height: none;
   }
 
@@ -1639,14 +1631,6 @@ main,
   .ask {
     align-items: start;
     padding-top: 0;
-  }
-
-  .ask .portrait {
-    margin-top: calc(-1 * clamp(0px, 4vw, 56px));
-  }
-
-  .feed {
-    align-self: center;
   }
 }
 
@@ -1704,13 +1688,6 @@ html {
   align-self: flex-end;
 }
 
-.feed .cites,
-.dock-log .cites,
-.exchange .cites {
-  align-self: center;
-  justify-content: center;
-}
-
 .dock-top {
   display: inline-flex;
   flex: 0 0 auto;
@@ -1765,7 +1742,6 @@ html {
   height: 16px;
   border-top: 2px solid var(--ink);
   border-right: 2px solid var(--ink);
-  background: var(--action);
   transform: rotate(45deg);
 }
 
@@ -1777,11 +1753,6 @@ html {
 /* the visitor's bubble casts its shadow to the left, away from its tail */
 .msg-user {
   box-shadow: -4px 4px 0 var(--shadow);
-}
-
-.feed .msg-user,
-.dock-log .msg-user {
-  margin-left: 8px;
 }
 
 /* Bubbles cast their hard shadow with a drop-shadow filter, so the tail is shadowed too, on whichever

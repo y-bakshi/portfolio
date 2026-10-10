@@ -1,9 +1,9 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Answer, answerFor, education, projects, roles, suggestions } from './content';
 
-export type Status = 'ready' | 'thinking' | 'answering';
+type Status = 'ready' | 'thinking' | 'answering';
 
-export const statusLabel: Record<Status, string> = {
+const statusLabel: Record<Status, string> = {
   ready: 'Ready for your question',
   thinking: 'Looking through the notes',
   answering: 'Answering, one moment',
@@ -125,7 +125,8 @@ export function useGuide() {
     setOpen(true);
     if (!showLog && window.scrollY > 0) window.scrollTo({ top: 0 });
     clearTimers();
-    if (asked && answer) setHistory((h) => [...h, { q: asked, text: answer.text, cites: answer.cites }]);
+    if (asked && answer)
+      setHistory((h) => [...h, { q: asked, text: answer.text, cites: answer.cites }]);
     setAsked(q);
     setQuestion('');
     setAnswer(null);
@@ -311,49 +312,113 @@ export function GuideDock({ g }: { g: Guide }) {
 
   return (
     <>
-    <div className={`dock-scrim${open ? ' is-open' : ''}`} onClick={closeDock} aria-hidden="true" />
-    <aside className={`dock${open ? ' is-open' : ''}${closing ? ' is-closing' : ''}`} aria-label="Guide chat" onKeyDown={onDockKey}>
-      <p className="sr-only" aria-live="polite">
-        {statusLabel[status]}
-      </p>
-      <p className="sr-only" role="status">
-        {announce}
-      </p>
-      <button
-        type="button"
-        ref={refs.toggleRef}
-        className="dock-bar"
-        aria-expanded={open}
-        aria-controls="dock-open"
-        aria-label={`Ask the guide, ${statusLabel[status].toLowerCase()}`}
-        onClick={() => setOpen(true)}
-        tabIndex={open ? -1 : 0}
+      <div
+        className={`dock-scrim${open ? ' is-open' : ''}`}
+        onClick={closeDock}
+        aria-hidden="true"
+      />
+      <aside
+        className={`dock${open ? ' is-open' : ''}${closing ? ' is-closing' : ''}`}
+        aria-label="Guide chat"
+        onKeyDown={onDockKey}
       >
-        <span className="dock-title">
-          Ask the guide
-          <span className="dock-state">{statusLabel[status]}</span>
-        </span>
-        <span className={`light light-${status}`} aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <i className="fi fi-sr-comment-alt-dots dock-chevron" aria-hidden="true" />
-      </button>
-      <div id="dock-open" className="dock-open" {...(open ? {} : ({ inert: '' } as object))}>
-        {showLog && (
-          <>
-            <span className="dock-handle" aria-hidden="true" />
-            <div className="dock-head">
-              <span className={`light light-${status}`} aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-              <h2>
-                Ask the guide
-                <span className="dock-state">{statusLabel[status]}</span>
-              </h2>
+        <p className="sr-only" aria-live="polite">
+          {statusLabel[status]}
+        </p>
+        <p className="sr-only" role="status">
+          {announce}
+        </p>
+        <button
+          type="button"
+          ref={refs.toggleRef}
+          className="dock-bar"
+          aria-expanded={open}
+          aria-controls="dock-open"
+          aria-label={`Ask the guide, ${statusLabel[status].toLowerCase()}`}
+          onClick={() => setOpen(true)}
+          tabIndex={open ? -1 : 0}
+        >
+          <span className="dock-title">
+            Ask the guide
+            <span className="dock-state">{statusLabel[status]}</span>
+          </span>
+          <span className={`light light-${status}`} aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+          <i className="fi fi-sr-comment-alt-dots dock-chevron" aria-hidden="true" />
+        </button>
+        <div id="dock-open" className="dock-open" {...(open ? {} : ({ inert: '' } as object))}>
+          {showLog && (
+            <>
+              <span className="dock-handle" aria-hidden="true" />
+              <div className="dock-head">
+                <span className={`light light-${status}`} aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <h2>
+                  Ask the guide
+                  <span className="dock-state">{statusLabel[status]}</span>
+                </h2>
+                <button
+                  type="button"
+                  className="dock-close"
+                  aria-label="Close the guide"
+                  onClick={closeDock}
+                >
+                  <i className="fi fi-sr-cross-small" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="dock-log" ref={refs.logRef}>
+                {!asked && (
+                  <>
+                    <p className="console-note">
+                      I answer from Yash’s project notes. The full version is still in development.
+                    </p>
+                    {chipList}
+                  </>
+                )}
+                {thread}
+              </div>
+              {asked && <div className="chips-strip">{chipList}</div>}
+            </>
+          )}
+          {!showLog && chipList}
+          <form className="dock-form" onSubmit={onSubmit}>
+            <span className={`light light-${status}`} aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <label htmlFor="ask-input" className="sr-only">
+              Ask the guide about Yash’s work
+            </label>
+            <input
+              id="ask-input"
+              ref={refs.inputRef}
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder={statusLabel[status]}
+              autoComplete="off"
+            />
+            <button type="submit" className="dock-ask" disabled={status !== 'ready'}>
+              Ask
+            </button>
+            {!showLog && scrolled && (
+              <button
+                type="button"
+                className="dock-top"
+                onClick={() => window.scrollTo({ top: 0 })}
+              >
+                <i className="fi fi-sr-angle-small-up" aria-hidden="true" />
+                Back to top
+              </button>
+            )}
+            {!showLog && (
               <button
                 type="button"
                 className="dock-close"
@@ -362,62 +427,10 @@ export function GuideDock({ g }: { g: Guide }) {
               >
                 <i className="fi fi-sr-cross-small" aria-hidden="true" />
               </button>
-            </div>
-            <div className="dock-log" ref={refs.logRef}>
-              {!asked && (
-                <>
-                  <p className="console-note">
-                    I answer from Yash’s project notes. The full version is still in development.
-                  </p>
-                  {chipList}
-                </>
-              )}
-              {thread}
-            </div>
-            {asked && <div className="chips-strip">{chipList}</div>}
-          </>
-        )}
-        {!showLog && chipList}
-        <form className="dock-form" onSubmit={onSubmit}>
-          <span className={`light light-${status}`} aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          <label htmlFor="ask-input" className="sr-only">
-            Ask the guide about Yash’s work
-          </label>
-          <input
-            id="ask-input"
-            ref={refs.inputRef}
-            type="text"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder={statusLabel[status]}
-            autoComplete="off"
-          />
-          <button type="submit" className="dock-ask" disabled={status !== 'ready'}>
-            Ask
-          </button>
-          {!showLog && scrolled && (
-            <button type="button" className="dock-top" onClick={() => window.scrollTo({ top: 0 })}>
-              <i className="fi fi-sr-angle-small-up" aria-hidden="true" />
-              Back to top
-            </button>
-          )}
-          {!showLog && (
-            <button
-              type="button"
-              className="dock-close"
-              aria-label="Close the guide"
-              onClick={closeDock}
-            >
-              <i className="fi fi-sr-cross-small" aria-hidden="true" />
-            </button>
-          )}
-        </form>
-      </div>
-    </aside>
+            )}
+          </form>
+        </div>
+      </aside>
     </>
   );
 }
