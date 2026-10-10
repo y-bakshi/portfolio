@@ -42,7 +42,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 
 - Left aligned. Content width up to 1240 px with a fluid gutter of 20 to 72 px.
 - The sticky header spans the full width with the ground colour and a thin rule.
-- Projects are open rows, not cards: name and one line on the left, detail, trace, stack and link on the right. They stack on screens under 820 px.
+- Each project and each role is its own card, styled like the guide console: panel fill, 2 px ink border and a hard offset shadow (8 px for projects, 6 px for roles, smaller on phones). Inside a project card the name and one line sit on the left and the detail, trace, stack and link on the right; they stack on screens under 820 px.
 - The hero places the guide console and the portrait side by side on wide screens. On narrow screens the portrait comes first, then the console.
 - Spacing is fluid with `clamp()`. Section gaps run roughly 56 to 112 px.
 - Depth comes from hard offset shadows (8 px on the console, 6 px on the facts panel). No soft grey shadows.
@@ -53,7 +53,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 - **Guide console:** labelled input, Ask button, suggested-question chips, status light with text, answer area (status text is a polite live region; streamed text is hidden from assistive tech until done, then announced once), and "Show" buttons that jump to a cited row. Ask is available whenever the guide is ready. An empty submit moves focus to the input.
 - **Status light:** red while answering, yellow while thinking, green when ready, with matching text: "Answering, one moment", "Looking through the notes", "Ready for your question".
 - **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
-- **Project row:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
+- **Project card:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
 - **Contact block:** an inverted ink panel with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
 - **Case study:** headline, standfirst, trace, problem, approach, results, with a facts panel for role, stack, source and demo. Results stay "evidence pending" until verified.
 
