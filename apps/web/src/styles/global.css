@@ -858,10 +858,30 @@ main,
   margin: 0;
 }
 
-.portrait img {
+.portrait {
+  position: relative;
+}
+
+/* a soft patch of page colour keeps the dot grid from showing through the particles */
+.portrait::before {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  z-index: -1;
+  background: var(--ground);
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent);
+  mask-image: radial-gradient(closest-side, #000 62%, transparent);
+}
+
+.portrait img,
+.portrait canvas {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.mist {
+  touch-action: pan-y;
 }
 
 @media (max-width: 900px) {

@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Answer, answerFor, projects, roles, stackGroups, suggestions } from './content';
 import { DotGrid } from './DotGrid';
+import { MistPortrait } from './MistPortrait';
 import { SiteHeader, Trace } from './parts';
 
 const contactLinks = [
@@ -219,10 +220,10 @@ export function Home() {
               </div>
             </div>
             <figure className="portrait">
-              <img
+              <MistPortrait
                 src="/portrait.webp"
-                width="1100"
-                height="1075"
+                width={1100}
+                height={1075}
                 alt="Illustrated portrait of Yash Bakshi in a beanie and sunglasses, looking down"
               />
             </figure>
