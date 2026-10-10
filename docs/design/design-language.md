@@ -54,7 +54,7 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 - **Status light:** red while answering, yellow while thinking, green when ready, with matching text: "Answering, one moment", "Looking through the notes", "Ready for your question".
 - **Trace:** a waterfall of pipeline stages, each starting one step right of the last. It shows order only. Do not add timings unless they are measured.
 - **Project card:** see Layout. A project with a published case study links to it; others say the case study is in preparation.
-- **Contact block:** an inverted ink panel with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
+- **Contact block:** a full-width ink band attached to the bottom of the page (the footer continues it), with the heading on the left and the links on the right on wide screens, stacked on narrow ones, with a single question as its heading and plain links, each with a Flaticon icon on the left and text on the right: two email addresses, LinkedIn, GitHub and a 30 minute booking link that opens the owner's Google Calendar page in a new tab. The footer credits Flaticon.
 - **Case study:** headline, standfirst, trace, problem, approach, results, with a facts panel for role, stack, source and demo. Results stay "evidence pending" until verified.
 
 ## Motion
