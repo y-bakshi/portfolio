@@ -5,7 +5,7 @@
 ```mermaid
 flowchart TD
   Home[Header, thesis and guide console] --> About[Introduction and portrait]
-  About --> Featured[Project rows with traces]
+  About --> Featured[Project cards with traces]
   Featured --> Archive[Filtered project archive]
   Featured --> Case[Case study]
   Archive --> Case
