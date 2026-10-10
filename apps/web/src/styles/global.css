@@ -2002,8 +2002,58 @@ html {
   }
 }
 
-/* The visitor's bubble is solid navy with a gold shadow. A navy outline and navy shadow around a blue
-   fill all merged into one shape, so the shadow carries the contrast instead. */
+/* phone drawer: after the first question the suggestions become one row above the input that scrolls
+   sideways with the scrollbar hidden */
+@media (max-width: 900px) {
+  .dock-open .chips-strip {
+    flex: 0 0 auto;
+    padding: 8px 12px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .dock-open .chips-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dock-open .chips-strip .chips {
+    flex-wrap: nowrap;
+    margin: 0;
+    padding-bottom: 8px;
+    overflow: visible;
+  }
+
+  .dock-open .chips-strip .chips li {
+    flex: 0 0 auto;
+  }
+
+  .dock-open .chips-strip .chips button {
+    white-space: nowrap;
+  }
+}
+
+/* phones: the open chat takes the whole visible screen. It is pinned to the visual viewport, so the
+   keyboard and the browser's toolbars never cover any part of it. */
+@media (max-width: 900px) {
+  .dock.is-open {
+    top: var(--vvt, 0px);
+    bottom: auto;
+    height: var(--vvh, 100dvh);
+    border-top: 0;
+    box-shadow: none;
+  }
+
+  .dock-handle {
+    display: none;
+  }
+
+  html.chat-open,
+  html.chat-open body {
+    overflow: hidden;
+  }
+}
+
+/* The visitor's bubble is solid navy; the darker --shadow token keeps it from merging with its own outline. */
 .msg-user,
 .feed .msg-user,
 .dock-log .msg-user {

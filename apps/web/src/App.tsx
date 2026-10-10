@@ -87,6 +87,29 @@ export function Home() {
   }, []);
 
   useEffect(() => {
+    // On phones the on-screen keyboard shrinks the visual viewport but not the layout viewport, so a
+    // fixed drawer would sit behind it. Publish the visible area's top and height as CSS variables.
+    const vv = window.visualViewport;
+    if (!vv || !open || !isMobile) return;
+    const root = document.documentElement.style;
+    const update = () => {
+      root.setProperty('--vvt', `${vv.offsetTop}px`);
+      root.setProperty('--vvh', `${vv.height}px`);
+    };
+    update();
+    // the full-screen chat owns the screen, so the page behind it must not scroll
+    document.documentElement.classList.add('chat-open');
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+      root.removeProperty('--vvt');
+      root.removeProperty('--vvh');
+      document.documentElement.classList.remove('chat-open');
+    };
+  }, [open, isMobile]);
+  useEffect(() => {
     if (open) inputRef.current?.focus({ preventScroll: true });
   }, [open]);
   useEffect(() => {
@@ -466,6 +489,7 @@ export function Home() {
                 )}
                 {thread}
               </div>
+              {asked && <div className="chips-strip">{chipList}</div>}
             </>
           )}
           {!isMobile && chipList}
