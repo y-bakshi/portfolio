@@ -73,7 +73,7 @@ export function MistPortrait({
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    const INK = token('--ink', [20, 33, 27]);
+    const INK = token('--ink', [14, 29, 97]);
     const small = window.innerWidth < 700;
     const count = small ? 9000 : 24000;
 

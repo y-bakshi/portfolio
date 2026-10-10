@@ -4,27 +4,28 @@ Status: implemented in `apps/web`. Direction agreed 2026-10-09, replacing the ea
 
 ## Concept
 
-The page is a working surface built around the portfolio guide. The first thing a visitor can do is ask a question about the work. Answers cite real project rows, and the cited row is highlighted in amber on the page. That highlight is the one memorable moment. Everything else stays quiet and plain.
+The page is a working surface built around the portfolio guide. The first thing a visitor can do is ask a question about the work. Answers cite real project rows, and the cited row is highlighted in gold on the page. That highlight is the one memorable moment. Everything else stays quiet and plain.
 
 The portfolio must stay fully useful without the guide: every project, the work history, tools and contact details are ordinary content that reads and links without JavaScript-driven features.
 
 **Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (cobalt bubble) and answer (panel bubble) with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the bottom drawer. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
+**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (navy bubble) and answer (panel bubble). The visitor's bubble is solid navy and relies on the darker shadow to separate from its own outline with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the full-screen chat. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
 
 ## Palette
 
 | Token | Value | Usage |
 | --- | --- | --- |
-| `--ground` | `#EDEFE9` | Page background. |
-| `--panel` | `#F9FAF6` | Guide console, trace panels, facts panel. |
-| `--ink` | `#14211B` | Text, borders, offset shadows, contact block. |
-| `--muted` | `#4A5A52` | Secondary text. About 6:1 on the ground. |
-| `--line` | `#B8C1BA` | Row dividers. |
-| `--action` | `#2440E8` | Primary action fill, trace bars, text links. |
-| `--mark` | `#F5C542` | Citation highlight, card hover, and text selection. Do not use it as decoration elsewhere. |
+| `--ground` | `#E8E0D2` | Page background (ivory). |
+| `--panel` | `#F4EFE5` | Guide console, trace panels, facts panel. |
+| `--ink` | `#0E1D61` | Text, borders, offset shadows, contact block, portrait and dot grid (deep atlas navy). |
+| `--shadow` | `#040720` | Every hard offset shadow: near-black navy, darker than the ink so shadows separate from navy fills and borders. |
+| `--muted` | `#4B547F` | Secondary text. 5.6:1 on the ground, 6.4:1 on the panel. |
+| `--line` | `#BDB09A` | Row dividers. |
+| `--action` | `#1A2E8A` | Primary action fill, trace bars, text links. |
+| `--mark` | `#B89A5A` (gold) | Citation highlight, card hover, and text selection. Do not use it as decoration elsewhere. |
 
-Muted grey and the cobalt link drop below 4.5:1 on amber, so text inside a highlighted or hovered card switches to full ink (the link also gets an underline). Hover applies only on devices that can hover.
+Muted text and the link colour drop below 4.5:1 on gold, so text inside a highlighted or hovered card switches to full ink (the link also gets an underline). Hover applies only on devices that can hover.
 
 The status light uses red `#FF4D3D`, yellow `#FFC933` and green `#35D07F` on an ink pill. It always appears with a text label, so colour is never the only signal.
 
@@ -72,9 +73,9 @@ Sentence case throughout. No all-caps labels, no eyebrow above every heading, no
 
 ## Accessibility and quality floor
 
-- Visible 3 px cobalt focus ring with offset. Controls are at least 44 px tall.
+- Visible 3 px navy focus ring with offset. Controls are at least 44 px tall.
 - Skip link, labelled landmarks, and one `h1` per route.
-- Text contrast checked on the ground, panel and amber surfaces.
+- Text contrast checked on the ground, panel and gold surfaces.
 - Verify at 320 px through wide desktop, 200 percent text zoom, keyboard only, and with reduced motion.
 - Empty, loading and miss states are designed: the guide says plainly when a question is not in the notes.
 

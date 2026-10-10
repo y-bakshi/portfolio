@@ -4,13 +4,13 @@ Version-controlled asset specification. Use it with the [design language](design
 
 ## Art direction
 
-Flat, graphic and restrained: pale grey-green ground, deep green-black ink, cobalt, and amber used sparingly. Hard edges, no gradients, no soft shadows, no 3D, no neon AI imagery. Anything illustrated should look like it belongs next to a pipeline trace.
+Flat, graphic and restrained: ivory ground, deep navy ink, navy for actions, and gold used sparingly. Hard edges, no gradients, no soft shadows, no 3D, no neon AI imagery. Anything illustrated should look like it belongs next to a pipeline trace.
 
 ## Delivered assets (in `apps/web/public/`)
 
 | Asset | File | Notes |
 | --- | --- | --- |
-| Favicon | `favicon.svg` | Hand-drawn SVG monogram: bold condensed YB with an amber highlighter bar. Based on an owner-generated Nano Banana concept, redrawn as vector so it stays sharp at 16 px. The old scaffold `favicon.ico` has been removed. |
+| Favicon | `favicon.svg` | Hand-drawn SVG monogram: bold condensed YB with a gold highlighter bar. Based on an owner-generated Nano Banana concept, redrawn as vector so it stays sharp at 16 px. The old scaffold `favicon.ico` has been removed. |
 | Portrait | `portrait.webp` | Halftone engraving derived from the owner's photograph (generated with Nano Banana, owner-approved). The outside ground is transparent and the left, right and bottom edges are feathered so the cropped engraving dissolves into the page instead of ending in a hard line. Source photo is kept outside the repository. |
 | Social preview | `og.png` | 1200×630. Staircase artwork generated with Nano Banana, with the name and a one-line description added as real text (Bahnschrift). `og:image` is relative until a domain exists. |
 
