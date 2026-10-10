@@ -100,8 +100,16 @@ export function useGuide() {
   }, [asked, shown, status, history.length, isMobile]);
 
   const [closing, setClosing] = useState(false);
+  // The bar is hidden while the chat is open, so focus can only go back to it once it is showing again.
+  const returnFocus = useRef(false);
+  useEffect(() => {
+    if (!open && returnFocus.current) {
+      returnFocus.current = false;
+      toggleRef.current?.focus();
+    }
+  }, [open]);
   const closeDock = () => {
-    toggleRef.current?.focus();
+    returnFocus.current = true;
     if (showLog || prefersReducedMotion()) {
       setOpen(false);
       return;
