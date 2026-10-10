@@ -39,6 +39,8 @@ Run all commands from `apps/web/`:
 | `npm ci` | Installs exact dependencies from the lockfile. |
 | `npm run dev` | Starts the Vite development server. |
 | `npm run check` | Type-checks TypeScript. |
+| `npm test` | Runs the unit and component tests once (Vitest). |
+| `npm run test:watch` | Re-runs the tests as files change. |
 | `npm run build` | Type-checks and builds production files to `dist/`. |
 | `npm run preview` | Previews your build locally. |
 | `npm run format` | Formats frontend source and configuration with Prettier. |

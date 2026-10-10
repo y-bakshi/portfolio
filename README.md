@@ -30,5 +30,6 @@ Before submitting changes, run:
 ```sh
 npm run format:check
 npm run check
+npm test
 npm run build
 ```
