@@ -1500,7 +1500,6 @@ main,
     max-height: calc(100svh - var(--header-h, 76px) - 64px);
     padding: 6px 10px 10px 16px;
     overflow-y: auto;
-    overscroll-behavior: contain;
     scrollbar-width: thin;
   }
 
