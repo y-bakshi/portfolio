@@ -509,13 +509,7 @@ export function Home() {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder={statusLabel[status]}
-              name="guide-question"
               autoComplete="off"
-              enterKeyHint="send"
-              aria-autocomplete="none"
-              data-form-type="other"
-              data-lpignore="true"
-              data-1p-ignore
             />
             <button type="submit" className="dock-ask" disabled={status !== 'ready'}>
               Ask
