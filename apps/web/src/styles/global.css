@@ -2031,10 +2031,23 @@ html {
   }
 }
 
-/* phones: the drawer rides above the on-screen keyboard and never grows taller than what is visible */
+/* phones: the open chat takes the whole visible screen. It is pinned to the visual viewport, so the
+   keyboard and the browser's toolbars never cover any part of it. */
 @media (max-width: 900px) {
   .dock.is-open {
-    bottom: var(--kb, 0px);
-    height: min(72dvh, 560px, calc(var(--vvh, 100dvh) - 72px));
+    top: var(--vvt, 0px);
+    bottom: auto;
+    height: var(--vvh, 100dvh);
+    border-top: 0;
+    box-shadow: none;
+  }
+
+  .dock-handle {
+    display: none;
+  }
+
+  html.chat-open,
+  html.chat-open body {
+    overflow: hidden;
   }
 }
