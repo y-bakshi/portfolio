@@ -10,7 +10,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 
 **Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (navy bubble) and answer (panel bubble) with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the bottom drawer. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
+**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (navy bubble) and answer (panel bubble). The visitor's bubble is solid navy with a gold hard shadow, so it separates from its own outline with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the bottom drawer. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
 
 ## Palette
 

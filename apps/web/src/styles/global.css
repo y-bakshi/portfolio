@@ -2000,3 +2000,16 @@ html {
     transition: none;
   }
 }
+
+/* The visitor's bubble is solid navy with a gold shadow. A navy outline and navy shadow around a blue
+   fill all merged into one shape, so the shadow carries the contrast instead. */
+.msg-user,
+.feed .msg-user,
+.dock-log .msg-user {
+  background: var(--ink);
+  filter: drop-shadow(5px 5px 0 var(--mark));
+}
+
+.msg-user::after {
+  background: var(--ink);
+}
