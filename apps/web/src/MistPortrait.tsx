@@ -9,6 +9,9 @@ const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
 const FORM_MS = 3600;
 const STAGGER = 0.38;
 const REPEL_RADIUS = 80;
+// The finished engraving is drawn as small tiles so the pointer can push the picture itself aside.
+const TILE = 5;
+const TILE_PUSH = 5.5;
 
 const token = (name: string, fallback: RGB): RGB => {
   const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -75,6 +78,9 @@ export function MistPortrait({
     let visible = false;
     let mouse: { x: number; y: number } | null = null;
     let dead = false;
+    let tilesX = 0;
+    let tilesY = 0;
+    let tileState = new Float32Array(0); // ox, oy, vx, vy per tile
     let portrait: HTMLImageElement | null = null;
 
     const sampleImage = (img: HTMLImageElement) => {
@@ -138,6 +144,9 @@ export function MistPortrait({
       canvas.width = Math.round(cw * dpr);
       canvas.height = Math.round(ch * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      tilesX = Math.ceil(cw / TILE);
+      tilesY = Math.ceil(ch / TILE);
+      tileState = new Float32Array(tilesX * tilesY * 4);
     };
 
     const paint = (now: number) => {
@@ -153,14 +162,59 @@ export function MistPortrait({
       const cy = ch / 2;
       // In the last stretch the real engraving fades in under the particles so the face resolves.
       const resolve = Math.min(1, Math.max(0, (t - 0.68) / 0.32));
+      const mx = mouse?.x ?? -9999;
+      const my = mouse?.y ?? -9999;
+
       if (portrait && resolve > 0) {
+        // Push tiles of the engraving away from the pointer; they spring back.
+        let moving = false;
+        for (let j = 0; j < tilesY; j++) {
+          for (let i = 0; i < tilesX; i++) {
+            const k = (j * tilesX + i) * 4;
+            const x = (i + 0.5) * TILE + tileState[k];
+            const y = (j + 0.5) * TILE + tileState[k + 1];
+            const dx = x - mx;
+            const dy = y - my;
+            const dist = Math.hypot(dx, dy);
+            if (dist < REPEL_RADIUS && dist > 0.01) {
+              const f = (1 - dist / REPEL_RADIUS) ** 2 * TILE_PUSH;
+              tileState[k + 2] += (dx / dist) * f;
+              tileState[k + 3] += (dy / dist) * f;
+            }
+            tileState[k] = (tileState[k] + tileState[k + 2]) * 0.93;
+            tileState[k + 1] = (tileState[k + 1] + tileState[k + 3]) * 0.93;
+            tileState[k + 2] *= 0.8;
+            tileState[k + 3] *= 0.8;
+            if (Math.abs(tileState[k]) > 0.25 || Math.abs(tileState[k + 1]) > 0.25) moving = true;
+          }
+        }
+
         ctx.globalAlpha = resolve * resolve * (3 - 2 * resolve);
-        ctx.drawImage(portrait, 0, 0, cw, ch);
+        if (!moving) {
+          ctx.drawImage(portrait, 0, 0, cw, ch);
+        } else {
+          const sx = portrait.naturalWidth / cw;
+          const sy = portrait.naturalHeight / ch;
+          for (let j = 0; j < tilesY; j++) {
+            for (let i = 0; i < tilesX; i++) {
+              const k = (j * tilesX + i) * 4;
+              ctx.drawImage(
+                portrait,
+                i * TILE * sx,
+                j * TILE * sy,
+                TILE * sx,
+                TILE * sy,
+                i * TILE + tileState[k],
+                j * TILE + tileState[k + 1],
+                TILE + 0.6,
+                TILE + 0.6,
+              );
+            }
+          }
+        }
         ctx.globalAlpha = 1;
       }
       const grain = 1 - 0.6 * resolve;
-      const mx = mouse?.x ?? -9999;
-      const my = mouse?.y ?? -9999;
 
       for (const p of particles) {
         const local = Math.min(1, Math.max(0, (t - p.delay) / (1 - STAGGER)));
