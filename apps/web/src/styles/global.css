@@ -1028,3 +1028,21 @@ main,
   margin: clamp(32px, 5vw, 56px) auto 0;
   text-align: left;
 }
+
+/* Body text that sits straight on the dot grid (not inside a card) gets a halo of page colour so the
+   dots never cut through the letters. Cards have their own solid fill and do not need it. */
+.ask-lede,
+.section-title,
+.section-lede,
+.fineprint,
+.case-back,
+.case-title,
+.case-lede,
+.case-text h2,
+.case-text > p {
+  text-shadow:
+    0 0 2px var(--ground),
+    0 0 5px var(--ground),
+    0 0 9px var(--ground),
+    0 0 14px var(--ground);
+}
