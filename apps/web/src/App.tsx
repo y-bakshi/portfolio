@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Answer, answerFor, projects, roles, stackGroups, suggestions } from './content';
-import { DotGrid } from './DotGrid';
+import { NoiseBg } from './NoiseBg';
 import { SiteHeader, Trace } from './parts';
 
 const contactLinks = [
@@ -134,7 +134,7 @@ export function Home() {
 
   return (
     <>
-      <DotGrid />
+      <NoiseBg />
       <SiteHeader />
       <main id="main">
         <section className="ask" aria-labelledby="ask-title">

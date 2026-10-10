@@ -1,12 +1,21 @@
 import { useEffect, useRef } from 'react';
 
-const SPACING = 20;
-const RADIUS = 130;
-const BASE_ALPHA = 0.15;
-const PEAK_ALPHA = 0.9;
+// tune: lower the divisor to add more dots
+const DENSITY = 1 / 120;
+// tune: raise to permit more dots on large screens
+const MAX_DOTS = 3000;
+// tune: raise to widen pointer influence
+const RADIUS = 200;
+// tune: raise to connect dots across larger gaps
+const NEIGHBOUR_D = 35;
+const BASE_ALPHA = 0.28;
+const PEAK_ALPHA = 0.14;
+
+type Dot = { x: number; y: number; b: number };
+type Pair = [Dot, Dot];
 type RGB = [number, number, number];
 
-/** Reads a hex colour token such as --ink from the stylesheet, so the dots follow the design tokens. */
+/** Reads a hex colour token such as --ink from the stylesheet, so the field follows the design tokens. */
 const token = (name: string, fallback: RGB): RGB => {
   const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const m = /^#([0-9a-f]{6})$/i.exec(hex);
@@ -15,13 +24,11 @@ const token = (name: string, fallback: RGB): RGB => {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 };
 
-type Dot = { x: number; y: number; b: number };
-
 /**
- * A page-wide dot grid fixed behind the content. The pointer anywhere on the page brightens and
- * enlarges the dots near it, with an eased falloff. Skipped when the visitor prefers reduced motion.
+ * A page-wide field of granular dots fixed behind the content. Dots near the pointer change
+ * brightness and faint lines join the lit neighbours. Static under reduced motion.
  */
-export function DotGrid() {
+export function NoiseBg() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -29,10 +36,11 @@ export function DotGrid() {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    // Dots use --ink, the same colour as the portrait's line work. Lit dots get darker and larger.
     const INK = token('--ink', [20, 33, 27]);
+    const rgb = `${INK[0]},${INK[1]},${INK[2]}`;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let dots: Dot[] = [];
+    let pairs: Pair[] = [];
     let width = 0;
     let height = 0;
     let mouse: { x: number; y: number } | null = null;
@@ -45,14 +53,22 @@ export function DotGrid() {
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      dots = [];
-      const cols = Math.floor(width / SPACING) + 2;
-      const rows = Math.floor(height / SPACING) + 2;
-      const ox = (width % SPACING) / 2;
-      const oy = (height % SPACING) / 2;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++)
-          dots.push({ x: ox + c * SPACING, y: oy + r * SPACING, b: 0 });
+
+      const count = Math.min(Math.round(width * height * DENSITY), MAX_DOTS);
+      dots = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        b: 0,
+      }));
+
+      const nd2 = NEIGHBOUR_D * NEIGHBOUR_D;
+      pairs = [];
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
+          if (dx * dx + dy * dy < nd2) pairs.push([dots[i], dots[j]]);
+        }
       }
     };
 
@@ -60,21 +76,36 @@ export function DotGrid() {
       ctx.clearRect(0, 0, width, height);
       const mx = mouse?.x ?? -99999;
       const my = mouse?.y ?? -99999;
+      const r2 = RADIUS * RADIUS;
       let busy = false;
+
       for (const d of dots) {
         const dx = d.x - mx;
         const dy = d.y - my;
-        const dist = Math.hypot(dx, dy);
-        const target = dist < RADIUS ? (1 - dist / RADIUS) ** 1.5 : 0;
+        const dist2 = dx * dx + dy * dy;
+        const target = dist2 < r2 ? Math.exp(-dist2 / (r2 * 0.25)) : 0;
         d.b += (target > d.b ? 0.16 : 0.07) * (target - d.b);
         if (d.b < 0.004) d.b = 0;
         else busy = true;
+
         const alpha = BASE_ALPHA + (PEAK_ALPHA - BASE_ALPHA) * d.b;
-        const size = 1.4 + d.b * 1.6;
-        ctx.fillStyle = `rgba(${INK[0]},${INK[1]},${INK[2]},${alpha.toFixed(2)})`;
+        const size = 0.8 + d.b * 0.6;
+        ctx.fillStyle = `rgba(${rgb},${alpha.toFixed(2)})`;
         ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
       }
-      // Keep animating while the pointer is down on the page or dots are still fading.
+
+      if (busy) {
+        ctx.lineWidth = 0.5;
+        for (const [a, b] of pairs) {
+          if (a.b < 0.05 || b.b < 0.05) continue;
+          ctx.strokeStyle = `rgba(${rgb},${(Math.min(a.b, b.b) * 0.1).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+
       frame = mouse || busy ? requestAnimationFrame(paint) : 0;
     };
 
@@ -96,9 +127,13 @@ export function DotGrid() {
       mouse = null;
       wake();
     };
+    let resizeTimer = 0;
     const onResize = () => {
-      build();
-      wake();
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        build();
+        wake();
+      }, 120);
     };
 
     build();
@@ -114,6 +149,7 @@ export function DotGrid() {
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('touchmove', onTouch);
