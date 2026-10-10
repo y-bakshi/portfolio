@@ -10,7 +10,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 
 **Masthead:** Yash Bakshi (small wordmark in the sticky header).
 
-**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (navy bubble) and answer (panel bubble). The visitor's bubble is solid navy with a gold hard shadow, so it separates from its own outline with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the bottom drawer. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
+**Hero:** on desktop (above 900 px) the portrait fills the left, as large as the window height allows, and the right column is the conversation: the introduction as a square-cornered chat bubble with its tail pointing at the portrait, then each question (navy bubble) and answer (panel bubble). The visitor's bubble is solid navy and relies on the darker shadow to separate from its own outline with the "Show" navigation buttons beneath. The hero fills the first screen, so Projects starts below the fold. On phones the portrait is centred with the introduction bubble under it, tail pointing up, and the conversation happens in the bottom drawer. The portrait forms out of mist. There is no display headline; the page's `h1` is visually hidden text naming the person.
 
 ## Palette
 
@@ -19,6 +19,7 @@ The portfolio must stay fully useful without the guide: every project, the work 
 | `--ground` | `#E8E0D2` | Page background (ivory). |
 | `--panel` | `#F4EFE5` | Guide console, trace panels, facts panel. |
 | `--ink` | `#0E1D61` | Text, borders, offset shadows, contact block, portrait and dot grid (deep atlas navy). |
+| `--shadow` | `#040720` | Every hard offset shadow: near-black navy, darker than the ink so shadows separate from navy fills and borders. |
 | `--muted` | `#4B547F` | Secondary text. 5.6:1 on the ground, 6.4:1 on the panel. |
 | `--line` | `#BDB09A` | Row dividers. |
 | `--action` | `#1A2E8A` | Primary action fill, trace bars, text links. |
