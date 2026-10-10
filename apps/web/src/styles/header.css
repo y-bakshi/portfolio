@@ -1,0 +1,106 @@
+/* Sticky header and skip link. */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  max-width: none;
+  padding-inline: clamp(16px, 2.5vw, 40px);
+  /* solid so scrolled content never shows through; the dots are drawn inside it. No divider line. */
+  background: var(--ground);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 18px;
+  font-family: var(--display);
+}
+
+.site-name {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  white-space: nowrap;
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-stretch: 80%;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+}
+
+.site-header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .site-header nav a:hover,
+  .site-name:hover {
+    color: var(--action);
+  }
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--ground);
+}
+
+.skip:focus {
+  left: var(--gutter);
+  top: 8px;
+  z-index: 10;
+}
+
+@media (max-width: 520px) {
+  .site-header {
+    flex-wrap: wrap;
+  }
+}
+
+.site-header > :not(canvas):not(.skip) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  /* the header stays on one row: name left, links right */
+  .site-header {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding-block: 8px;
+  }
+
+  .site-name {
+    font-size: 1.1rem;
+  }
+
+  .site-header nav {
+    flex-wrap: nowrap;
+    gap: 0 14px;
+  }
+
+  .site-header nav a {
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-header nav a {
+    font-size: 0.9rem;
+  }
+}

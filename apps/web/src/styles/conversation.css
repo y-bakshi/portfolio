@@ -1,0 +1,393 @@
+/* The conversation with the guide: the introduction, questions, answers and the buttons under them. */
+
+.ask-lede,
+.msg-answer,
+.chat-note {
+  font-weight: 500;
+}
+
+.ask-lede {
+  margin-top: clamp(24px, 3vw, 40px);
+}
+
+.chat-note {
+  max-width: var(--measure);
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.cites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.cites button {
+  min-height: 44px;
+  padding: 6px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--mark);
+  font-family: var(--display);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .cites button:hover {
+    background: var(--ink);
+    color: var(--mark);
+  }
+}
+
+/* the citation buttons appear when an answer finishes */
+.cites button {
+  animation: cite-in 200ms var(--ease-out) both;
+}
+
+.cites button:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.cites button:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+@keyframes cite-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* keep the fade so a new button still reads as new, drop the movement */
+  .cites button {
+    animation-name: cite-fade;
+  }
+}
+
+@keyframes cite-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.ask-lede {
+  max-width: 44ch;
+  margin: clamp(20px, 3vw, 36px) auto 0;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1.5;
+}
+
+.ask-lede {
+  padding: clamp(18px, 3vw, 28px) clamp(20px, 3.5vw, 36px);
+}
+
+/* the conversation: the introduction, then each question and answer as bubbles */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msg {
+  padding: 12px 18px;
+  border: 2px solid var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.msg-user {
+  align-self: flex-end;
+  max-width: 85%;
+  margin: 0 6px 0 0;
+  background: var(--action);
+  color: var(--action-ink);
+  font-weight: 600;
+}
+
+.feed .msg-answer {
+  max-width: none;
+  margin: 0;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.msg-wait {
+  color: var(--muted);
+}
+
+.feed .cites {
+  margin: 0;
+}
+
+@media (min-width: 901px) {
+  /* chat output and the navigation buttons live in this column; it scrolls if a long exchange fills it */
+  .feed {
+    padding: 6px 10px 10px 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  /* a square-cornered bubble whose tail points at the portrait */
+  .ask-lede {
+    position: relative;
+    max-width: none;
+    margin: 0;
+    padding: 18px 22px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .ask-lede::before {
+    content: '';
+    position: absolute;
+    top: 34px;
+    left: -11px;
+    width: 18px;
+    height: 18px;
+    border-bottom: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+    background: var(--panel);
+    transform: rotate(45deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .feed .ask-lede,
+  .feed .msg-answer {
+    padding: 14px 16px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .feed .ask-lede {
+    position: relative;
+    margin: 18px 0 0;
+  }
+
+  .feed .ask-lede:first-child::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 40px;
+    width: 18px;
+    height: 18px;
+    border-top: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+    background: var(--panel);
+    transform: rotate(45deg);
+  }
+
+  .feed .msg-answer {
+    margin: 0;
+  }
+
+  .dock-log .chat-note {
+    margin-top: 0;
+  }
+
+  .dock-log .msg-user {
+    margin-right: 0;
+  }
+
+  .dock-log .ask-lede,
+  .dock-log .msg-answer {
+    max-width: none;
+    margin: 0;
+    padding: 12px 14px;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: 4px 4px 0 var(--shadow);
+  }
+
+  .dock-log .msg-answer {
+    margin-top: 12px;
+  }
+
+  .dock-log .cites {
+    margin-top: 12px;
+  }
+}
+
+/* each exchange is a group so earlier answers stay readable above the newest one */
+.exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exchange .cites {
+  margin: 0;
+}
+
+@media (min-width: 901px) {
+  /* desktop: a fixed-height feed that scrolls inside itself, so growing text never moves the page */
+  .feed {
+    max-height: none;
+  }
+
+  /* spacers centre a short conversation beside the portrait and collapse once it fills the column */
+  .feed::before,
+  .feed::after {
+    content: '';
+    flex: 1 0 0;
+  }
+
+  /* the conversation fills the space between the header and the open bar. It is not scrollable by
+     hand and shows no scrollbar; the code keeps the newest message in view and older ones fade out
+     at the top. */
+  .feed {
+    align-self: start;
+    height: calc(100svh - var(--header-h, 80px) - 144px);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 72px);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 72px);
+  }
+}
+
+/* the guide's messages sit to the left, yours to the right, and the buttons are centred between */
+.feed .ask-lede,
+.dock-log .ask-lede {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 92%;
+}
+
+.feed .msg-user,
+.dock-log .msg-user {
+  align-self: flex-end;
+  width: fit-content;
+  max-width: 86%;
+}
+
+.exchange {
+  align-items: stretch;
+}
+
+.exchange .ask-lede {
+  align-self: flex-start;
+}
+
+.exchange .msg-user {
+  align-self: flex-end;
+}
+
+/* navigation buttons: a little smaller, aligned with the guide's messages on the left, label centred */
+.feed .cites,
+.dock-log .cites,
+.exchange .cites {
+  align-self: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.feed .cites button,
+.dock-log .cites button,
+.exchange .cites button {
+  min-height: 44px;
+  padding: 4px 14px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* the visitor's bubble gets a tail on the right, mirroring the guide's tail on the left */
+.msg-user {
+  position: relative;
+}
+
+.msg-user::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: -10px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  transform: rotate(45deg);
+}
+
+.feed .msg-user,
+.dock-log .msg-user {
+  margin-right: 12px;
+}
+
+/* the visitor's bubble casts its shadow to the left, away from its tail */
+.msg-user {
+  box-shadow: -4px 4px 0 var(--shadow);
+}
+
+/* Bubbles cast their hard shadow with a drop-shadow filter, so the tail is shadowed too, on whichever
+   side it sits. The visitor's bubble goes back to the same down-and-right shadow as every card. */
+.feed .ask-lede,
+.dock-log .ask-lede,
+.feed .msg-user,
+.dock-log .msg-user,
+.msg-user {
+  box-shadow: none;
+  filter: drop-shadow(5px 5px 0 var(--shadow));
+}
+
+.feed .msg-user,
+.dock-log .msg-user {
+  margin-left: 0;
+}
+
+/* new messages enter from slightly below, so what just arrived is easy to see. Only the newest
+   exchange animates; earlier ones sit inside .exchange and are not replayed. */
+.feed > .msg-user,
+.feed > .msg-answer,
+.dock-log > .msg-user,
+.dock-log > .msg-answer {
+  animation: msg-in 220ms var(--ease-out) both;
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed > .msg-user,
+  .feed > .msg-answer,
+  .dock-log > .msg-user,
+  .dock-log > .msg-answer {
+    animation-name: cite-fade;
+  }
+}
+
+/* The visitor's bubble is solid navy; the darker --shadow token keeps it from merging with its own outline. */
+.msg-user,
+.feed .msg-user,
+.dock-log .msg-user {
+  background: var(--ink);
+  filter: drop-shadow(5px 5px 0 var(--shadow));
+}
+
+.msg-user::after {
+  background: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .dock-log > .msg-user {
+    align-self: flex-end;
+  }
+
+  .dock-log > .msg-answer,
+  .dock-log > .chat-note,
+  .dock-log > .cites,
+  .dock-log > .chips {
+    align-self: flex-start;
+  }
+}

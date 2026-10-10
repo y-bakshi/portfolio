@@ -9,7 +9,8 @@ import '@flaticon/flaticon-uicons/css/brands/all.css';
 import '@fontsource-variable/instrument-sans/wdth.css';
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
-import './styles/global.css';
+import './styles/tailwind.css';
+import './styles/index.css';
 
 /** A new page opens at the top, unless the link points at a section. */
 function ScrollToTop() {

@@ -1,0 +1,483 @@
+/* The guide chat: the bar, the open input bar, the full-screen phone chat and the chips. */
+
+.chips button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chips button {
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .chips button:hover:not(:disabled) {
+    background: var(--mark);
+  }
+}
+
+/* traffic light: red = answering, yellow = thinking, green = ready. The label beside it says the same in words. */
+.light {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px 6px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.light i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2a3568;
+  transition: background-color 160ms var(--ease-out);
+}
+
+.light-answering i:nth-child(1) {
+  background: #ff4d3d;
+}
+
+.light-thinking i:nth-child(2) {
+  background: #ffc933;
+}
+
+.light-ready i:nth-child(3) {
+  background: #35d07f;
+}
+
+.dock {
+  position: fixed;
+  right: 16px;
+  bottom: 0;
+  z-index: 30;
+  width: min(320px, calc(100vw - 32px));
+  border: 2px solid var(--ink);
+  border-bottom: 0;
+  background: var(--panel);
+  box-shadow: 5px 0 0 var(--shadow);
+  transition:
+    width 280ms var(--ease-out),
+    right 280ms var(--ease-out);
+}
+
+.dock.is-open {
+  width: min(1100px, calc(100vw - 32px));
+}
+
+.dock-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.is-open .dock-bar {
+  display: none;
+}
+
+.dock-title {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.dock-state {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.dock-chevron {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.dock-open {
+  display: none;
+  padding: 12px 14px 14px;
+}
+
+.is-open .dock-open {
+  display: block;
+  animation: dock-in 220ms var(--ease-out) both;
+}
+
+@keyframes dock-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* suggestions sit in one scrolling row above the input */
+.dock .chips {
+  flex-wrap: nowrap;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.dock .chips button {
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.dock-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dock-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: #fbf8f1;
+  font-size: 1.05rem;
+}
+
+.dock-ask {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--action);
+  color: var(--action-ink);
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dock-ask:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dock-close {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.dock-ask,
+.dock-close {
+  transition:
+    background-color 120ms var(--ease-out),
+    transform 140ms var(--ease-out);
+}
+
+.dock-ask:not(:disabled):active,
+.dock-close:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .dock-ask:not(:disabled):hover {
+    background: var(--ink);
+  }
+
+  .dock-close:hover {
+    background: var(--mark);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock {
+    transition: none;
+  }
+
+  .is-open .dock-open {
+    animation: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .dock-form .light {
+    display: none;
+  }
+}
+
+.dock-head .dock-state {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  /* closed: a bar across the bottom edge. open: a full-screen chat with the conversation inside. */
+  .dock,
+  .dock.is-open {
+    right: 0;
+    left: 0;
+    width: auto;
+    box-shadow: none;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .dock.is-open {
+    border-top-width: 2px;
+    transition: none;
+  }
+
+  .is-open .dock-open {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+  }
+
+  .dock-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    display: block;
+    background: rgba(14, 29, 97, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-out);
+  }
+
+  .dock-scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .dock-handle {
+    width: 44px;
+    height: 5px;
+    margin: 8px auto 0;
+    border-radius: 3px;
+    background: var(--line);
+  }
+
+  .dock-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 12px 10px 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .dock-head h2 {
+    flex: 1 1 auto;
+    margin: 0;
+    font-family: var(--display);
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .dock-head .dock-state {
+    display: block;
+  }
+
+  .dock-log {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 14px 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dock-log > * + * {
+    margin-top: 12px;
+  }
+
+  .dock-log .chips {
+    flex-wrap: wrap;
+    margin: 12px 0 0;
+    overflow: visible;
+  }
+
+  .dock-form {
+    padding: 10px 12px 12px;
+    border-top: 2px solid var(--ink);
+  }
+}
+
+@media (min-width: 901px) {
+  /* the open bar spans the whole window; its contents stay on the page's column */
+  .dock.is-open {
+    right: 0;
+    width: 100%;
+    border-right: 0;
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .is-open .dock-open {
+    width: min(1240px, 100%);
+    margin-inline: auto;
+    padding-inline: clamp(16px, 2.5vw, 40px);
+  }
+}
+
+.dock-top {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  background: var(--mark);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  animation: cite-in 200ms var(--ease-out) both;
+}
+
+.dock-top:active {
+  transform: scale(0.97);
+}
+
+@media (min-width: 901px) {
+  /* the dock is always as wide as the window; clip-path shows only the pill until it opens */
+  .dock,
+  .dock.is-open {
+    right: 0;
+    left: 0;
+    width: auto;
+    min-width: 0;
+    border: 0;
+    border-top: 2px solid var(--ink);
+    box-shadow: none;
+    transition: clip-path 280ms var(--ease-out);
+  }
+
+  .dock {
+    clip-path: inset(0 11px 0 calc(100% - 336px));
+  }
+
+  .dock.is-open {
+    clip-path: inset(0);
+  }
+
+  .dock .dock-bar {
+    width: 320px;
+    margin: 0 16px 0 auto;
+    border: 2px solid var(--ink);
+    border-top: 0;
+    border-bottom: 0;
+    box-shadow: 5px 0 0 var(--shadow);
+  }
+
+  .dock.is-closing .dock-open {
+    animation: dock-out 120ms var(--ease-out) both;
+  }
+}
+
+@keyframes dock-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock.is-open {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  /* phone chat: after the first question the suggestions become one row above the input that scrolls
+   sideways with the scrollbar hidden */
+  .dock-open .chips-strip {
+    flex: 0 0 auto;
+    padding: 8px 12px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .dock-open .chips-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dock-open .chips-strip .chips {
+    flex-wrap: nowrap;
+    margin: 0;
+    padding-bottom: 8px;
+    overflow: visible;
+  }
+
+  .dock-open .chips-strip .chips li {
+    flex: 0 0 auto;
+  }
+
+  .dock-open .chips-strip .chips button {
+    white-space: nowrap;
+  }
+
+  /* phones: the open chat takes the whole visible screen. It is pinned to the visual viewport, so the
+   keyboard and the browser's toolbars never cover any part of it. */
+  .dock.is-open {
+    top: var(--vvt, 0px);
+    bottom: auto;
+    height: var(--vvh, 100dvh);
+    border-top: 0;
+    box-shadow: none;
+  }
+
+  .dock-handle {
+    display: none;
+  }
+
+  html.chat-open,
+  html.chat-open body {
+    overflow: hidden;
+  }
+
+  /* phone chat: the log is a column so the visitor's messages can sit right and the guide's left */
+  .dock-log {
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+  }
+
+  .dock-log::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.dock-form input::placeholder {
+  color: #5a6288;
+}

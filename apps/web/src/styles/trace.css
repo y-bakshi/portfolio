@@ -1,0 +1,40 @@
+/* Pipeline traces. */
+
+.trace {
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px solid var(--ink);
+  background: var(--panel);
+  font-family: var(--code);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.trace li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 5px;
+}
+
+.trace-bar {
+  flex: none;
+  width: 46px;
+  height: 10px;
+  background: var(--action);
+}
+
+.trace-label {
+  min-width: 0;
+}
+
+@media (max-width: 520px) {
+  .trace {
+    font-size: 0.75rem;
+    --trace-step: 14px;
+  }
+
+  .trace-bar {
+    width: 28px;
+  }
+}
