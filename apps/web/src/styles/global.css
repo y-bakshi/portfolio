@@ -393,8 +393,18 @@ main,
   font-size: 0.95rem;
 }
 
-.is-marked {
-  background: linear-gradient(var(--mark), var(--mark)) no-repeat left / 100% 100%;
+.is-marked:not(.contact) {
+  position: relative;
+  isolation: isolate;
+}
+
+/* the amber sweeps across a layer behind the text */
+.is-marked:not(.contact)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--mark);
   animation: mark-in 420ms var(--ease-out) both;
 }
 
@@ -409,10 +419,10 @@ main,
 
 @keyframes mark-in {
   from {
-    background-size: 0% 100%;
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    background-size: 100% 100%;
+    clip-path: inset(0);
   }
 }
 
@@ -702,8 +712,6 @@ main,
   grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   gap: clamp(28px, 5vw, 72px);
   margin-top: clamp(32px, 5vw, 64px);
-  padding-top: clamp(24px, 3vw, 36px);
-  border-top: 2px solid var(--ink);
 }
 
 .case-text h2 {
@@ -828,7 +836,7 @@ main,
   html {
     scroll-behavior: auto;
   }
-  .is-marked {
+  .is-marked::before {
     animation: none;
   }
   /* keep the fade so a new button still reads as new, drop the movement */
@@ -1917,4 +1925,79 @@ html {
 .feed .msg-user,
 .dock-log .msg-user {
   margin-left: 0;
+}
+
+/* new messages enter from slightly below, so what just arrived is easy to see. Only the newest
+   exchange animates; earlier ones sit inside .exchange and are not replayed. */
+.feed > .msg-user,
+.feed > .msg-answer,
+.dock-log > .msg-user,
+.dock-log > .msg-answer {
+  animation: msg-in 220ms var(--ease-out) both;
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed > .msg-user,
+  .feed > .msg-answer,
+  .dock-log > .msg-user,
+  .dock-log > .msg-answer {
+    animation-name: cite-fade;
+  }
+}
+
+/* ---------- desktop bar: reveal with clip-path instead of animating width ---------- */
+@media (min-width: 901px) {
+  /* the dock is always as wide as the window; clip-path shows only the pill until it opens */
+  .dock,
+  .dock.is-open {
+    right: 0;
+    left: 0;
+    width: auto;
+    min-width: 0;
+    border: 0;
+    border-top: 2px solid var(--ink);
+    box-shadow: none;
+    transition: clip-path 280ms var(--ease-out);
+  }
+
+  .dock {
+    clip-path: inset(0 11px 0 calc(100% - 336px));
+  }
+
+  .dock.is-open {
+    clip-path: inset(0);
+  }
+
+  .dock .dock-bar {
+    width: 320px;
+    margin: 0 16px 0 auto;
+    border: 2px solid var(--ink);
+    border-top: 0;
+    border-bottom: 0;
+    box-shadow: 5px 0 0 var(--ink);
+  }
+
+  .dock.is-closing .dock-open {
+    animation: dock-out 120ms var(--ease-out) both;
+  }
+}
+
+@keyframes dock-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock.is-open {
+    transition: none;
+  }
 }

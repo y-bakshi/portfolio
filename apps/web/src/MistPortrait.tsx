@@ -6,7 +6,7 @@ type RGB = [number, number, number];
 const SAMPLE_WIDTH = 420;
 // where the face sits in the portrait, so it gets more particles and stays recognisable
 const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
-const FORM_MS = 3600;
+const FORM_MS = 3200;
 const STAGGER = 0.38;
 const REPEL_RADIUS = PUSH_RADIUS; // shared with the background dots
 // Where the pointer pushes the finished engraving it comes apart into small round specks of the
@@ -25,7 +25,8 @@ const token = (name: string, fallback: RGB): RGB => {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 };
 
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+// ease-out: the mist starts moving at once instead of lingering at the start
+const ease = (t: number) => 1 - (1 - t) ** 3;
 
 type P = {
   sx: number; // position on the unit sphere

@@ -103,9 +103,21 @@ export function Home() {
     if (log && q) log.scrollTop = q.offsetTop;
   }, [asked, isMobile]);
 
+  const [closing, setClosing] = useState(false);
   const closeDock = () => {
-    setOpen(false);
     toggleRef.current?.focus();
+    if (isMobile || prefersReducedMotion()) {
+      setOpen(false);
+      return;
+    }
+    // let the open bar fade out (120 ms) before it collapses to the pill
+    setClosing(true);
+    timers.current.push(
+      window.setTimeout(() => {
+        setOpen(false);
+        setClosing(false);
+      }, 130),
+    );
   };
   const onDockKey = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Escape' && open) closeDock();
@@ -171,7 +183,9 @@ export function Home() {
     if (!el) return;
     if (isMobile) setOpen(false);
     // Scroll behavior comes from the stylesheet, so this matches every other jump on the page.
-    el.scrollIntoView({ block: 'start' });
+    // a jump of more than a screen and a half is instant; a long smooth scroll just makes people wait
+    const far = Math.abs(el.getBoundingClientRect().top) > window.innerHeight * 1.5;
+    el.scrollIntoView({ block: 'start', behavior: far ? ('instant' as ScrollBehavior) : 'auto' });
     // Move keyboard and screen reader focus to the target as well.
     el.focus({ preventScroll: true });
     const wait = prefersReducedMotion() ? 0 : 500;
@@ -390,7 +404,7 @@ export function Home() {
         </section>
       </main>
       <div className={`dock-scrim${open ? ' is-open' : ''}`} onClick={closeDock} aria-hidden="true" />
-      <aside className={`dock${open ? ' is-open' : ''}`} aria-label="Guide chat" onKeyDown={onDockKey}>
+      <aside className={`dock${open ? ' is-open' : ''}${closing ? ' is-closing' : ''}`} aria-label="Guide chat" onKeyDown={onDockKey}>
         <p className="sr-only" aria-live="polite">
           {statusLabel[status]}
         </p>
