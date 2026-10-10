@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { PUSH_RADIUS } from './pointerPush';
 
 type RGB = [number, number, number];
 
@@ -7,7 +8,7 @@ const SAMPLE_WIDTH = 420;
 const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
 const FORM_MS = 3600;
 const STAGGER = 0.38;
-const REPEL_RADIUS = 80;
+const REPEL_RADIUS = PUSH_RADIUS; // shared with the background dots
 // Where the pointer pushes the finished engraving it comes apart into small round specks of the
 // picture's own tone, which spring back into place. Only tiles near the pointer are ever active.
 const TILE = 4;

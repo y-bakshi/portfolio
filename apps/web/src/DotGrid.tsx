@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
+import { PUSH_RADIUS } from './pointerPush';
 
 const SPACING = 14;
-const RADIUS = 120; // how far from the pointer dots are pushed
+const RADIUS = PUSH_RADIUS; // shared with the portrait so both clear the same-sized gap
 const PUSH = 5; // strength of the push
 const DOT_RADIUS = 1.35;
 const DOT_ALPHA = 0.32;
