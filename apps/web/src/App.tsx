@@ -250,6 +250,10 @@ export function Home() {
     </>
   );
 
+  // one follow-up suggestion for the phone drawer: the first one not asked yet
+  const nextSuggestion =
+    suggestions.find((sug) => sug !== asked && !history.some((h) => h.q === sug)) ?? suggestions[0];
+
   const chipList = (
     <ul className="chips" aria-label="Suggested questions">
       {suggestions.map((sug) => (
@@ -466,6 +470,18 @@ export function Home() {
                 )}
                 {thread}
               </div>
+              {asked && nextSuggestion && (
+                <div className="chips-strip">
+                  <button
+                    type="button"
+                    className="chip-next"
+                    onClick={() => ask(nextSuggestion)}
+                    disabled={status !== 'ready'}
+                  >
+                    {nextSuggestion}
+                  </button>
+                </div>
+              )}
             </>
           )}
           {!isMobile && chipList}
