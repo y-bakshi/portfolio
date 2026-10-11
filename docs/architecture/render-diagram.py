@@ -51,7 +51,7 @@ def main():
     arrow((10.1, 4.72), (8.45, 3.68), "reserve / settle")
     arrow((11.7, 4.72), (11.7, 3.68), "inference")
     ax.text(0.4, -0.55,
-            "Current implementation: React + TypeScript + Vite + Tailwind scaffold. Dashed boxes are planned.\n"
+            "Current implementation: React + TypeScript + Vite scaffold. Dashed boxes are planned.\n"
             "Publication remains usable when AI is unavailable. No raw IPs or prompts in application storage/logs.",
             fontsize=9, color="#555555")
     fig.savefig(Path(__file__).with_name("architecture-diagram.png"),

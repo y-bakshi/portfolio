@@ -25,3 +25,7 @@ Build the frontend as static files for Firebase Hosting. Keep paid model and spe
 - **Astro with Vue islands:** better static-first rendering, but introduces a second UI framework for the assistant.
 - **Next.js:** adds server and framework features not needed for the planned static frontend and FastAPI backend.
 - **Plain React without Tailwind:** viable, but inconsistent with the owner's selected implementation stack.
+
+## Update
+
+Tailwind CSS was dropped. The site's styling is hand-written CSS in `apps/web/src/styles/`, and only Tailwind's base reset was ever used, so that reset now lives in `reset.css` and the dependency and config are removed. The decision above stands for React, TypeScript, Vite and React Router.

@@ -27,9 +27,12 @@ describe('stylesheet files', () => {
     const imported = [...index.matchAll(/@import '\.\/([\w-]+)\.css';/g)].map((m) => m[1]);
     const files = Object.keys(css)
       .map((f) => f.replace('./', '').replace('.css', ''))
-      .filter((f) => f !== 'index' && f !== 'tailwind');
+      .filter((f) => f !== 'index');
+    const order = [...imported];
     expect(imported.sort()).toEqual(files.sort());
     expect(new Set(imported).size).toBe(imported.length);
+    // the reset comes first so every other file can override it
+    expect(order[0]).toBe('reset');
     expect(index.indexOf("'./tokens.css'")).toBeLessThan(index.indexOf("'./base.css'"));
   });
 

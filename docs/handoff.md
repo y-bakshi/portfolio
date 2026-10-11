@@ -9,7 +9,7 @@
 
 ## What Is Ready
 
-The repo includes a React/TypeScript/Vite/Tailwind scaffold, lockfile, check/build commands, product requirements, architecture/contracts, visual specifications, reference screenshots, content summary, operational plans, and ADRs. Agent files/private root briefs are ignored and are not needed to interpret the shared specification.
+The repo includes a React/TypeScript/Vite scaffold, lockfile, check/build commands, product requirements, architecture/contracts, visual specifications, reference screenshots, content summary, operational plans, and ADRs. Agent files/private root briefs are ignored and are not needed to interpret the shared specification.
 
 The site has a built homepage and a TestPilot case-study page (see [ADR-005](decisions/ADR-005-ask-first-design-direction.md)); its guide answers from a small keyword-matched set in `apps/web/src/content.ts`. No published case studies beyond the TestPilot template, real assistant, API, database, cloud infrastructure, deployment automation, or automated test suite exists. Documentation diagrams show intended architecture rather than provisioned services.
 

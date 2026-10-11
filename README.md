@@ -6,7 +6,7 @@ A technical portfolio for desktop and mobile, built around an interactive portfo
 
 ```text
 apps/
-└── web/    React + Vite frontend styled with Tailwind CSS
+└── web/    React + Vite frontend with hand-written CSS
 ```
 
 The future FastAPI backend will live in `apps/api/`.

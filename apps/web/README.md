@@ -1,6 +1,6 @@
 # Portfolio Web
 
-React + Vite frontend for Yash Bakshi's responsive portfolio. The visual system in `docs/design/design-language.md` is hand-written CSS in `src/styles/` (one file per area, imported in order by `index.css`); Tailwind CSS is in the build only for its base reset. React components handle the interactive parts such as the portfolio guide.
+React + Vite frontend for Yash Bakshi's responsive portfolio. The visual system in `docs/design/design-language.md` is hand-written CSS in `src/styles/` (one file per area, imported in order by `index.css`); the browser reset is `reset.css`, copied from Tailwind's preflight (Tailwind itself is not a dependency). React components handle the interactive parts such as the portfolio guide.
 
 ## Project Structure
 

@@ -4,7 +4,7 @@ The GitHub repository is public. Build and validate the website privately until 
 
 ## Completed: Scaffold
 
-- React, TypeScript, Vite, and Tailwind CSS in `apps/web/`.
+- React, TypeScript, Vite, and hand-written CSS in `apps/web/`.
 - Placeholder homepage; `check` and production `build` scripts.
 - Initial Git commit and GitHub remote.
 - Agent context/private briefs excluded from Git.

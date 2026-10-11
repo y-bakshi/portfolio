@@ -2,7 +2,7 @@
 
 ## Implemented and Planned
 
-Implemented: React + TypeScript frontend built with Vite and styled with Tailwind CSS. Planned: reviewed project content, AI guide, FastAPI service, Firestore, provider adapters, App Check, and cloud deployment.
+Implemented: React + TypeScript frontend built with Vite and styled with hand-written CSS. Planned: reviewed project content, AI guide, FastAPI service, Firestore, provider adapters, App Check, and cloud deployment.
 
 ![Planned architecture: browser reads static publication from Firebase Hosting; assistant calls Cloud Run, which validates access, retrieves verified content, reserves quota in Firestore, and calls model and optional speech providers.](architecture-diagram.png)
 
