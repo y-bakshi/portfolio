@@ -340,9 +340,9 @@
     box-shadow: none;
   }
 
+  /* same side margins as the header, so the light lines up with the logo and the input runs to the right margin */
   .is-open .dock-open {
-    width: min(1240px, 100%);
-    margin-inline: auto;
+    width: 100%;
     padding-inline: clamp(16px, 2.5vw, 40px);
   }
 }

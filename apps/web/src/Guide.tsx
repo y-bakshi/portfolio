@@ -359,12 +359,12 @@ export function GuideDock({ g }: { g: Guide }) {
           onClick={() => setOpen(true)}
           tabIndex={open ? -1 : 0}
         >
+          <StatusLight status={status} />
+          <i className="fi fi-sr-comment-alt-dots dock-chevron" aria-hidden="true" />
           <span className="dock-title">
             Ask the guide
             <span className="dock-state">{statusLabel[status]}</span>
           </span>
-          <StatusLight status={status} />
-          <i className="fi fi-sr-comment-alt-dots dock-chevron" aria-hidden="true" />
         </button>
         <div id="dock-open" className="dock-open" {...(open ? {} : ({ inert: '' } as object))}>
           {showLog && (
