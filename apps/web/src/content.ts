@@ -35,6 +35,22 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: 'cv-studio',
+    name: 'CV Studio',
+    line: 'A résumé editor that compiles real LaTeX.',
+    detail:
+      'A multi-user workspace where a résumé is edited visually, inspected as LaTeX source, and compiled to PDF on the server with pdflatex (shell escape off, with timeouts). It keeps revision history with restore, rejects silent concurrent overwrites with version checks, and stores job descriptions and text-selection annotations beside each CV.',
+    role: 'Sole author: the React editor, the FastAPI service, and the CI pipeline.',
+    stack: ['React', 'TypeScript', 'Tiptap', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'pdflatex'],
+    trace: [
+      { label: 'Visual edit', depth: 0 },
+      { label: 'Generate LaTeX', depth: 1 },
+      { label: 'Compile with pdflatex', depth: 2 },
+      { label: 'Protected PDF preview', depth: 3 },
+      { label: 'Save revision', depth: 4 },
+    ],
+  },
+  {
     id: 'guardianai',
     name: 'GuardianAI',
     line: 'Two ways to answer a safety question.',
