@@ -25,15 +25,16 @@ test.describe('wide screens', () => {
     const open = page.locator('.dock-open');
     await expect(open).toBeVisible();
     await expect.poll(async () => (await open.boundingBox())!.width).toBeGreaterThan(1000);
-    expect(await page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath)).toBe(
-      'inset(-16px 0px 0px)',
-    );
+    // the reveal is animated, so wait for it to finish
+    await expect
+      .poll(() => page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath))
+      .toBe('inset(-16px 0px 0px)');
     await page.keyboard.press('Escape');
     await expect(bar(page)).toBeFocused();
     await expect(open).toBeHidden();
-    expect(await page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath)).toContain(
-      'calc(',
-    );
+    await expect
+      .poll(() => page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath))
+      .toContain('calc(');
   });
 
   test('answers appear beside the portrait and keep earlier ones', async ({ page }) => {
