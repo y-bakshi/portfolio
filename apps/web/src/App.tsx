@@ -106,6 +106,22 @@ export function Home() {
                     <Link className="row-link" to="/projects/testpilot">
                       Read the TestPilot case study
                     </Link>
+                  ) : p.links ? (
+                    <ul className="row-links" aria-label={`${p.name} links`}>
+                      {p.links.map((l) => (
+                        <li key={l.href}>
+                          <a
+                            className="row-link"
+                            href={l.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${l.label}, ${p.name} (opens in a new tab)`}
+                          >
+                            {l.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
                   ) : (
                     <p className="row-pending">Case study in preparation.</p>
                   )}
