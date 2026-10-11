@@ -41,6 +41,7 @@ Run all commands from `apps/web/`:
 | `npm run check` | Type-checks TypeScript. |
 | `npm test` | Runs the unit and component tests once (Vitest). |
 | `npm run test:watch` | Re-runs the tests as files change. |
+| `npm run e2e` | Runs the browser tests in Chromium (Playwright); first run `npx playwright install chromium`. |
 | `npm run build` | Type-checks and builds production files to `dist/`. |
 | `npm run preview` | Previews your build locally. |
 | `npm run format` | Formats frontend source and configuration with Prettier. |
