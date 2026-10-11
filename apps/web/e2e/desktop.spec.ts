@@ -26,7 +26,7 @@ test.describe('wide screens', () => {
     await expect(open).toBeVisible();
     await expect.poll(async () => (await open.boundingBox())!.width).toBeGreaterThan(1000);
     expect(await page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath)).toBe(
-      'inset(0px)',
+      'inset(-16px 0px 0px)',
     );
     await page.keyboard.press('Escape');
     await expect(bar(page)).toBeFocused();
