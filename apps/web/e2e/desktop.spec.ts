@@ -25,15 +25,16 @@ test.describe('wide screens', () => {
     const open = page.locator('.dock-open');
     await expect(open).toBeVisible();
     await expect.poll(async () => (await open.boundingBox())!.width).toBeGreaterThan(1000);
-    expect(await page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath)).toBe(
-      'inset(0px)',
-    );
+    // the reveal is animated, so wait for it to finish
+    await expect
+      .poll(() => page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath))
+      .toBe('inset(-16px 0px 0px)');
     await page.keyboard.press('Escape');
     await expect(bar(page)).toBeFocused();
     await expect(open).toBeHidden();
-    expect(await page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath)).toContain(
-      'calc(',
-    );
+    await expect
+      .poll(() => page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath))
+      .toContain('calc(');
   });
 
   test('answers appear beside the portrait and keep earlier ones', async ({ page }) => {
@@ -106,6 +107,24 @@ test.describe('wide screens', () => {
       .getByRole('button', { name: 'Has he worked with agents?' })
       .click();
     await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(5);
+  });
+
+  test('the back to top button never changes the input row', async ({ page }) => {
+    await openHome(page);
+    await bar(page).click();
+    const before = (await input(page).boundingBox())!;
+    await page.evaluate(() => window.scrollTo(0, 1500));
+    const top = page.getByRole('button', { name: /back to top/i });
+    await expect(top).toBeVisible();
+    const after = (await input(page).boundingBox())!;
+    expect(after.width).toBe(before.width);
+    expect(after.x).toBe(before.x);
+    // it sits clear of the header and of the dock
+    const t = (await top.boundingBox())!;
+    const header = (await page.getByRole('banner').boundingBox())!;
+    expect(t.y).toBeGreaterThanOrEqual(header.y + header.height);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(top).toBeHidden();
   });
 
   test('the keyboard focus ring shows on the guide input', async ({ page }) => {
