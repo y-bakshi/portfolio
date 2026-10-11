@@ -347,12 +347,15 @@
   }
 }
 
-.dock-top {
+.to-top {
+  position: fixed;
+  top: calc(var(--header-h, 76px) + 12px);
+  right: clamp(16px, 2.5vw, 40px);
+  z-index: 25;
   display: inline-flex;
-  flex: 0 0 auto;
   align-items: center;
   gap: 6px;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0 14px;
   border: 2px solid var(--ink);
   background: var(--mark);
@@ -362,11 +365,32 @@
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  animation: cite-in 200ms var(--ease-out) both;
+  /* always laid out, so showing it never moves anything else */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 160ms var(--ease-out),
+    transform 160ms var(--ease-out),
+    visibility 0s linear 160ms;
 }
 
-.dock-top:active {
+.to-top.is-shown {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.to-top:active {
   transform: scale(0.97);
+}
+
+/* phones have no feed to scroll back past, and the chat there is full screen */
+@media (max-width: 900px) {
+  .to-top {
+    display: none;
+  }
 }
 
 @media (min-width: 901px) {

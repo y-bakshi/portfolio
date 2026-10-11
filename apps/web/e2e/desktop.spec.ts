@@ -108,6 +108,24 @@ test.describe('wide screens', () => {
     await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(5);
   });
 
+  test('the back to top button never changes the input row', async ({ page }) => {
+    await openHome(page);
+    await bar(page).click();
+    const before = (await input(page).boundingBox())!;
+    await page.evaluate(() => window.scrollTo(0, 1500));
+    const top = page.getByRole('button', { name: /back to top/i });
+    await expect(top).toBeVisible();
+    const after = (await input(page).boundingBox())!;
+    expect(after.width).toBe(before.width);
+    expect(after.x).toBe(before.x);
+    // it sits clear of the header and of the dock
+    const t = (await top.boundingBox())!;
+    const header = (await page.getByRole('banner').boundingBox())!;
+    expect(t.y).toBeGreaterThanOrEqual(header.y + header.height);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(top).toBeHidden();
+  });
+
   test('the keyboard focus ring shows on the guide input', async ({ page }) => {
     await openHome(page);
     await page.keyboard.press('Tab'); // skip link

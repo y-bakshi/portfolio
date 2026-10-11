@@ -319,8 +319,20 @@ export function GuideDock({ g }: { g: Guide }) {
     refs,
   } = g;
 
+  const showTop = !showLog && scrolled;
+
   return (
     <>
+      <button
+        type="button"
+        className={`to-top${showTop ? ' is-shown' : ''}`}
+        tabIndex={showTop ? 0 : -1}
+        aria-hidden={!showTop}
+        onClick={() => window.scrollTo({ top: 0 })}
+      >
+        <i className="fi fi-sr-angle-small-up" aria-hidden="true" />
+        Back to top
+      </button>
       <div
         className={`dock-scrim${open ? ' is-open' : ''}`}
         onClick={closeDock}
@@ -405,16 +417,6 @@ export function GuideDock({ g }: { g: Guide }) {
             <button type="submit" className="dock-ask" disabled={status !== 'ready'}>
               Ask
             </button>
-            {!showLog && scrolled && (
-              <button
-                type="button"
-                className="dock-top"
-                onClick={() => window.scrollTo({ top: 0 })}
-              >
-                <i className="fi fi-sr-angle-small-up" aria-hidden="true" />
-                Back to top
-              </button>
-            )}
             {!showLog && (
               <button
                 type="button"
