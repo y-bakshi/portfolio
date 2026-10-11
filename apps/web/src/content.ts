@@ -153,7 +153,7 @@ export const projects: Project[] = [
     line: 'A process monitor that streams to a browser.',
     detail:
       'A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.',
-    role: 'Contribution details to be confirmed.',
+    role: 'Built on my own.',
     stack: ['Rust', 'sysinfo', 'clap', 'WebSockets'],
     links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/procwatch' }],
     trace: [
@@ -169,7 +169,7 @@ export const projects: Project[] = [
     line: 'Stories and pictures for children.',
     detail:
       'A React and Vite interface and a FastAPI service collect a child\u2019s age, theme and characters, then prompt Gemini for a story and matching images, for ages 4 to 12.',
-    role: 'Contribution details to be confirmed.',
+    role: 'Built the React interface and the FastAPI service.',
     stack: ['React', 'Vite', 'FastAPI', 'Python', 'Gemini API'],
     trace: [
       { label: 'Story preferences', depth: 0 },

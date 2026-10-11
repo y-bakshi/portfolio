@@ -19,8 +19,7 @@
 .is-marked .row-line,
 .is-marked .row-role,
 .is-marked .stack-list,
-.is-marked .record-when,
-.is-marked .row-pending {
+.is-marked .record-when {
   color: var(--ink);
 }
 
@@ -63,7 +62,6 @@
   .row:hover .row-line,
   .row:hover .row-role,
   .row:hover .stack-list,
-  .row:hover .row-pending,
   .record-item:hover .record-when {
     color: var(--ink);
   }

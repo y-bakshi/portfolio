@@ -122,9 +122,7 @@ export function Home() {
                         </li>
                       ))}
                     </ul>
-                  ) : (
-                    <p className="row-pending">Case study in preparation.</p>
-                  )}
+                  ) : null}
                 </div>
               </article>
             ))}
