@@ -58,7 +58,7 @@ export const projects: Project[] = [
     name: 'GuardianAI',
     line: 'Two ways to answer a safety question.',
     detail:
-      'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed.',
+      'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed. The team later renamed it CityWatch, which is the name its live demo shows. It is a different project from the AWS Ideathon entry below.',
     role: 'Contributed within a four-person team.',
     stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
     links: [{ label: 'Live demo', href: 'https://city-watch-frontend.vercel.app/' }],
@@ -78,6 +78,12 @@ export const projects: Project[] = [
       'A serverless pipeline on AWS that turns social-media signals into department alerts within 15 seconds. Kinesis ingests, Lambda and Rekognition analyse, Bedrock classifies, and EventBridge routes each alert. Won the AWS Ideathon 2026.',
     role: 'Designed the pipeline and its scaling model. Won the AWS Ideathon 2026.',
     stack: ['Kinesis', 'Lambda', 'Rekognition', 'Bedrock', 'EventBridge'],
+    links: [
+      {
+        label: 'Pitch deck',
+        href: 'https://gamma.app/docs/CityWatch-we9ido0egg80ra9?mode=present',
+      },
+    ],
     trace: [
       { label: 'Social signals', depth: 0 },
       { label: 'Kinesis and Lambda', depth: 1 },
