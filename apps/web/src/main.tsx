@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './App';
 import CaseStudy from './CaseStudy';
-import '@flaticon/flaticon-uicons/css/solid/rounded.css';
-import '@flaticon/flaticon-uicons/css/brands/all.css';
 import '@fontsource-variable/instrument-sans/wdth.css';
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';

@@ -22,7 +22,7 @@ Record provenance for each generated file: tool (Nano Banana via Gemini CLI), pr
 | --- | --- |
 | Real project screenshots | Capture from verified builds, secrets removed, consistent dimensions, meaningful alt text. |
 | Case-study diagrams | Verify against each repository before replacing the editorial traces. Generated art must not stand in for architecture. |
-| Icon set | Done: Flaticon UIcons (`@flaticon/flaticon-uicons`, solid rounded plus brands) for the contact links. The Flaticon license is free with credit, so the footer credits Flaticon. Record this if the icon set changes. |
+| Icon set | Done: seven Flaticon UIcons glyphs (solid rounded plus brands) as inline SVGs in `src/Icon.tsx`, not the npm font package. The Flaticon license is free with credit, so the footer credits Flaticon. Record this if the icon set changes. |
 | Fonts | Self-hosted variable WOFF2 through Fontsource (`@fontsource-variable/instrument-sans`, `geist`, `geist-mono`), all SIL OFL 1.1. Only the Latin subsets load for English text. |
 | Résumé | Secondary action. Owner to supply. |
 | Contact links | Done: two email addresses, LinkedIn, GitHub and the 30 minute booking link. |

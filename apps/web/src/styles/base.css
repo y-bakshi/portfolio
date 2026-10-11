@@ -123,3 +123,9 @@ main,
   position: relative;
   z-index: 1;
 }
+
+.icon {
+  display: inline-block;
+  flex: none;
+  vertical-align: -0.125em;
+}

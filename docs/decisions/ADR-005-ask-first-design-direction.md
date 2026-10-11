@@ -20,7 +20,7 @@ Full tokens and component rules are in [design-language.md](../design/design-lan
 - The guide currently answers from a small keyword-matched set in `apps/web/src/content.ts`, grounded in the content snapshot. It is a stand-in for the planned grounded backend, and it says so on the page.
 - The portrait effect samples the image on load, so it is chunked, uses fewer particles on phones, and drops to half density if frames run slow. It has been measured only in a desktop browser; test on real phones.
 - Fonts are self-hosted with Fontsource: Instrument Sans, Geist and Geist Mono, all SIL Open Font License 1.1. No request goes to a font CDN.
-- Icons come from Flaticon UIcons (npm package). The free license requires crediting Flaticon, done in the footer.
+- Icons come from Flaticon UIcons, drawn as inline SVGs in `src/Icon.tsx` (the seven the site uses, so the icon font is not shipped). The free license requires crediting Flaticon, done in the footer.
 
 ## Alternatives
 
