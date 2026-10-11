@@ -1,5 +1,6 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Answer, answerFor, education, projects, roles, suggestions } from './content';
+import { Icon } from './Icon';
 
 type Status = 'ready' | 'thinking' | 'answering';
 
@@ -330,7 +331,7 @@ export function GuideDock({ g }: { g: Guide }) {
         aria-hidden={!showTop}
         onClick={() => window.scrollTo({ top: 0 })}
       >
-        <i className="fi fi-sr-angle-small-up" aria-hidden="true" />
+        <Icon name="angleUp" />
         Back to top
       </button>
       <div
@@ -360,7 +361,7 @@ export function GuideDock({ g }: { g: Guide }) {
           tabIndex={open ? -1 : 0}
         >
           <StatusLight status={status} />
-          <i className="fi fi-sr-comment-alt-dots dock-chevron" aria-hidden="true" />
+          <Icon name="comment" className="dock-chevron" />
           <span className="dock-title">
             Ask the guide
             <span className="dock-state">{statusLabel[status]}</span>
@@ -382,7 +383,7 @@ export function GuideDock({ g }: { g: Guide }) {
                   aria-label="Close the guide"
                   onClick={closeDock}
                 >
-                  <i className="fi fi-sr-cross-small" aria-hidden="true" />
+                  <Icon name="cross" />
                 </button>
               </div>
               <div className="dock-log" ref={refs.logRef}>
@@ -424,7 +425,7 @@ export function GuideDock({ g }: { g: Guide }) {
                 aria-label="Close the guide"
                 onClick={closeDock}
               >
-                <i className="fi fi-sr-cross-small" aria-hidden="true" />
+                <Icon name="cross" />
               </button>
             )}
           </form>
