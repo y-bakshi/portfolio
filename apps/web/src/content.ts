@@ -5,6 +5,8 @@ export type Project = {
   detail: string;
   role: string;
   stack: string[];
+  /** Outside links shown on the card. Only add ones that exist and are public. */
+  links?: { label: string; href: string }[];
   /** Pipeline stages in order. `depth` indents a stage under the one before it. */
   trace: { label: string; depth: number }[];
 };
@@ -42,6 +44,7 @@ export const projects: Project[] = [
       'A multi-user workspace where a résumé is edited visually, inspected as LaTeX source, and compiled to PDF on the server with pdflatex (shell escape off, with timeouts). It keeps revision history with restore, rejects silent concurrent overwrites with version checks, and stores job descriptions and text-selection annotations beside each CV.',
     role: 'Sole author: the React editor, the FastAPI service, and the CI pipeline.',
     stack: ['React', 'TypeScript', 'Tiptap', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'pdflatex'],
+    links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/cv-studio' }],
     trace: [
       { label: 'Visual edit', depth: 0 },
       { label: 'Generate LaTeX', depth: 1 },
@@ -58,6 +61,7 @@ export const projects: Project[] = [
       'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed.',
     role: 'Contributed within a four-person team.',
     stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
+    links: [{ label: 'Live demo', href: 'https://city-watch-frontend.vercel.app/' }],
     trace: [
       { label: 'Incident map and feeds', depth: 0 },
       { label: 'Route the question', depth: 1 },
@@ -103,6 +107,9 @@ export const projects: Project[] = [
       'A C++17 language with a lexer, a 400-line grammar, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.',
     role: 'Led a four-person team.',
     stack: ['C++17', 'Flex', 'Bison', 'Make'],
+    links: [
+      { label: 'Source on GitHub', href: 'https://github.com/y-bakshi/SER502-CatScript-Team8' },
+    ],
     trace: [
       { label: 'Source text', depth: 0 },
       { label: 'Lexer and parser', depth: 1 },
@@ -148,6 +155,7 @@ export const projects: Project[] = [
       'A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.',
     role: 'Contribution details to be confirmed.',
     stack: ['Rust', 'sysinfo', 'clap', 'WebSockets'],
+    links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/procwatch' }],
     trace: [
       { label: 'Collect metrics', depth: 0 },
       { label: 'Filter', depth: 1 },

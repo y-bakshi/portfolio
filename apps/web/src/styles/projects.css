@@ -72,6 +72,15 @@
   color: var(--action);
 }
 
+.row-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .row-pending {
   margin-top: 12px;
   color: var(--muted);

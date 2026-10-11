@@ -62,6 +62,22 @@ describe('home page', () => {
     expect(links[0]).toHaveAttribute('href', '/projects/testpilot');
   });
 
+  it('shows each card link as a safe external link', () => {
+    home();
+    const withLinks = projects.filter((p) => p.links);
+    expect(withLinks.length).toBeGreaterThan(0);
+    for (const p of withLinks) {
+      const card = document.getElementById(p.id) as HTMLElement;
+      for (const l of p.links!) {
+        expect(l.href, l.label).toMatch(/^https:\/\//);
+        const a = within(card).getByRole('link', { name: new RegExp(l.label, 'i') });
+        expect(a).toHaveAttribute('href', l.href);
+        expect(a).toHaveAttribute('target', '_blank');
+        expect(a.getAttribute('rel')).toContain('noopener');
+      }
+    }
+  });
+
   it('has real contact links', () => {
     home();
     const contact = document.getElementById('contact') as HTMLElement;
