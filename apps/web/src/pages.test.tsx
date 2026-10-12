@@ -136,8 +136,21 @@ describe('case study page', () => {
     expect(screen.queryByRole('button', { name: /ask the guide/i })).toBeNull();
   });
 
-  it('keeps the unfinished sections honest', () => {
+  it('has no placeholder text left', () => {
     study();
-    expect(screen.getByText(/owner to write/i)).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/\[[^\]]*(owner|to come)[^\]]*\]/i);
+  });
+
+  it('links the live demo safely', () => {
+    study();
+    const demo = screen.getByRole('link', { name: /live demo of testpilot/i });
+    expect(demo).toHaveAttribute('href', expect.stringMatching(/^https:\/\//));
+    expect(demo).toHaveAttribute('target', '_blank');
+    expect(demo.getAttribute('rel')).toContain('noopener');
+  });
+
+  it('says what was not measured', () => {
+    study();
+    expect(screen.getByText(/not measured/i)).toBeInTheDocument();
   });
 });
