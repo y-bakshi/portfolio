@@ -100,7 +100,7 @@ describe('the guide chat', () => {
     await user.click(bar());
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
-      await screen.findByText(/Arizona State University \(GPA 3\.85\)/, {
+      await screen.findByText(/Arizona State University, after/, {
         selector: '.msg-answer',
       }),
     ).toBeInTheDocument();

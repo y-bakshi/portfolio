@@ -65,9 +65,9 @@ export function answerFor(question: string): Answer {
       text: 'The Gemini story generator takes a child\u2019s age, theme and characters from a React interface, and a FastAPI service prompts Gemini for a story and matching images.',
       cites: find(['story-generator']),
     };
-  if (has('education', 'degree', 'school', 'universit', 'study', 'gpa', 'certif', 'asu'))
+  if (has('education', 'degree', 'school', 'universit', 'study', 'certif', 'asu'))
     return {
-      text: 'Yash is finishing an MS in Computer Software Engineering at Arizona State University (GPA 3.85), after a Bachelor of Information Technology at Manipal University Jaipur. He holds ServiceNow CSA and Discovery certifications.',
+      text: 'Yash is finishing an MS in Computer Software Engineering at Arizona State University, after a Bachelor of Information Technology at Manipal University Jaipur. He holds ServiceNow CSA and Discovery certifications.',
       cites: find(['asu', 'manipal']),
     };
   if (has('skill', 'stack', 'tool', 'technolog'))

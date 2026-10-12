@@ -47,7 +47,7 @@ export const education: Entry[] = [
     title: 'MS, Computer Software Engineering',
     org: 'Arizona State University',
     when: 'Jan 2025 to Dec 2026',
-    note: 'GPA 3.85. Statistical machine learning, AI for software engineers, data processing at scale, cloud computing, software project management.',
+    note: 'Statistical machine learning, AI for software engineers, data processing at scale, cloud computing, software project management.',
   },
   {
     id: 'manipal',
