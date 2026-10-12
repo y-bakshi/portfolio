@@ -4,6 +4,7 @@ import { education, projects, roles, smallProjects, stackGroups, type Project } 
 import { DotGrid } from './DotGrid';
 import { MistPortrait } from './MistPortrait';
 import { GuideDock, useGuide } from './Guide';
+import { CardArt } from './CardArt';
 import { Icon, type IconName } from './Icon';
 import { SiteHeader, Trace } from './parts';
 
@@ -177,6 +178,7 @@ export function Home() {
                     aria-pressed={picked === p.id}
                     onClick={() => pick(p.id)}
                   >
+                    <CardArt />
                     <Corner rank={ranks[stackOrder.indexOf(p.id)]} />
                     <Corner rank={ranks[stackOrder.indexOf(p.id)]} end />
                     <span className="card-name">{p.name}</span>

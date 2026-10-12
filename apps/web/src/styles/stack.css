@@ -162,45 +162,44 @@
     box-shadow 220ms var(--ease-out);
 }
 
-/* a gold diamond behind the name, like the big pip on an ace */
-.playing-card::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 62%;
-  height: 46%;
-  background: var(--mark);
-  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-  transform: translate(-50%, -50%);
-}
-
 .card-name {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
   padding: 0 20px;
-  font-family: var(--display);
-  font-size: 2rem;
-  font-weight: 800;
-  font-stretch: 78%;
+  font-family: 'Cinzel Decorative', var(--display);
+  font-size: calc(var(--cw) * 0.074);
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
   text-align: center;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+}
+
+.card-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--mark);
+}
+
+.card-art .plate {
+  fill: var(--panel);
 }
 
 .playing-card .corner {
-  top: 14px;
-  left: 14px;
-  font-size: 1.3rem;
+  top: 17px;
+  left: 17px;
+  font-family: 'Cinzel Decorative', var(--display);
+  font-size: 1.2rem;
 }
 
 .playing-card .corner-end {
   top: auto;
-  right: 14px;
-  bottom: 14px;
+  right: 17px;
+  bottom: 17px;
   left: auto;
 }
 
@@ -249,8 +248,7 @@
   }
 
   .card-name {
-    padding: 0 8px;
-    font-size: 1.15rem;
+    font-size: calc(var(--cw) * 0.088);
   }
 
   .card-side {
