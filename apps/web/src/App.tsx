@@ -4,7 +4,7 @@ import { education, projects, roles, smallProjects, stackGroups, type Project } 
 import { DotGrid } from './DotGrid';
 import { MistPortrait } from './MistPortrait';
 import { GuideDock, useGuide } from './Guide';
-import { CardArt } from './CardArt';
+import { CardArt, type CardKind } from './CardArt';
 import { Icon, type IconName } from './Icon';
 import { SiteHeader, Trace } from './parts';
 
@@ -21,6 +21,13 @@ const stackOrder = [
   'edge-inference',
   'story-generator',
 ];
+const cardKinds: Record<string, CardKind> = {
+  testpilot: 'compass',
+  citywatch: 'eye',
+  'cv-studio': 'page',
+  guardianai: 'shield',
+  catscript: 'cat',
+};
 const ranks = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5'];
 const stacked = stackOrder.map((id) => projects.find((p) => p.id === id)!);
 // the hand's cards stay in a fixed order in the page; their place in the fan comes from the order state
@@ -178,7 +185,7 @@ export function Home() {
                     aria-pressed={picked === p.id}
                     onClick={() => pick(p.id)}
                   >
-                    <CardArt />
+                    <CardArt kind={cardKinds[p.id]} />
                     <Corner rank={ranks[stackOrder.indexOf(p.id)]} />
                     <Corner rank={ranks[stackOrder.indexOf(p.id)]} end />
                     <span className="card-name">{p.name}</span>
