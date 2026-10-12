@@ -54,8 +54,6 @@ function ProjectRow({
       style={{ '--i': i + 1 } as React.CSSProperties}
       aria-labelledby={`${p.id}-name`}
     >
-      <Corner rank={ranks[i]} />
-      <Corner rank={ranks[i]} end />
       <div className="row-head">
         <h3 id={`${p.id}-name`}>{p.name}</h3>
         <p className="row-line">{p.line}</p>
@@ -211,8 +209,6 @@ export function Home() {
               <ProjectRow key={p.id} p={p} i={stackOrder.indexOf(p.id)} marked={marked} />
             ))}
             <article className="row" aria-labelledby="small-name">
-              <Corner rank="★" />
-              <Corner rank="★" end />
               <div className="row-head">
                 <h3 id="small-name">Smaller projects</h3>
                 <p className="row-line">Coursework and experiments.</p>
