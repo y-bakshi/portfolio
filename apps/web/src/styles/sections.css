@@ -4,7 +4,6 @@
    guide chat bubbles, project and role cards. */
 .ask-lede,
 .section-card,
-.fineprint,
 .case-head,
 .case-text,
 .case-back a {
@@ -38,37 +37,11 @@
   letter-spacing: -0.025em;
 }
 
-.section-lede {
-  max-width: 54ch;
-  margin-top: 14px;
-  color: var(--muted);
-}
-
-.fineprint {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.section-card .section-lede {
-  margin-top: 12px;
-}
-
-.fineprint {
-  width: fit-content;
-  max-width: min(100%, 62ch);
-  margin-top: 24px;
-  padding: 12px 16px;
-  box-shadow: 4px 4px 0 var(--shadow);
-}
-
-.section-lede,
-.fineprint,
 .row-line,
 .row-body > p,
 .row-body .row-role,
 .stack-list,
 .record-item p,
-.tools-list dd,
 .case-text > p {
   font-weight: 500;
 }

@@ -3,6 +3,7 @@ import type { Project } from './types';
 export const projects: Project[] = [
   {
     id: 'testpilot',
+    featured: true,
     name: 'TestPilot',
     line: 'Writes tests, then argues with them.',
     detail:
@@ -26,41 +27,8 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: 'cv-studio',
-    name: 'CV Studio',
-    line: 'A résumé editor that compiles real LaTeX.',
-    detail:
-      'A multi-user workspace where a résumé is edited visually, inspected as LaTeX source, and compiled to PDF on the server with pdflatex (shell escape off, with timeouts). It keeps revision history with restore, rejects silent concurrent overwrites with version checks, and stores job descriptions and text-selection annotations beside each CV.',
-    role: 'Sole author: the React editor, the FastAPI service, and the CI pipeline.',
-    stack: ['React', 'TypeScript', 'Tiptap', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'pdflatex'],
-    links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/cv-studio' }],
-    trace: [
-      { label: 'Visual edit', depth: 0 },
-      { label: 'Generate LaTeX', depth: 1 },
-      { label: 'Compile with pdflatex', depth: 2 },
-      { label: 'Protected PDF preview', depth: 3 },
-      { label: 'Save revision', depth: 4 },
-    ],
-  },
-  {
-    id: 'guardianai',
-    name: 'GuardianAI',
-    line: 'Two ways to answer a safety question.',
-    detail:
-      'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed. The team later renamed it CityWatch, which is the name its live demo shows. It is a different project from the AWS Ideathon entry below.',
-    role: 'Contributed within a four-person team.',
-    stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
-    links: [{ label: 'Live demo', href: 'https://city-watch-frontend.vercel.app/' }],
-    trace: [
-      { label: 'Incident map and feeds', depth: 0 },
-      { label: 'Route the question', depth: 1 },
-      { label: 'Summary path', depth: 2 },
-      { label: 'ReAct path', depth: 2 },
-      { label: 'Safety response', depth: 3 },
-    ],
-  },
-  {
     id: 'citywatch',
+    featured: true,
     name: 'CityWatch',
     line: 'Turns noisy public signals into alerts for the right department.',
     detail:
@@ -81,17 +49,39 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: 'face-recognition',
-    name: 'Serverless face recognition',
-    line: 'Detection and recognition as separate stages with a queue between them.',
+    id: 'cv-studio',
+    featured: true,
+    name: 'CV Studio',
+    line: 'A résumé editor that compiles real LaTeX.',
     detail:
-      'MTCNN detection and FaceNet recognition run as separate Lambda functions joined by SQS. Under 100 concurrent requests it reached 99% accuracy at 3.75 seconds average latency, after shrinking a 10 GB container to fit Lambda.',
-    role: 'Course project.',
-    stack: ['PyTorch', 'MTCNN', 'FaceNet', 'Lambda', 'SQS', 'ECR', 'Docker'],
+      'A multi-user workspace where a résumé is edited visually, inspected as LaTeX source, and compiled to PDF on the server with pdflatex (shell escape off, with timeouts). It keeps revision history with restore, rejects silent concurrent overwrites with version checks, and stores job descriptions and text-selection annotations beside each CV.',
+    role: 'Sole author: the React editor, the FastAPI service, and the CI pipeline.',
+    stack: ['React', 'TypeScript', 'Tiptap', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'pdflatex'],
+    links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/cv-studio' }],
     trace: [
-      { label: 'Detect faces', depth: 0 },
-      { label: 'SQS queue', depth: 1 },
-      { label: 'Recognize', depth: 2 },
+      { label: 'Visual edit', depth: 0 },
+      { label: 'Generate LaTeX', depth: 1 },
+      { label: 'Compile with pdflatex', depth: 2 },
+      { label: 'Protected PDF preview', depth: 3 },
+      { label: 'Save revision', depth: 4 },
+    ],
+  },
+  {
+    id: 'guardianai',
+    featured: true,
+    name: 'GuardianAI',
+    line: 'Two ways to answer a safety question.',
+    detail:
+      'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed. The team later renamed it CityWatch, which is the name its live demo shows. It is a different project from the AWS Ideathon entry below.',
+    role: 'Contributed within a four-person team.',
+    stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
+    links: [{ label: 'Live demo', href: 'https://city-watch-frontend.vercel.app/' }],
+    trace: [
+      { label: 'Incident map and feeds', depth: 0 },
+      { label: 'Route the question', depth: 1 },
+      { label: 'Summary path', depth: 2 },
+      { label: 'ReAct path', depth: 2 },
+      { label: 'Safety response', depth: 3 },
     ],
   },
   {
@@ -114,6 +104,22 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: 'procwatch',
+    name: 'ProcWatch',
+    line: 'A process monitor that streams to a browser.',
+    detail:
+      'A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.',
+    role: 'Built on my own.',
+    stack: ['Rust', 'sysinfo', 'clap', 'WebSockets'],
+    links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/procwatch' }],
+    trace: [
+      { label: 'Collect metrics', depth: 0 },
+      { label: 'Filter', depth: 1 },
+      { label: 'WebSocket stream', depth: 2 },
+      { label: 'Live dashboard', depth: 3 },
+    ],
+  },
+  {
     id: 'streaming-pipeline',
     name: 'Streaming data pipeline',
     line: 'NYC taxi events flowing into a graph database.',
@@ -125,6 +131,20 @@ export const projects: Project[] = [
       { label: 'Taxi events', depth: 0 },
       { label: 'Kafka consumer', depth: 1 },
       { label: 'Neo4j graph', depth: 2 },
+    ],
+  },
+  {
+    id: 'face-recognition',
+    name: 'Serverless face recognition',
+    line: 'Detection and recognition as separate stages with a queue between them.',
+    detail:
+      'MTCNN detection and FaceNet recognition run as separate Lambda functions joined by SQS. Under 100 concurrent requests it reached 99% accuracy at 3.75 seconds average latency, after shrinking a 10 GB container to fit Lambda.',
+    role: 'Course project.',
+    stack: ['PyTorch', 'MTCNN', 'FaceNet', 'Lambda', 'SQS', 'ECR', 'Docker'],
+    trace: [
+      { label: 'Detect faces', depth: 0 },
+      { label: 'SQS queue', depth: 1 },
+      { label: 'Recognize', depth: 2 },
     ],
   },
   {
@@ -140,22 +160,6 @@ export const projects: Project[] = [
       { label: 'Detect on the edge device', depth: 1 },
       { label: 'MQTT and SQS', depth: 2 },
       { label: 'Cloud recognition', depth: 3 },
-    ],
-  },
-  {
-    id: 'procwatch',
-    name: 'ProcWatch',
-    line: 'A process monitor that streams to a browser.',
-    detail:
-      'A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.',
-    role: 'Built on my own.',
-    stack: ['Rust', 'sysinfo', 'clap', 'WebSockets'],
-    links: [{ label: 'Source on GitHub', href: 'https://github.com/y-bakshi/procwatch' }],
-    trace: [
-      { label: 'Collect metrics', depth: 0 },
-      { label: 'Filter', depth: 1 },
-      { label: 'WebSocket stream', depth: 2 },
-      { label: 'Live dashboard', depth: 3 },
     ],
   },
   {

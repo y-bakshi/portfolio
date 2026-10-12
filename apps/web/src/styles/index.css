@@ -19,9 +19,10 @@
 @import './dock-small.css';
 @import './controls.css';
 @import './projects.css';
+@import './tiles.css';
 @import './history.css';
-@import './tools.css';
 @import './trace.css';
 @import './contact.css';
 @import './case.css';
 @import './cards.css';
+@import './snap.css';

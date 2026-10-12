@@ -62,6 +62,8 @@
 
 .site-footer {
   display: flex;
+  box-sizing: border-box;
+  min-height: var(--footer-h);
   justify-content: space-between;
   gap: 16px;
   margin-top: -1px; /* overlap by a pixel so no seam shows between contact and footer */

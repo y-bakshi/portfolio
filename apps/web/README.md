@@ -20,7 +20,7 @@ The frontend uses Vite to serve and bundle the React application:
 │   ├── MistPortrait.tsx    the portrait that condenses from particles
 │   ├── pointerPush.ts      the push radius both effects share
 │   └── styles/             tokens, base, header, hero, conversation, dock, projects, history,
-│                           tools, trace, contact, case, cards and others; index.css imports them in order
+│                           trace, contact, case, cards and others; index.css imports them in order
 └── package.json
 ```
 

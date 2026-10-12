@@ -1,7 +1,8 @@
 import { render, screen, within } from '@testing-library/react';
 import Home from './App';
+import AllProjects from './AllProjects';
 import CaseStudy from './CaseStudy';
-import { education, projects, roles, smallProjects, stackGroups } from './content';
+import { education, projects, roles, smallProjects } from './content';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
 vi.mock('./MistPortrait', () => ({
@@ -29,7 +30,7 @@ describe('home page', () => {
 
   it('has every section, each with a heading', () => {
     home();
-    for (const name of ['Projects', 'Work history', 'Education', 'What I work with']) {
+    for (const name of ['Projects', 'Work history', 'Education']) {
       expect(screen.getByRole('heading', { level: 2, name }), name).toBeInTheDocument();
     }
     expect(
@@ -37,16 +38,27 @@ describe('home page', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows a card for every project, role and degree', () => {
+  it('shows the featured projects and every role and degree', () => {
     home();
-    expect(document.querySelectorAll('article.row')).toHaveLength(projects.length + 1);
-    for (const p of projects)
-      expect(screen.getByRole('heading', { level: 3, name: p.name }), p.name).toBeInTheDocument();
+    for (const p of projects.filter((p) => p.featured))
+      expect(document.getElementById(p.id), p.id).toHaveTextContent(p.name);
     for (const r of [...roles, ...education])
       expect(document.getElementById(r.id), r.id).toBeInTheDocument();
-    for (const s of smallProjects)
-      expect(screen.getByText(s.name, { exact: false })).toBeInTheDocument();
-    for (const g of stackGroups) expect(screen.getByText(g.group)).toBeInTheDocument();
+  });
+
+  it('puts exactly the four featured projects on the projects screen, with a link to the rest', () => {
+    home();
+    const screenOne = document.getElementById('work') as HTMLElement;
+    const tiles = [...screenOne.querySelectorAll('article.tile')].map((t) => t.id);
+    expect(tiles).toEqual(projects.filter((p) => p.featured).map((p) => p.id));
+    expect(tiles).toHaveLength(4);
+    expect(within(screenOne).getByRole('link', { name: /see all projects/i })).toHaveAttribute(
+      'href',
+      '/projects/',
+    );
+    // the other projects live on their own page, not on the home page
+    for (const p of projects.filter((p) => !p.featured))
+      expect(document.getElementById(p.id), p.id).toBeNull();
   });
 
   it('links to the TestPilot case study and only that one', () => {
@@ -57,7 +69,7 @@ describe('home page', () => {
   });
 
   it('shows each card link as a safe external link', () => {
-    home();
+    render(<AllProjects />);
     const withLinks = projects.filter((p) => p.links);
     expect(withLinks.length).toBeGreaterThan(0);
     for (const p of withLinks) {
@@ -102,10 +114,9 @@ describe('home page', () => {
   it('gives every card the guide can cite an id and a focus target', () => {
     home();
     for (const id of [
-      ...projects.map((p) => p.id),
+      ...projects.filter((p) => p.featured).map((p) => p.id),
       ...roles.map((r) => r.id),
       ...education.map((e) => e.id),
-      'tools',
       'contact',
     ]) {
       const el = document.getElementById(id);
@@ -121,7 +132,10 @@ describe('case study page', () => {
   it('shows the project with a way back and no guide', () => {
     study();
     expect(screen.getByRole('heading', { level: 1, name: 'TestPilot' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute('href', '/#work');
+    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute(
+      'href',
+      '/projects/',
+    );
     expect(screen.queryByRole('button', { name: /ask the guide/i })).toBeNull();
   });
 
@@ -136,5 +150,26 @@ describe('case study page', () => {
     expect(demo).toHaveAttribute('href', expect.stringMatching(/^https:\/\//));
     expect(demo).toHaveAttribute('target', '_blank');
     expect(demo.getAttribute('rel')).toContain('noopener');
+  });
+});
+
+describe('all projects page', () => {
+  const all = () => render(<AllProjects />);
+
+  it('shows every project and the coursework, with a way back and no guide', () => {
+    all();
+    expect(screen.getByRole('heading', { level: 1, name: /all projects/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /back to projects/i })).toHaveAttribute(
+      'href',
+      '/#work',
+    );
+    expect(screen.queryByRole('button', { name: /ask the guide/i })).toBeNull();
+    for (const p of projects) {
+      const el = document.getElementById(p.id);
+      expect(el, p.id).toHaveTextContent(p.name);
+      expect(el, p.id).toHaveAttribute('tabindex', '-1');
+    }
+    for (const sp of smallProjects)
+      expect(screen.getByText(sp.name, { exact: false })).toBeInTheDocument();
   });
 });

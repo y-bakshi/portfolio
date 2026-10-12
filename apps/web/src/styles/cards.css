@@ -40,7 +40,6 @@
 
 @media (max-width: 820px) {
   .row,
-  .record-item,
   .case-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -81,15 +80,13 @@
 }
 
 @media (max-width: 820px) {
-  .row,
-  .tools-list {
+  .row {
     --sh: 5px;
   }
 }
 
 .row,
-.record-item,
-.tools-list {
+.record-item {
   box-shadow: var(--sh) var(--sh) 0 var(--shadow);
   transition:
     background-color 160ms var(--ease-out),
@@ -99,8 +96,7 @@
 
 @media (hover: hover) {
   .row:hover,
-  .record-item:hover,
-  .tools-list:hover {
+  .record-item:hover {
     transform: translate(-3px, -3px);
     box-shadow: calc(var(--sh) + 3px) calc(var(--sh) + 3px) 0 var(--shadow);
   }
@@ -108,14 +104,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .row,
-  .record-item,
-  .tools-list {
+  .record-item {
     transition: background-color 160ms var(--ease-out);
   }
 
   .row:hover,
-  .record-item:hover,
-  .tools-list:hover {
+  .record-item:hover {
     transform: none;
     box-shadow: var(--sh) var(--sh) 0 var(--shadow);
   }

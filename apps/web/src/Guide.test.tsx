@@ -100,7 +100,7 @@ describe('the guide chat', () => {
     await user.click(bar());
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
-      await screen.findByText(/Arizona State University \(GPA 3\.85\)/, {
+      await screen.findByText(/Arizona State University, after/, {
         selector: '.msg-answer',
       }),
     ).toBeInTheDocument();
@@ -116,6 +116,18 @@ describe('the guide chat', () => {
     expect(card.scrollIntoView).toHaveBeenCalled();
     expect(card).toHaveFocus();
     await waitFor(() => expect(card).toHaveClass('is-marked'));
+  });
+
+  it('opens the all-projects page for a cited project that is not on this page', async () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', { ...window.location, assign });
+    const user = userEvent.setup();
+    renderHome();
+    await user.click(bar());
+    await user.type(input(), 'Tell me about the rust process monitor{Enter}');
+    await user.click(await screen.findByRole('button', { name: 'Show ProcWatch on the page' }));
+    expect(assign).toHaveBeenCalledWith('/projects/#procwatch');
+    vi.unstubAllGlobals();
   });
 
   it('takes the new question while the answer streams: status runs thinking, answering, ready', async () => {

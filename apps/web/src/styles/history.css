@@ -12,9 +12,11 @@
 
 /* each role is its own card, matching the project cards */
 .record-item {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  gap: clamp(12px, 4vw, 56px);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(14px, 2.5vw, 28px);
   padding: clamp(18px, 3vw, 28px) clamp(20px, 3.5vw, 36px);
   border: 2px solid var(--ink);
   background-color: var(--panel);
@@ -23,8 +25,12 @@
 }
 
 .record-when {
+  position: absolute;
+  top: 10px;
+  right: clamp(14px, 2vw, 22px);
   color: var(--muted);
   font-family: var(--display);
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -44,6 +50,12 @@
   .record-item {
     box-shadow: 4px 4px 0 var(--shadow);
   }
+
+  /* too narrow for a corner date, so it becomes a small line above the logo and the text */
+  .record-when {
+    position: static;
+    grid-column: 1 / -1;
+  }
 }
 
 .record-item {
@@ -53,5 +65,35 @@
 @media (max-width: 820px) {
   .record-item {
     --sh: 4px;
+  }
+}
+
+/* the organisation's logo, or its initials, to the left of the description */
+
+.org-mark {
+  display: grid;
+  align-self: center;
+  place-items: center;
+  width: 148px;
+  height: 64px;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  object-fit: contain;
+}
+
+/* on a small phone there is no room beside the logo, so it sits above the text */
+@media (max-width: 560px) {
+  .record-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .org-mark {
+    justify-self: start;
+    width: 120px;
+    height: 44px;
+    object-position: left center;
   }
 }

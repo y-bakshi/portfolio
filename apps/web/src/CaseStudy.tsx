@@ -12,7 +12,7 @@ export function CaseStudy() {
       <SiteHeader />
       <main id="main" className="case">
         <p className="case-back">
-          <a href="/#work">All projects</a>
+          <a href="/projects/">All projects</a>
         </p>
         <div className="case-head">
           <h1 className="case-title">{project.name}</h1>

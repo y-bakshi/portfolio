@@ -1,6 +1,10 @@
-export const roles = [
+import type { Entry } from './types';
+
+export const roles: Entry[] = [
   {
     id: 'thryv',
+    mark: 'Th',
+    logo: '/logos/thryv.png',
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
@@ -8,6 +12,8 @@ export const roles = [
   },
   {
     id: 'insight',
+    mark: 'In',
+    logo: '/logos/insight.webp',
     title: 'Technical team lead',
     org: 'InfoCenter, an Insight Company',
     when: 'Jun to Dec 2024',
@@ -15,6 +21,8 @@ export const roles = [
   },
   {
     id: 'tcs-dev',
+    mark: 'TCS',
+    logo: '/logos/tcs.svg',
     title: 'ServiceNow developer',
     org: 'Tata Consultancy Services',
     when: 'Sep 2022 to May 2024',
@@ -22,6 +30,8 @@ export const roles = [
   },
   {
     id: 'tcs-ase',
+    mark: 'TCS',
+    logo: '/logos/tcs.svg',
     title: 'Assistant systems engineer',
     org: 'Tata Consultancy Services',
     when: 'Nov 2021 to Sep 2022',
@@ -29,16 +39,20 @@ export const roles = [
   },
 ];
 
-export const education = [
+export const education: Entry[] = [
   {
     id: 'asu',
+    mark: 'ASU',
+    logo: '/logos/asu.png',
     title: 'MS, Computer Software Engineering',
     org: 'Arizona State University',
     when: 'Jan 2025 to Dec 2026',
-    note: 'GPA 3.85. Statistical machine learning, AI for software engineers, data processing at scale, cloud computing, software project management.',
+    note: 'Statistical machine learning, AI for software engineers, data processing at scale, cloud computing, software project management.',
   },
   {
     id: 'manipal',
+    mark: 'MUJ',
+    logo: '/logos/manipal.png',
     title: 'Bachelor of Information Technology',
     org: 'Manipal University Jaipur',
     when: 'Aug 2017 to Aug 2021',

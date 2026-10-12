@@ -11,6 +11,14 @@ for (const width of widths) {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
+  test(`all projects page has no sideways scrolling at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/projects/');
+    await expect(page.getByRole('heading', { level: 1, name: 'All projects' })).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+
   test(`case study has no sideways scrolling at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/projects/testpilot/');

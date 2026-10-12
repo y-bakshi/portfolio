@@ -1,10 +1,11 @@
 import type { Guide } from '../Guide';
+import { OrgMark } from './OrgMark';
 import { education } from '../content';
 
 /** The education list. */
 export function Education({ marked }: Pick<Guide, 'marked'>) {
   return (
-    <section className="record" aria-labelledby="education-title">
+    <section className="record" id="education" aria-labelledby="education-title">
       <div className="section-card">
         <h2 id="education-title" className="section-title">
           Education
@@ -19,6 +20,7 @@ export function Education({ marked }: Pick<Guide, 'marked'>) {
             className={`record-item${marked === e.id ? ' is-marked' : ''}`}
           >
             <p className="record-when">{e.when}</p>
+            <OrgMark org={e.org} mark={e.mark} logo={e.logo} />
             <div>
               <h3>
                 {e.title}, {e.org}

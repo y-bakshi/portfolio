@@ -1,5 +1,5 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Answer, answerFor } from '../content';
+import { Answer, answerFor, projects } from '../content';
 import { prefersReducedMotion, type Status } from './shared';
 import { Chips, Thread, type Exchange } from './Thread';
 import { useFollowNewest } from './useFollowNewest';
@@ -128,7 +128,11 @@ export function useGuide() {
 
   const show = (id: string) => {
     const el = document.getElementById(id);
-    if (!el) return;
+    if (!el) {
+      // only the four featured projects are on this page; the rest are on the all-projects page
+      if (projects.some((p) => p.id === id)) window.location.assign(`/projects/#${id}`);
+      return;
+    }
     if (isMobile) setOpen(false);
     // Scroll behavior comes from the stylesheet, so this matches every other jump on the page.
     // a jump of more than a screen and a half is instant; a long smooth scroll just makes people wait
