@@ -148,7 +148,7 @@ test.describe('wide screens', () => {
   });
 
   test('the case study has no guide', async ({ page }) => {
-    await page.goto('/projects/testpilot');
+    await page.goto('/projects/testpilot/');
     await expect(page.getByRole('button', { name: /ask the guide/i })).toHaveCount(0);
   });
 });

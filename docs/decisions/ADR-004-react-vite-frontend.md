@@ -29,3 +29,5 @@ Build the frontend as static files for Firebase Hosting. Keep paid model and spe
 ## Update
 
 Tailwind CSS was dropped. The site's styling is hand-written CSS in `apps/web/src/styles/`, and only Tailwind's base reset was ever used, so that reset now lives in `reset.css` and the dependency and config are removed. The decision above stands for React, TypeScript, Vite and React Router.
+
+React Router was also dropped. The site has a home page and case study pages, so each case study is now its own static HTML page built by Vite's multi-page mode. That gives every page its own title and social preview tags (link crawlers do not run JavaScript), removes the need for a host rewrite rule, and saves about 30 KB of gzipped JavaScript.

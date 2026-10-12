@@ -8,7 +8,7 @@ Static frontend: Firebase Hosting. Planned API: FastAPI container on Cloud Run. 
 
 ## Frontend Release
 
-1. Configure the correct Firebase project, domain, security headers, cache rules, and SPA fallback for React Router routes.
+1. Configure the correct Firebase project, domain, security headers, cache rules, and trailing-slash handling for the case study pages (each is a real directory page, so no SPA fallback is needed).
 2. Set reviewed public build variables and build from the committed lockfile.
 3. Run `npm run check` and `npm run build` in `apps/web/`.
 4. Deploy `apps/web/dist/` to an access-restricted preview environment and verify deep links, assets, and contact actions.

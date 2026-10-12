@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { education, projects, roles, smallProjects, stackGroups } from './content';
 import { DotGrid } from './DotGrid';
 import { MistPortrait } from './MistPortrait';
@@ -104,9 +103,9 @@ export function Home() {
                     ))}
                   </ul>
                   {p.id === 'testpilot' ? (
-                    <Link className="row-link" to="/projects/testpilot">
+                    <a className="row-link" href="/projects/testpilot/">
                       Read the TestPilot case study
-                    </Link>
+                    </a>
                   ) : p.links ? (
                     <ul className="row-links" aria-label={`${p.name} links`}>
                       {p.links.map((l) => (

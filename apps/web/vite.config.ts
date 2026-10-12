@@ -3,6 +3,16 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  // every page is its own HTML file, so there is no single-page fallback
+  appType: 'mpa',
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        testpilot: 'projects/testpilot/index.html',
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

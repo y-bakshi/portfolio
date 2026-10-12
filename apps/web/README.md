@@ -24,7 +24,7 @@ The frontend uses Vite to serve and bundle the React application:
 └── package.json
 ```
 
-Vite serves `index.html` and loads the React application from `src/main.tsx`. Add application routes with React Router as the portfolio grows.
+The site is a few real HTML pages, not a single-page app. `index.html` loads `src/main.tsx` for the home page, and each case study is its own page, for example `projects/testpilot/index.html` loading `src/case-main.tsx`. To add a case study, add a page folder under `projects/`, an entry file, and the page to `build.rollupOptions.input` in `vite.config.ts`. Each page sets its own title and social preview tags.
 
 Reviewed project and case-study content lives in the typed module `src/content.ts` until a content system is selected. Fonts are self-hosted through Fontsource packages imported in `src/main.tsx`.
 

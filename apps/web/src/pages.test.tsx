@@ -1,5 +1,4 @@
 import { render, screen, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import Home from './App';
 import CaseStudy from './CaseStudy';
 import { education, projects, roles, smallProjects, stackGroups } from './content';
@@ -9,12 +8,7 @@ vi.mock('./MistPortrait', () => ({
   MistPortrait: ({ alt }: { alt: string }) => <img alt={alt} src="" />,
 }));
 
-const home = () =>
-  render(
-    <MemoryRouter>
-      <Home />
-    </MemoryRouter>,
-  );
+const home = () => render(<Home />);
 
 describe('home page', () => {
   it('has one h1 and the standard landmarks', () => {
@@ -59,7 +53,7 @@ describe('home page', () => {
     home();
     const links = screen.getAllByRole('link', { name: /case study/i });
     expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute('href', '/projects/testpilot');
+    expect(links[0]).toHaveAttribute('href', '/projects/testpilot/');
   });
 
   it('shows each card link as a safe external link', () => {
@@ -122,12 +116,7 @@ describe('home page', () => {
 });
 
 describe('case study page', () => {
-  const study = () =>
-    render(
-      <MemoryRouter initialEntries={['/projects/testpilot']}>
-        <CaseStudy />
-      </MemoryRouter>,
-    );
+  const study = () => render(<CaseStudy />);
 
   it('shows the project with a way back and no guide', () => {
     study();

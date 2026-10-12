@@ -1,18 +1,12 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
 import { motion } from './test/setup';
 import Home from './App';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
 vi.mock('./MistPortrait', () => ({ MistPortrait: () => <div data-testid="portrait" /> }));
 
-const renderHome = () =>
-  render(
-    <MemoryRouter>
-      <Home />
-    </MemoryRouter>,
-  );
+const renderHome = () => render(<Home />);
 
 const bar = () => screen.getByRole('button', { name: /^ask the guide/i });
 const panel = () => document.getElementById('dock-open') as HTMLElement;
