@@ -18,6 +18,9 @@ export type TileField = {
 
 export type Specks = { x: number[]; y: number[] }[];
 
+export const makeSpecks = (): Specks =>
+  Array.from({ length: SPECK_BUCKETS }, () => ({ x: [], y: [] }));
+
 /** The tone of every tile, read from the portrait scaled down to one pixel per tile. */
 export function tileTones(portrait: HTMLImageElement, tilesX: number, tilesY: number) {
   const dark = new Float32Array(tilesX * tilesY);

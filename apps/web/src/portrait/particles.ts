@@ -2,6 +2,9 @@ import { BUCKETS, REPEL_RADIUS, STAGGER, ease, type P, type RGB } from './config
 
 export type Buckets = { x: number[]; y: number[]; s: number[] }[];
 
+export const makeBuckets = (): Buckets =>
+  Array.from({ length: BUCKETS }, () => ({ x: [], y: [], s: [] }));
+
 type Step = {
   particles: P[];
   buckets: Buckets;

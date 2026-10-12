@@ -1,0 +1,50 @@
+/* Opening and closing the bar on wide screens. */
+
+@media (min-width: 901px) {
+  /* the dock is always as wide as the window; clip-path shows only the pill until it opens */
+  .dock,
+  .dock.is-open {
+    right: 0;
+    left: 0;
+    width: auto;
+    min-width: 0;
+    border: 0;
+    border-top: 2px solid var(--ink);
+    box-shadow: none;
+    transition: clip-path 280ms var(--ease-out);
+  }
+
+  .dock {
+    clip-path: inset(0 11px 0 calc(100% - 336px));
+  }
+
+  .dock.is-open {
+    clip-path: inset(-16px 0 0 0);
+  }
+
+  .dock .dock-bar {
+    width: 320px;
+    margin: 0 16px 0 auto;
+    border: 2px solid var(--ink);
+    border-top: 0;
+    border-bottom: 0;
+    box-shadow: 5px 0 0 var(--shadow);
+  }
+
+  .dock.is-closing .dock-open {
+    animation: dock-out 120ms var(--ease-out) both;
+  }
+}
+
+@keyframes dock-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock.is-open {
+    transition: none;
+  }
+}

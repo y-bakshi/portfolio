@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { BUCKETS, FORM_MS, SPECK_BUCKETS, TILE, token, type P } from './portrait/config';
-import { drawBuckets, stepParticles, type Buckets } from './portrait/particles';
+import { FORM_MS, TILE, token, type P } from './portrait/config';
+import { drawBuckets, makeBuckets, stepParticles } from './portrait/particles';
 import { sampleParticles } from './portrait/sample';
 import {
   drawSpecks,
   springTiles,
   tileTones,
   wakeTiles,
-  type Specks,
+  makeSpecks,
   type TileField,
 } from './portrait/tiles';
 
@@ -65,15 +65,8 @@ export function MistPortrait({
     let lastNow = 0;
     let smoothedDt = 16.7;
     let measured = 0;
-    const specks: Specks = Array.from({ length: SPECK_BUCKETS }, () => ({
-      x: [] as number[],
-      y: [] as number[],
-    }));
-    const buckets: Buckets = Array.from({ length: BUCKETS }, () => ({
-      x: [] as number[],
-      y: [] as number[],
-      s: [] as number[],
-    }));
+    const specks = makeSpecks();
+    const buckets = makeBuckets();
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
