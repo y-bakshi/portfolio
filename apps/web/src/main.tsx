@@ -7,7 +7,7 @@ import CaseStudy from './CaseStudy';
 import '@fontsource-variable/instrument-sans/wdth.css';
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
-import '@fontsource/cinzel-decorative/700.css';
+import '@fontsource/rye/400.css';
 import './styles/index.css';
 
 /** A new page opens at the top, unless the link points at a section. */

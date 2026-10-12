@@ -168,9 +168,9 @@
   display: grid;
   place-items: center;
   padding: 0 20px;
-  font-family: 'Cinzel Decorative', var(--display);
-  font-size: calc(var(--cw) * 0.074);
-  font-weight: 700;
+  font-family: 'Rye', var(--display);
+  font-size: calc(var(--cw) * 0.066);
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.01em;
   text-align: center;
@@ -192,8 +192,9 @@
 .playing-card .corner {
   top: 17px;
   left: 17px;
-  font-family: 'Cinzel Decorative', var(--display);
-  font-size: 1.2rem;
+  font-family: 'Rye', var(--display);
+  font-size: 1.15rem;
+  font-weight: 400;
 }
 
 .playing-card .corner-end {
@@ -206,12 +207,17 @@
 /* the middle of a card is covered by the one on top, so the name also runs down its visible left edge */
 .card-side {
   position: absolute;
-  top: 78px;
-  left: 17px;
-  font-family: var(--display);
-  font-size: 0.85rem;
-  font-weight: 700;
+  top: 82px;
+  left: 14px;
+  padding: 7px 2px;
+  border-radius: 3px;
+  background: var(--panel);
+  box-shadow: 0 0 0 1.5px var(--mark);
+  font-family: 'Rye', var(--display);
+  font-size: 0.8rem;
+  font-weight: 400;
   line-height: 1;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
@@ -248,13 +254,14 @@
   }
 
   .card-name {
-    font-size: calc(var(--cw) * 0.088);
+    font-size: calc(var(--cw) * 0.078);
   }
 
   .card-side {
     top: 52px;
-    left: 9px;
-    font-size: 0.7rem;
+    left: 8px;
+    padding: 4px 1px;
+    font-size: 0.56rem;
   }
 
   .playing-card .corner {
