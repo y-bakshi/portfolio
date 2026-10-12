@@ -19,10 +19,8 @@ export function WorkHistory({ marked }: Pick<Guide, 'marked'>) {
             tabIndex={-1}
             className={`record-item${marked === r.id ? ' is-marked' : ''}`}
           >
-            <div className="record-side">
-              <p className="record-when">{r.when}</p>
-              <OrgMark org={r.org} mark={r.mark} logo={r.logo} />
-            </div>
+            <p className="record-when">{r.when}</p>
+            <OrgMark org={r.org} mark={r.mark} logo={r.logo} />
             <div>
               <h3>
                 {r.title}, {r.org}

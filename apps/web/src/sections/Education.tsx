@@ -19,10 +19,8 @@ export function Education({ marked }: Pick<Guide, 'marked'>) {
             tabIndex={-1}
             className={`record-item${marked === e.id ? ' is-marked' : ''}`}
           >
-            <div className="record-side">
-              <p className="record-when">{e.when}</p>
-              <OrgMark org={e.org} mark={e.mark} logo={e.logo} />
-            </div>
+            <p className="record-when">{e.when}</p>
+            <OrgMark org={e.org} mark={e.mark} logo={e.logo} />
             <div>
               <h3>
                 {e.title}, {e.org}

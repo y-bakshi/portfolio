@@ -40,7 +40,6 @@
 
 @media (max-width: 820px) {
   .row,
-  .record-item,
   .case-grid {
     grid-template-columns: minmax(0, 1fr);
   }
