@@ -186,7 +186,8 @@ export function MistPortrait({
       tileActive = new Uint8Array(tilesX * tilesY);
       activeTiles = [];
       tileDark = new Float32Array(tilesX * tilesY);
-      if (portrait) {
+      // a hidden canvas has no size, and reading pixels from nothing throws
+      if (portrait && tilesX > 0 && tilesY > 0) {
         const off = document.createElement('canvas');
         off.width = tilesX;
         off.height = tilesY;
