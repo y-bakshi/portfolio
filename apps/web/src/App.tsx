@@ -7,6 +7,31 @@ import { GuideDock, useGuide } from './Guide';
 import { Icon, type IconName } from './Icon';
 import { SiteHeader, Trace } from './parts';
 
+/** Prototype: the stack is ordered by strength and each card carries a playing-card rank. */
+const stackOrder = [
+  'testpilot',
+  'citywatch',
+  'cv-studio',
+  'guardianai',
+  'catscript',
+  'procwatch',
+  'streaming-pipeline',
+  'face-recognition',
+  'edge-inference',
+  'story-generator',
+];
+const ranks = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5'];
+const stacked = stackOrder.map((id) => projects.find((p) => p.id === id)!);
+
+function Corner({ rank, end }: { rank: string; end?: boolean }) {
+  return (
+    <span className={`corner${end ? ' corner-end' : ''}`} aria-hidden="true">
+      {rank}
+      <i className="pip" />
+    </span>
+  );
+}
+
 const contactLinks: { label: string; href: string; icon: IconName; external?: boolean }[] = [
   { label: 'ybakshi@asu.edu', href: 'mailto:ybakshi@asu.edu', icon: 'envelope' },
   {
@@ -81,15 +106,18 @@ export function Home() {
               notes. Timings are not measured, so none are shown.
             </p>
           </div>
-          <div className="rows">
-            {projects.map((p) => (
+          <div className="rows is-stack">
+            {stacked.map((p, i) => (
               <article
                 key={p.id}
                 id={p.id}
                 tabIndex={-1}
                 className={`row${marked === p.id ? ' is-marked' : ''}`}
+                style={{ '--i': i + 1 } as React.CSSProperties}
                 aria-labelledby={`${p.id}-name`}
               >
+                <Corner rank={ranks[i]} />
+                <Corner rank={ranks[i]} end />
                 <div className="row-head">
                   <h3 id={`${p.id}-name`}>{p.name}</h3>
                   <p className="row-line">{p.line}</p>
@@ -128,6 +156,8 @@ export function Home() {
               </article>
             ))}
             <article className="row" aria-labelledby="small-name">
+              <Corner rank="★" />
+              <Corner rank="★" end />
               <div className="row-head">
                 <h3 id="small-name">Smaller projects</h3>
                 <p className="row-line">Coursework and experiments.</p>
