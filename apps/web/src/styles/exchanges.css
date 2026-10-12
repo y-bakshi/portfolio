@@ -29,7 +29,7 @@
      at the top. */
   .feed {
     align-self: start;
-    height: calc(100svh - var(--header-h, 80px) - 144px);
+    height: calc(100svh - var(--header-h) - 144px);
     overflow: hidden;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 72px);
     mask-image: linear-gradient(to bottom, transparent 0, #000 72px);

@@ -38,19 +38,9 @@
   letter-spacing: -0.025em;
 }
 
-.section-lede {
-  max-width: 54ch;
-  margin-top: 14px;
-  color: var(--muted);
-}
-
 .fineprint {
   color: var(--muted);
   font-size: 0.95rem;
-}
-
-.section-card .section-lede {
-  margin-top: 12px;
 }
 
 .fineprint {
@@ -61,7 +51,6 @@
   box-shadow: 4px 4px 0 var(--shadow);
 }
 
-.section-lede,
 .fineprint,
 .row-line,
 .row-body > p,

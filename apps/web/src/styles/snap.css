@@ -1,0 +1,52 @@
+/* The projects and the experience each fill one screen on a wide, tall window. The page steps between
+   screens with a small script (snapScroll.ts) rather than with CSS scroll snapping, which cannot move a
+   page on one small wheel step. Phones and short windows scroll freely. */
+
+@media (min-width: 901px) and (min-height: 640px) and (hover: hover) {
+  html {
+    scroll-padding-top: var(--header-h);
+  }
+
+  /* the projects and the experience each fill one screen, with the tiles and the roles spread to fit it */
+  .work,
+  #record {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--header-h));
+    padding-bottom: 12px;
+  }
+
+  /* a compact heading on these two screens, so the content below it has the room */
+  .work .section-card,
+  #record .section-card {
+    padding: 10px clamp(20px, 2.4vw, 28px);
+  }
+
+  .work .section-title,
+  #record .section-title {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+  }
+
+  .tiles {
+    flex: 1;
+    grid-auto-rows: 1fr;
+    gap: 20px;
+    margin-top: 16px;
+  }
+
+  #record .record-list {
+    flex: 1;
+    align-content: start;
+    gap: 20px;
+    margin-top: 16px;
+  }
+
+  #record .record-item {
+    padding-block: 16px;
+  }
+
+  #record .fineprint {
+    margin-top: 14px;
+    padding: 8px 14px;
+  }
+}

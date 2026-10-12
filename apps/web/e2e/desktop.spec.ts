@@ -8,6 +8,63 @@ test.describe('wide screens', () => {
     expect(top).toBeGreaterThanOrEqual((await page.evaluate(() => innerHeight)) - 5);
   });
 
+  test('the header is as tall as the --header-h token says', async ({ page }) => {
+    await openHome(page);
+    const token = await page.evaluate(() =>
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')),
+    );
+    const header = (await page.getByRole('banner').boundingBox())!;
+    expect(header.height).toBe(token);
+  });
+
+  test('one scroll moves to the projects, the next to the experience, and back up again', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await openHome(page);
+    const header = await page.evaluate(
+      () => document.getElementById('main')!.previousElementSibling!.getBoundingClientRect().height,
+    );
+    const topOf = (id: string) =>
+      page.locator(id).evaluate((el) => Math.round(el.getBoundingClientRect().top));
+    await page.mouse.move(700, 500);
+
+    await page.mouse.wheel(0, 100);
+    await expect.poll(() => topOf('#work'), { timeout: 5000 }).toBe(header);
+
+    await page.waitForTimeout(1000);
+    await page.mouse.wheel(0, 100);
+    await expect.poll(() => topOf('#record'), { timeout: 5000 }).toBe(header);
+
+    await page.waitForTimeout(1000);
+    await page.mouse.wheel(0, -100);
+    await expect.poll(() => topOf('#work'), { timeout: 5000 }).toBe(header);
+  });
+
+  test('the four featured projects all fit on the projects screen', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await openHome(page);
+    await page.keyboard.press('PageDown');
+    // wait for the scroll to settle with the screen at the top, just under the header
+    await expect
+      .poll(() =>
+        page.locator('#work').evaluate((el) => Math.round(el.getBoundingClientRect().top)),
+      )
+      .toBe(80);
+    const view = page.viewportSize()!;
+    const boxes = await page.locator('#work .tile').evaluateAll((els) =>
+      els.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { top: r.top, bottom: r.bottom };
+      }),
+    );
+    expect(boxes).toHaveLength(4);
+    for (const b of boxes) {
+      expect(b.top).toBeGreaterThanOrEqual(0);
+      expect(b.bottom).toBeLessThanOrEqual(view.height);
+    }
+  });
+
   test('the portrait sits under the header and not behind it', async ({ page }) => {
     await openHome(page);
     const header = await page.getByRole('banner').boundingBox();

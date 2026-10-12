@@ -37,16 +37,30 @@ describe('home page', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows a card for every project, role and degree', () => {
+  it('shows every project, role and degree', () => {
     home();
-    expect(document.querySelectorAll('article.row')).toHaveLength(projects.length + 1);
-    for (const p of projects)
-      expect(screen.getByRole('heading', { level: 3, name: p.name }), p.name).toBeInTheDocument();
+    for (const p of projects) {
+      const el = document.getElementById(p.id);
+      expect(el, p.id).toBeInTheDocument();
+      expect(el, p.id).toHaveTextContent(p.name);
+    }
     for (const r of [...roles, ...education])
       expect(document.getElementById(r.id), r.id).toBeInTheDocument();
     for (const s of smallProjects)
       expect(screen.getByText(s.name, { exact: false })).toBeInTheDocument();
     for (const g of stackGroups) expect(screen.getByText(g.group)).toBeInTheDocument();
+  });
+
+  it('puts exactly the four featured projects on the projects screen', () => {
+    home();
+    const screenOne = document.getElementById('work') as HTMLElement;
+    const tiles = [...screenOne.querySelectorAll('article.tile')].map((t) => t.id);
+    expect(tiles).toEqual(projects.filter((p) => p.featured).map((p) => p.id));
+    expect(tiles).toHaveLength(4);
+    // everything else is in the more-projects section, after experience and education
+    const more = document.getElementById('more') as HTMLElement;
+    for (const p of projects.filter((p) => !p.featured))
+      expect(more).toContainElement(document.getElementById(p.id));
   });
 
   it('links to the TestPilot case study and only that one', () => {

@@ -4,12 +4,6 @@
   padding-bottom: clamp(56px, 9vw, 112px);
 }
 
-.rows {
-  display: grid;
-  gap: clamp(24px, 3.5vw, 40px);
-  margin-top: clamp(24px, 4vw, 48px);
-}
-
 /* each project is its own card, in the same style as the guide chat */
 .row {
   display: grid;

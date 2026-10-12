@@ -58,7 +58,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(260px, 23rem);
     gap: clamp(24px, 3vw, 48px);
     /* the hero fills the first screen, so Projects starts below the fold */
-    min-height: calc(100svh - var(--header-h, 76px));
+    min-height: calc(100svh - var(--header-h));
     padding-bottom: 32px;
     text-align: left;
   }

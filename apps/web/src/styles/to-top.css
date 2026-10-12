@@ -2,7 +2,7 @@
 
 .to-top {
   position: fixed;
-  top: calc(var(--header-h, 76px) + 12px);
+  top: calc(var(--header-h) + 12px);
   right: clamp(16px, 2.5vw, 40px);
   z-index: 25;
   display: inline-flex;

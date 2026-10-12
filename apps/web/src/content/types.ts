@@ -1,5 +1,7 @@
 export type Project = {
   id: string;
+  /** One of the four strongest projects, shown first and in full on the projects screen. */
+  featured?: boolean;
   name: string;
   line: string;
   detail: string;
