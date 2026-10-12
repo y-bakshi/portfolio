@@ -18,7 +18,7 @@ export const projects: Project[] = [
     line: 'Writes tests, then argues with them.',
     detail:
       'Generates pytest, Jest and JUnit tests and ranks defect-prone files in public GitHub repositories. It retrieves the five most relevant coding-standard chunks first, drafts the tests against them, and an LLM critique loop regenerates anything scoring below 0.6.',
-    role: 'Built every non-frontend part of a four-person team project.',
+    role: 'Led the AI pipeline, model integration and backend of a four-person team project.',
     stack: [
       'FastAPI',
       'Qwen via Ollama',
@@ -313,7 +313,7 @@ export function answerFor(question: string): Answer {
 
   if (has('rag', 'retriev', 'vector', 'embedding'))
     return {
-      text: 'TestPilot is the RAG project. It retrieves a team’s coding standards before drafting tests, stores them in pgvector, and runs a critique loop over the output. Yash built all of its non-frontend parts.',
+      text: 'TestPilot is the RAG project. It retrieves a team’s coding standards before drafting tests, stores them in pgvector, and runs a critique loop over the output. Yash led its AI pipeline, model integration and backend within a four-person team.',
       cites: find(['testpilot']),
     };
   if (has('agent', 'react', 'tool use', 'tool-use'))
