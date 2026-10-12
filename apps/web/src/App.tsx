@@ -35,23 +35,12 @@ function Corner({ rank, end }: { rank: string; end?: boolean }) {
   );
 }
 
-function ProjectRow({
-  p,
-  i,
-  marked,
-  picked,
-}: {
-  p: Project;
-  i: number;
-  marked: string | null | undefined;
-  picked?: boolean;
-}) {
+function ProjectRow({ p, marked }: { p: Project; marked: string | null | undefined }) {
   return (
     <article
       id={p.id}
       tabIndex={-1}
-      className={`row${marked === p.id ? ' is-marked' : ''}${picked ? ' row-picked' : ''}`}
-      style={{ '--i': i + 1 } as React.CSSProperties}
+      className={`pick${marked === p.id ? ' is-marked' : ''}`}
       aria-labelledby={`${p.id}-name`}
     >
       <div className="row-head">
@@ -198,30 +187,41 @@ export function Home() {
                 );
               })}
             </div>
-            <ProjectRow
-              key={picked}
-              p={stacked[stackOrder.indexOf(picked)]}
-              i={stackOrder.indexOf(picked)}
-              marked={marked}
-              picked
-            />
-            {rest.map((p) => (
-              <ProjectRow key={p.id} p={p} i={stackOrder.indexOf(p.id)} marked={marked} />
-            ))}
-            <article className="row" aria-labelledby="small-name">
-              <div className="row-head">
-                <h3 id="small-name">Smaller projects</h3>
-                <p className="row-line">Coursework and experiments.</p>
-              </div>
-              <div className="row-body">
-                <ul className="small-list">
-                  {smallProjects.map((sp) => (
-                    <li key={sp.name}>
-                      <strong>{sp.name}.</strong> {sp.line}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <ProjectRow key={picked} p={stacked[stackOrder.indexOf(picked)]} marked={marked} />
+            <div className="more">
+              <h3 className="more-title">More projects</h3>
+              <ul className="more-list">
+                {rest.map((p) => (
+                  <li key={p.id} id={p.id} tabIndex={-1}>
+                    <strong>{p.name}.</strong> {p.line}{' '}
+                    {p.links?.map((l) => (
+                      <a
+                        key={l.href}
+                        className="more-link"
+                        href={l.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${l.label}, ${p.name} (opens in a new tab)`}
+                      >
+                        {l.label}
+                      </a>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <article className="more" aria-labelledby="small-name">
+              <h3 id="small-name" className="more-title">
+                Smaller projects
+              </h3>
+
+              <ul className="small-list">
+                {smallProjects.map((sp) => (
+                  <li key={sp.name}>
+                    <strong>{sp.name}.</strong> {sp.line}
+                  </li>
+                ))}
+              </ul>
             </article>
           </div>
         </section>
