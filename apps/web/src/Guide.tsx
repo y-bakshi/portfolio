@@ -367,7 +367,7 @@ export function GuideDock({ g }: { g: Guide }) {
             <span className="dock-state">{statusLabel[status]}</span>
           </span>
         </button>
-        <div id="dock-open" className="dock-open" {...(open ? {} : ({ inert: '' } as object))}>
+        <div id="dock-open" className="dock-open" inert={!open}>
           {showLog && (
             <>
               <span className="dock-handle" aria-hidden="true" />
