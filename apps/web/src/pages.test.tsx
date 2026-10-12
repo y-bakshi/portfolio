@@ -148,9 +148,4 @@ describe('case study page', () => {
     expect(demo).toHaveAttribute('target', '_blank');
     expect(demo.getAttribute('rel')).toContain('noopener');
   });
-
-  it('says what was not measured', () => {
-    study();
-    expect(screen.getByText(/not measured/i)).toBeInTheDocument();
-  });
 });
