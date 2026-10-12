@@ -72,20 +72,14 @@
 
 .org-mark {
   display: grid;
+  align-self: center;
   place-items: center;
   width: 112px;
   height: 64px;
-  border: 2px solid var(--ink);
-  background: var(--ground);
   color: var(--ink);
   font-family: var(--display);
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   object-fit: contain;
-}
-
-img.org-mark {
-  padding: 8px 10px;
-  background: var(--panel);
 }
