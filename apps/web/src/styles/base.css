@@ -60,9 +60,10 @@ a {
   outline-offset: 3px;
 }
 
+/* navy with ivory text: gold would vanish on the gold hover and highlight colour */
 ::selection {
-  background: var(--mark);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--panel);
 }
 
 @media (prefers-reduced-motion: no-preference) {
