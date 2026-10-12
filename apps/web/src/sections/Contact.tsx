@@ -28,6 +28,7 @@ const contactLinks: { label: string; href: string; icon: IconName; external?: bo
   },
 ];
 
+/** The contact band at the bottom of the page, with its links. */
 export function Contact({ marked }: Pick<Guide, 'marked'>) {
   return (
     <section

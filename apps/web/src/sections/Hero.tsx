@@ -1,6 +1,7 @@
 import { MistPortrait } from '../MistPortrait';
 import type { Guide } from '../Guide';
 
+/** The first screen: the portrait and the conversation with the guide. */
 export function Hero({
   isMobile,
   thread,

@@ -1,6 +1,7 @@
 import type { Guide } from '../Guide';
 import { education } from '../content';
 
+/** The education list. */
 export function Education({ marked }: Pick<Guide, 'marked'>) {
   return (
     <section className="record" aria-labelledby="education-title">

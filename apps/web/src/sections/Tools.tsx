@@ -1,6 +1,7 @@
 import type { Guide } from '../Guide';
 import { stackGroups } from '../content';
 
+/** The skills, grouped by area. */
 export function Tools({ marked }: Pick<Guide, 'marked'>) {
   return (
     <section className="tools" aria-labelledby="tools-title">

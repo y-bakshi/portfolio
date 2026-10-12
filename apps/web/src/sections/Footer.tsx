@@ -1,3 +1,4 @@
+/** The page footer and the icon credit. */
 export function Footer() {
   return (
     <footer className="site-footer">

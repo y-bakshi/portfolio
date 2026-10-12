@@ -18,6 +18,7 @@ const paths = {
 
 export type IconName = keyof typeof paths;
 
+/** One of the site's icons, drawn inline so no icon font is loaded. */
 export function Icon({ name, className }: { name: IconName; className?: string }) {
   return (
     <svg

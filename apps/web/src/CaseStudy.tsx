@@ -4,6 +4,7 @@ import { SiteHeader, Trace } from './parts';
 
 const project = projects.find((p) => p.id === 'testpilot')!;
 
+/** The TestPilot case study page. */
 export function CaseStudy() {
   return (
     <>

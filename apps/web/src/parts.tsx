@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react';
 import { DotGrid } from './DotGrid';
 
+/** The sticky header: the name and the section links. */
 export function SiteHeader() {
   /** On the home page a link to "/" does nothing, so scroll to the top instead. */
   const toTop = (e: MouseEvent<HTMLAnchorElement>) => {

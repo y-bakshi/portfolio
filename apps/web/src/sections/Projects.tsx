@@ -2,6 +2,7 @@ import type { Guide } from '../Guide';
 import { projects, smallProjects } from '../content';
 import { Trace } from '../parts';
 
+/** The project cards and the shared card for smaller projects. */
 export function Projects({ marked }: Pick<Guide, 'marked'>) {
   return (
     <section className="work" id="work" aria-labelledby="work-title">

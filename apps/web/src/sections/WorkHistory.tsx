@@ -1,6 +1,7 @@
 import type { Guide } from '../Guide';
 import { roles } from '../content';
 
+/** The work history list. */
 export function WorkHistory({ marked }: Pick<Guide, 'marked'>) {
   return (
     <section className="record" id="record" aria-labelledby="record-title">
