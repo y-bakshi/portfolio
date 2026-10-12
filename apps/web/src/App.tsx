@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { education, projects, roles, smallProjects, stackGroups } from './content';
+import { education, projects, roles, smallProjects, stackGroups, type Project } from './content';
 import { DotGrid } from './DotGrid';
 import { MistPortrait } from './MistPortrait';
 import { GuideDock, useGuide } from './Guide';
@@ -22,6 +22,9 @@ const stackOrder = [
 ];
 const ranks = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5'];
 const stacked = stackOrder.map((id) => projects.find((p) => p.id === id)!);
+// the hand reads 10, J, Q, K, A left to right, like the photo, with the ace on top
+const hand = stacked.slice(0, 5).reverse();
+const rest = stacked.slice(5);
 
 function Corner({ rank, end }: { rank: string; end?: boolean }) {
   return (
@@ -29,6 +32,66 @@ function Corner({ rank, end }: { rank: string; end?: boolean }) {
       {rank}
       <i className="pip" />
     </span>
+  );
+}
+
+function ProjectRow({
+  p,
+  i,
+  marked,
+  picked,
+}: {
+  p: Project;
+  i: number;
+  marked: string | null | undefined;
+  picked?: boolean;
+}) {
+  return (
+    <article
+      id={p.id}
+      tabIndex={-1}
+      className={`row${marked === p.id ? ' is-marked' : ''}${picked ? ' row-picked' : ''}`}
+      style={{ '--i': i + 1 } as React.CSSProperties}
+      aria-labelledby={`${p.id}-name`}
+    >
+      <Corner rank={ranks[i]} />
+      <Corner rank={ranks[i]} end />
+      <div className="row-head">
+        <h3 id={`${p.id}-name`}>{p.name}</h3>
+        <p className="row-line">{p.line}</p>
+      </div>
+      <div className="row-body">
+        <p>{p.detail}</p>
+        <p className="row-role">{p.role}</p>
+        <Trace steps={p.trace} label={`${p.name} pipeline`} />
+        <ul className="stack-list" aria-label={`${p.name} technologies`}>
+          {p.stack.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ul>
+        {p.id === 'testpilot' ? (
+          <Link className="row-link" to="/projects/testpilot">
+            Read the TestPilot case study
+          </Link>
+        ) : p.links ? (
+          <ul className="row-links" aria-label={`${p.name} links`}>
+            {p.links.map((l) => (
+              <li key={l.href}>
+                <a
+                  className="row-link"
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${l.label}, ${p.name} (opens in a new tab)`}
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+    </article>
   );
 }
 
@@ -63,6 +126,7 @@ export function Home() {
   const g = useGuide();
   const { isMobile, thread, marked } = g;
   const feedRef = g.refs.feedRef;
+  const [picked, setPicked] = useState('testpilot');
 
   useEffect(() => {
     const id = window.location.hash.slice(1);
@@ -107,53 +171,38 @@ export function Home() {
             </p>
           </div>
           <div className="rows is-stack">
-            {stacked.map((p, i) => (
-              <article
-                key={p.id}
-                id={p.id}
-                tabIndex={-1}
-                className={`row${marked === p.id ? ' is-marked' : ''}`}
-                style={{ '--i': i + 1 } as React.CSSProperties}
-                aria-labelledby={`${p.id}-name`}
-              >
-                <Corner rank={ranks[i]} />
-                <Corner rank={ranks[i]} end />
-                <div className="row-head">
-                  <h3 id={`${p.id}-name`}>{p.name}</h3>
-                  <p className="row-line">{p.line}</p>
-                </div>
-                <div className="row-body">
-                  <p>{p.detail}</p>
-                  <p className="row-role">{p.role}</p>
-                  <Trace steps={p.trace} label={`${p.name} pipeline`} />
-                  <ul className="stack-list" aria-label={`${p.name} technologies`}>
-                    {p.stack.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                  {p.id === 'testpilot' ? (
-                    <Link className="row-link" to="/projects/testpilot">
-                      Read the TestPilot case study
-                    </Link>
-                  ) : p.links ? (
-                    <ul className="row-links" aria-label={`${p.name} links`}>
-                      {p.links.map((l) => (
-                        <li key={l.href}>
-                          <a
-                            className="row-link"
-                            href={l.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${l.label}, ${p.name} (opens in a new tab)`}
-                          >
-                            {l.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </div>
-              </article>
+            <div
+              className="hand"
+              role="group"
+              aria-label="My five strongest projects. Pick a card to read about it."
+            >
+              {hand.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={`playing-card${picked === p.id ? ' is-picked' : ''}`}
+                  style={{ '--n': i - 2, '--z': i + 1 } as React.CSSProperties}
+                  aria-pressed={picked === p.id}
+                  onClick={() => setPicked(p.id)}
+                >
+                  <Corner rank={ranks[stackOrder.indexOf(p.id)]} />
+                  <Corner rank={ranks[stackOrder.indexOf(p.id)]} end />
+                  <span className="card-name">{p.name}</span>
+                  <span className="card-side" aria-hidden="true">
+                    {p.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <ProjectRow
+              key={picked}
+              p={stacked[stackOrder.indexOf(picked)]}
+              i={stackOrder.indexOf(picked)}
+              marked={marked}
+              picked
+            />
+            {rest.map((p) => (
+              <ProjectRow key={p.id} p={p} i={stackOrder.indexOf(p.id)} marked={marked} />
             ))}
             <article className="row" aria-labelledby="small-name">
               <Corner rank="★" />
