@@ -22,8 +22,8 @@ const stackOrder = [
 ];
 const ranks = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5'];
 const stacked = stackOrder.map((id) => projects.find((p) => p.id === id)!);
-// the hand reads 10, J, Q, K, A left to right, like the photo, with the ace on top
-const hand = stacked.slice(0, 5).reverse();
+// the hand's cards stay in a fixed order in the page; their place in the fan comes from the order state
+const hand = stacked.slice(0, 5);
 const rest = stacked.slice(5);
 
 function Corner({ rank, end }: { rank: string; end?: boolean }) {
@@ -126,7 +126,10 @@ export function Home() {
   const g = useGuide();
   const { isMobile, thread, marked } = g;
   const feedRef = g.refs.feedRef;
-  const [picked, setPicked] = useState('testpilot');
+  // the hand's order: the first card is the one on top and open below; picking one moves it to the front
+  const [order, setOrder] = useState(() => stackOrder.slice(0, 5));
+  const picked = order[0];
+  const pick = (id: string) => setOrder((o) => [id, ...o.filter((x) => x !== id)]);
 
   useEffect(() => {
     const id = window.location.hash.slice(1);
@@ -176,23 +179,26 @@ export function Home() {
               role="group"
               aria-label="My five strongest projects. Pick a card to read about it."
             >
-              {hand.map((p, i) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  className={`playing-card${picked === p.id ? ' is-picked' : ''}`}
-                  style={{ '--n': i - 2, '--z': i + 1 } as React.CSSProperties}
-                  aria-pressed={picked === p.id}
-                  onClick={() => setPicked(p.id)}
-                >
-                  <Corner rank={ranks[stackOrder.indexOf(p.id)]} />
-                  <Corner rank={ranks[stackOrder.indexOf(p.id)]} end />
-                  <span className="card-name">{p.name}</span>
-                  <span className="card-side" aria-hidden="true">
-                    {p.name}
-                  </span>
-                </button>
-              ))}
+              {hand.map((p) => {
+                const slot = order.indexOf(p.id);
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    className={`playing-card${picked === p.id ? ' is-picked' : ''}`}
+                    style={{ '--n': 2 - slot, '--z': 5 - slot } as React.CSSProperties}
+                    aria-pressed={picked === p.id}
+                    onClick={() => pick(p.id)}
+                  >
+                    <Corner rank={ranks[stackOrder.indexOf(p.id)]} />
+                    <Corner rank={ranks[stackOrder.indexOf(p.id)]} end />
+                    <span className="card-name">{p.name}</span>
+                    <span className="card-side" aria-hidden="true">
+                      {p.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
             <ProjectRow
               key={picked}
