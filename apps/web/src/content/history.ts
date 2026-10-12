@@ -4,6 +4,7 @@ export const roles: Entry[] = [
   {
     id: 'thryv',
     mark: 'Th',
+    logo: '/logos/thryv.png',
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
@@ -12,6 +13,7 @@ export const roles: Entry[] = [
   {
     id: 'insight',
     mark: 'In',
+    logo: '/logos/insight.webp',
     title: 'Technical team lead',
     org: 'InfoCenter, an Insight Company',
     when: 'Jun to Dec 2024',
