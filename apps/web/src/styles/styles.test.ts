@@ -109,6 +109,14 @@ describe('palette', () => {
     expect(contrast(fg, bg)).toBeGreaterThanOrEqual(4.5);
   });
 
+  it('selects text in a colour that shows on the gold hover and highlight', () => {
+    const rule = /::selection\s*\{([^}]*)\}/.exec(allCss)?.[1] ?? '';
+    expect(rule).toMatch(/background:\s*var\(--ink\)/);
+    expect(rule).toMatch(/color:\s*var\(--panel\)/);
+    expect(rule).not.toMatch(/--mark/);
+    expect(contrast('panel', 'ink')).toBeGreaterThanOrEqual(4.5);
+  });
+
   it('keeps hard shadows darker than the ink so they separate from navy fills', () => {
     expect(luminance(tokens.shadow)).toBeLessThan(luminance(tokens.ink));
   });
