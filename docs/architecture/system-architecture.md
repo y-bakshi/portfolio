@@ -25,7 +25,7 @@ Prefer a same-origin `/api/v1/*` Firebase Hosting rewrite to Cloud Run. Keep req
 
 ## State and Navigation
 
-Use stable project IDs and canonical routes. Keep assistant state in focused React components. Use React Router for case-study routes and rebind section navigation after route changes. Restore only safe short-lived UI state; never persist transcripts without an explicit decision.
+Use stable project IDs and canonical routes. Keep assistant state in focused React components. Each case study is its own static HTML page, so it has its own title and social preview tags and needs no client-side router or rewrite rule; section links use plain `#` anchors. Restore only safe short-lived UI state; never persist transcripts without an explicit decision.
 
 ## Failure Behavior
 

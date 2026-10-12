@@ -7,7 +7,16 @@
 @import './hero.css';
 @import './sections.css';
 @import './conversation.css';
+@import './bubbles.css';
+@import './exchanges.css';
+@import './chips.css';
 @import './dock.css';
+@import './dock-form.css';
+@import './dock-phone.css';
+@import './dock-wide.css';
+@import './to-top.css';
+@import './dock-motion.css';
+@import './dock-small.css';
 @import './controls.css';
 @import './projects.css';
 @import './history.css';

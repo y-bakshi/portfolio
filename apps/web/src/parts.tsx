@@ -1,13 +1,11 @@
 import type { MouseEvent } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { DotGrid } from './DotGrid';
 
+/** The sticky header: the name and the section links. */
 export function SiteHeader() {
-  const { pathname } = useLocation();
-
   /** On the home page a link to "/" does nothing, so scroll to the top instead. */
   const toTop = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (pathname !== '/') return;
+    if (window.location.pathname !== '/') return;
     e.preventDefault();
     window.scrollTo({ top: 0 });
     window.history.replaceState(null, '', '/');
@@ -19,9 +17,9 @@ export function SiteHeader() {
       <a className="skip" href="#main">
         Skip to content
       </a>
-      <Link className="site-name" to="/" onClick={toTop}>
+      <a className="site-name" href="/" onClick={toTop}>
         Yash Bakshi
-      </Link>
+      </a>
       <nav aria-label="Main">
         <a href="/#work">Projects</a>
         <a href="/#record">Work history</a>

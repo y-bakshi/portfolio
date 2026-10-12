@@ -1,0 +1,133 @@
+/* Questions and answers as chat bubbles. */
+
+/* the conversation: the introduction, then each question and answer as bubbles */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msg {
+  padding: 12px 18px;
+  border: 2px solid var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.msg-user {
+  align-self: flex-end;
+  max-width: 85%;
+  margin: 0 6px 0 0;
+  background: var(--action);
+  color: var(--action-ink);
+  font-weight: 600;
+}
+
+.feed .msg-answer {
+  max-width: none;
+  margin: 0;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.msg-wait {
+  color: var(--muted);
+}
+
+.feed .cites {
+  margin: 0;
+}
+
+@media (min-width: 901px) {
+  /* chat output and the navigation buttons live in this column; it scrolls if a long exchange fills it */
+  .feed {
+    padding: 6px 10px 10px 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  /* a square-cornered bubble whose tail points at the portrait */
+  .ask-lede {
+    position: relative;
+    max-width: none;
+    margin: 0;
+    padding: 18px 22px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .ask-lede::before {
+    content: '';
+    position: absolute;
+    top: 34px;
+    left: -11px;
+    width: 18px;
+    height: 18px;
+    border-bottom: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+    background: var(--panel);
+    transform: rotate(45deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .feed .ask-lede,
+  .feed .msg-answer {
+    padding: 14px 16px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .feed .ask-lede {
+    position: relative;
+    margin: 18px 0 0;
+  }
+
+  .feed .ask-lede:first-child::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 40px;
+    width: 18px;
+    height: 18px;
+    border-top: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+    background: var(--panel);
+    transform: rotate(45deg);
+  }
+
+  .feed .msg-answer {
+    margin: 0;
+  }
+
+  .dock-log .chat-note {
+    margin-top: 0;
+  }
+
+  .dock-log .msg-user {
+    margin-right: 0;
+  }
+
+  .dock-log .ask-lede,
+  .dock-log .msg-answer {
+    max-width: none;
+    margin: 0;
+    padding: 12px 14px;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: 4px 4px 0 var(--shadow);
+  }
+
+  .dock-log .msg-answer {
+    margin-top: 12px;
+  }
+
+  .dock-log .cites {
+    margin-top: 12px;
+  }
+}

@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom';
 import { projects } from './content';
 import { DotGrid } from './DotGrid';
 import { SiteHeader, Trace } from './parts';
 
 const project = projects.find((p) => p.id === 'testpilot')!;
 
+/** The TestPilot case study page. */
 export function CaseStudy() {
   return (
     <>
@@ -12,7 +12,7 @@ export function CaseStudy() {
       <SiteHeader />
       <main id="main" className="case">
         <p className="case-back">
-          <Link to="/#work">All projects</Link>
+          <a href="/#work">All projects</a>
         </p>
         <div className="case-head">
           <h1 className="case-title">{project.name}</h1>
@@ -104,9 +104,9 @@ export function CaseStudy() {
                 </dd>
               </div>
             </dl>
-            <Link className="solid-link" to="/#contact">
+            <a className="solid-link" href="/#contact">
               Contact Yash
-            </Link>
+            </a>
           </aside>
         </div>
       </main>

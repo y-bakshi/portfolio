@@ -1,0 +1,94 @@
+/* The full-screen chat on phones. */
+
+@media (max-width: 900px) {
+  /* closed: a bar across the bottom edge. open: a full-screen chat with the conversation inside. */
+  .dock,
+  .dock.is-open {
+    right: 0;
+    left: 0;
+    width: auto;
+    box-shadow: none;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .dock.is-open {
+    border-top-width: 2px;
+    transition: none;
+  }
+
+  .is-open .dock-open {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+  }
+
+  .dock-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    display: block;
+    background: rgba(14, 29, 97, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-out);
+  }
+
+  .dock-scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .dock-handle {
+    width: 44px;
+    height: 5px;
+    margin: 8px auto 0;
+    border-radius: 3px;
+    background: var(--line);
+  }
+
+  .dock-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 12px 10px 16px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .dock-head h2 {
+    flex: 1 1 auto;
+    margin: 0;
+    font-family: var(--display);
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .dock-head .dock-state {
+    display: block;
+  }
+
+  .dock-log {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 14px 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dock-log > * + * {
+    margin-top: 12px;
+  }
+
+  .dock-log .chips {
+    flex-wrap: wrap;
+    margin: 12px 0 0;
+    overflow: visible;
+  }
+
+  .dock-form {
+    padding: 10px 12px 12px;
+    border-top: 2px solid var(--ink);
+  }
+}

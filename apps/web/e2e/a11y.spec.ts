@@ -26,7 +26,7 @@ test('home page with the guide open and answering has none either', async ({ pag
 });
 
 test('case study has no serious accessibility violations', async ({ page }) => {
-  await page.goto('/projects/testpilot');
+  await page.goto('/projects/testpilot/');
   const results = await new AxeBuilder({ page }).analyze();
   expect(
     serious(results.violations),

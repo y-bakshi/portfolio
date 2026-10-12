@@ -13,7 +13,7 @@ for (const width of widths) {
 
   test(`case study has no sideways scrolling at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
-    await page.goto('/projects/testpilot');
+    await page.goto('/projects/testpilot/');
     await expect(page.getByRole('heading', { level: 1, name: 'TestPilot' })).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
@@ -37,7 +37,7 @@ test('the open page opens at the top when a case study link is followed', async 
   await link.scrollIntoViewIfNeeded();
   expect(await page.evaluate(() => scrollY)).toBeGreaterThan(300);
   await link.click();
-  await expect(page).toHaveURL(/\/projects\/testpilot$/);
+  await expect(page).toHaveURL(/\/projects\/testpilot\/$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
 });
 
