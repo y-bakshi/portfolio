@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 /** A wide, tall screen with a real pointer. Phones and short windows scroll freely. */
 const WIDE = '(min-width: 901px) and (min-height: 640px) and (hover: hover)';
 /** The sections that start a screen, in page order. */
-const SCREENS = '.ask, .work, .record, .more, .tools, .contact';
+const SCREENS = '.ask, .work, .record, .tools, .contact';
 /** After a step, ignore input for this long so a trackpad's momentum does not skip a screen. */
 const LOCK_MS = 900;
 /** Focus here means a key press belongs to that control, not to the page. */

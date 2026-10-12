@@ -1,6 +1,9 @@
-export const roles = [
+import type { Entry } from './types';
+
+export const roles: Entry[] = [
   {
     id: 'thryv',
+    mark: 'Th',
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
@@ -8,6 +11,7 @@ export const roles = [
   },
   {
     id: 'insight',
+    mark: 'In',
     title: 'Technical team lead',
     org: 'InfoCenter, an Insight Company',
     when: 'Jun to Dec 2024',
@@ -15,6 +19,7 @@ export const roles = [
   },
   {
     id: 'tcs-dev',
+    mark: 'TCS',
     title: 'ServiceNow developer',
     org: 'Tata Consultancy Services',
     when: 'Sep 2022 to May 2024',
@@ -22,6 +27,7 @@ export const roles = [
   },
   {
     id: 'tcs-ase',
+    mark: 'TCS',
     title: 'Assistant systems engineer',
     org: 'Tata Consultancy Services',
     when: 'Nov 2021 to Sep 2022',
@@ -29,9 +35,10 @@ export const roles = [
   },
 ];
 
-export const education = [
+export const education: Entry[] = [
   {
     id: 'asu',
+    mark: 'ASU',
     title: 'MS, Computer Software Engineering',
     org: 'Arizona State University',
     when: 'Jan 2025 to Dec 2026',
@@ -39,6 +46,7 @@ export const education = [
   },
   {
     id: 'manipal',
+    mark: 'MUJ',
     title: 'Bachelor of Information Technology',
     org: 'Manipal University Jaipur',
     when: 'Aug 2017 to Aug 2021',

@@ -37,8 +37,48 @@ test.describe('wide screens', () => {
     await expect.poll(() => topOf('#record'), { timeout: 5000 }).toBe(header);
 
     await page.waitForTimeout(1000);
+    await page.mouse.wheel(0, 100);
+    await expect.poll(() => topOf('#education'), { timeout: 5000 }).toBe(header);
+
+    await page.waitForTimeout(1000);
     await page.mouse.wheel(0, -100);
-    await expect.poll(() => topOf('#work'), { timeout: 5000 }).toBe(header);
+    await expect.poll(() => topOf('#record'), { timeout: 5000 }).toBe(header);
+  });
+
+  test('the projects screen links to a page with every project', async ({ page }) => {
+    await openHome(page);
+    await page.getByRole('link', { name: /see all projects/i }).click();
+    await expect(page).toHaveURL(/\/projects\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'All projects' })).toBeVisible();
+    await expect(page.locator('#procwatch')).toBeAttached();
+    await expect(page.getByRole('button', { name: /ask the guide/i })).toHaveCount(0);
+  });
+
+  test('a guide button for a project that is not on the home page opens the all-projects page', async ({
+    page,
+  }) => {
+    await openHome(page);
+    await bar(page).click();
+    await input(page).fill('Tell me about the rust process monitor');
+    await page.getByRole('button', { name: 'Ask', exact: true }).click();
+    await page.getByRole('button', { name: 'Show ProcWatch on the page' }).click();
+    await expect(page).toHaveURL(/\/projects\/#procwatch$/);
+    await expect(page.locator('#procwatch')).toBeInViewport();
+  });
+
+  test('the links in each project tile line up along the bottom of a row', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await openHome(page);
+    const tops = await page
+      .locator('#work .tile-actions')
+      .evaluateAll((els) =>
+        els.map((el) =>
+          Math.round(el.getBoundingClientRect().top + el.getBoundingClientRect().height),
+        ),
+      );
+    expect(tops).toHaveLength(4);
+    expect(tops[0]).toBe(tops[1]);
+    expect(tops[2]).toBe(tops[3]);
   });
 
   test('the four featured projects all fit on the projects screen', async ({ page }) => {

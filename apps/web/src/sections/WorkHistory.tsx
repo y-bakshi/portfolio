@@ -1,4 +1,5 @@
 import type { Guide } from '../Guide';
+import { OrgMark } from './OrgMark';
 import { roles } from '../content';
 
 /** The work history list. */
@@ -18,7 +19,10 @@ export function WorkHistory({ marked }: Pick<Guide, 'marked'>) {
             tabIndex={-1}
             className={`record-item${marked === r.id ? ' is-marked' : ''}`}
           >
-            <p className="record-when">{r.when}</p>
+            <div className="record-side">
+              <p className="record-when">{r.when}</p>
+              <OrgMark org={r.org} mark={r.mark} logo={r.logo} />
+            </div>
             <div>
               <h3>
                 {r.title}, {r.org}
@@ -28,9 +32,6 @@ export function WorkHistory({ marked }: Pick<Guide, 'marked'>) {
           </li>
         ))}
       </ol>
-      <p className="fineprint">
-        Dates and descriptions come from my résumé and will be confirmed before launch.
-      </p>
     </section>
   );
 }

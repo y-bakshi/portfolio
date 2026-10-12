@@ -34,6 +34,15 @@ test('case study has no serious accessibility violations', async ({ page }) => {
   ).toEqual([]);
 });
 
+test('all projects page has no serious accessibility violations', async ({ page }) => {
+  await page.goto('/projects/');
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(
+    serious(results.violations),
+    JSON.stringify(serious(results.violations).map((v) => v.id)),
+  ).toEqual([]);
+});
+
 test('reduced motion removes the movement', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);

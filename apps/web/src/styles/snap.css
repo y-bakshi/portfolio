@@ -7,9 +7,10 @@
     scroll-padding-top: var(--header-h);
   }
 
-  /* the projects and the experience each fill one screen, with the tiles and the roles spread to fit it */
+  /* the projects, the experience and the education each fill one screen, with the tiles and the roles spread to fit it */
   .work,
-  #record {
+  #record,
+  #education {
     display: flex;
     flex-direction: column;
     min-height: calc(100svh - var(--header-h));
@@ -18,12 +19,14 @@
 
   /* a compact heading on these two screens, so the content below it has the room */
   .work .section-card,
-  #record .section-card {
+  #record .section-card,
+  #education .section-card {
     padding: 10px clamp(20px, 2.4vw, 28px);
   }
 
   .work .section-title,
-  #record .section-title {
+  #record .section-title,
+  #education .section-title {
     font-size: clamp(1.8rem, 3vw, 2.4rem);
   }
 
@@ -34,19 +37,16 @@
     margin-top: 16px;
   }
 
-  #record .record-list {
+  #record .record-list,
+  #education .record-list {
     flex: 1;
     align-content: start;
     gap: 20px;
     margin-top: 16px;
   }
 
-  #record .record-item {
+  #record .record-item,
+  #education .record-item {
     padding-block: 16px;
-  }
-
-  #record .fineprint {
-    margin-top: 14px;
-    padding: 8px 14px;
   }
 }

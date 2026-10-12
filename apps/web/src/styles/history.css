@@ -55,3 +55,31 @@
     --sh: 4px;
   }
 }
+
+/* the date, with the organisation's logo (or its initials) beneath it */
+.record-side {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 10px;
+}
+
+.org-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 2px solid var(--ink);
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  object-fit: contain;
+}
+
+img.org-mark {
+  padding: 6px;
+  background: var(--panel);
+}
