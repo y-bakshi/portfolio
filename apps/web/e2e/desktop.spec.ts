@@ -38,11 +38,60 @@ test.describe('wide screens', () => {
 
     await page.waitForTimeout(1000);
     await page.mouse.wheel(0, 100);
-    await expect.poll(() => topOf('#education'), { timeout: 5000 }).toBe(header);
+    // the footer overlaps the contact band by a pixel, so the last screen can sit one pixel low
+    await expect
+      .poll(
+        async () => {
+          const t = await topOf('#education');
+          return t >= header && t <= header + 1;
+        },
+        { timeout: 5000 },
+      )
+      .toBe(true);
 
     await page.waitForTimeout(1000);
     await page.mouse.wheel(0, -100);
     await expect.poll(() => topOf('#record'), { timeout: 5000 }).toBe(header);
+  });
+
+  for (const height of [800, 900]) {
+    test(`scrolling back up from the bottom retraces each screen at ${height}px high`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height });
+      await openHome(page);
+      const header = await page
+        .getByRole('banner')
+        .evaluate((el) => el.getBoundingClientRect().height);
+      const topOf = (id: string) =>
+        page.locator(id).evaluate((el) => Math.round(el.getBoundingClientRect().top));
+      // the last screen (education, contact and footer) fills the window from the bottom of the page
+      await page.evaluate(() => window.scrollTo({ top: 1e6, behavior: 'instant' }));
+      await expect.poll(() => topOf('.finale')).toBeLessThanOrEqual(header + 1);
+      await page.mouse.move(700, 400);
+
+      for (const id of ['#record', '#work']) {
+        await page.mouse.wheel(0, -100);
+        await expect.poll(() => topOf(id), { timeout: 5000 }).toBe(header);
+        await page.waitForTimeout(1000);
+      }
+      await page.mouse.wheel(0, -100);
+      await expect.poll(() => page.evaluate(() => Math.round(scrollY)), { timeout: 5000 }).toBe(0);
+    });
+  }
+
+  test('the last screen holds the education, the contact band and the footer in one window', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await openHome(page);
+    await page.evaluate(() => window.scrollTo({ top: 1e6, behavior: 'instant' }));
+    const box = (sel: string) =>
+      page.locator(sel).evaluate((el) => el.getBoundingClientRect().toJSON());
+    await expect.poll(async () => (await box('#education')).top).toBeGreaterThanOrEqual(79);
+    expect((await box('#contact')).bottom).toBeLessThanOrEqual((await box('.site-footer')).top + 1);
+    expect(Math.round((await box('.site-footer')).bottom)).toBe(800);
+    await expect(page.getByRole('heading', { name: 'What I work with' })).toHaveCount(0);
   });
 
   test('the projects screen links to a page with every project', async ({ page }) => {

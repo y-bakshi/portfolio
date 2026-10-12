@@ -15,7 +15,7 @@ const find = (ids: string[]) =>
       projects.some((p) => p.id === id) ||
       roles.some((r) => r.id === id) ||
       education.some((e) => e.id === id) ||
-      id === 'tools',
+      id === 'contact',
   );
 
 /** Answers are written from the owner-provided notes only. Anything else gets an honest miss. */
@@ -72,8 +72,8 @@ export function answerFor(question: string): Answer {
     };
   if (has('skill', 'stack', 'tool', 'technolog'))
     return {
-      text: 'Day to day: Python and Java, FastAPI and Micronaut, AWS and GCP, Docker and Kubernetes, with Rust, C++ and TypeScript in project work. The full list is further down the page.',
-      cites: find(['tools']),
+      text: 'Day to day: Python and Java, FastAPI and Micronaut, AWS and GCP, Docker and Kubernetes, with Rust, C++ and TypeScript in project work.',
+      cites: [],
     };
   if (has('compiler', 'language', 'parser', 'c++', 'systems'))
     return {

@@ -8,7 +8,7 @@ const nameFor = (id: string) =>
   projects.find((p) => p.id === id)?.name ??
   roles.find((r) => r.id === id)?.org ??
   education.find((e) => e.id === id)?.org ??
-  (id === 'contact' ? 'Contact' : id === 'tools' ? 'What I work with' : id);
+  (id === 'contact' ? 'Contact' : id);
 
 /** The buttons under an answer that jump to the sections it draws on. */
 function CiteList({ ids, onShow }: { ids: string[]; onShow: (id: string) => void }) {

@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import Home from './App';
 import AllProjects from './AllProjects';
 import CaseStudy from './CaseStudy';
-import { education, projects, roles, smallProjects, stackGroups } from './content';
+import { education, projects, roles, smallProjects } from './content';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
 vi.mock('./MistPortrait', () => ({
@@ -30,7 +30,7 @@ describe('home page', () => {
 
   it('has every section, each with a heading', () => {
     home();
-    for (const name of ['Projects', 'Work history', 'Education', 'What I work with']) {
+    for (const name of ['Projects', 'Work history', 'Education']) {
       expect(screen.getByRole('heading', { level: 2, name }), name).toBeInTheDocument();
     }
     expect(
@@ -38,13 +38,12 @@ describe('home page', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the featured projects, every role and degree, and every skill group', () => {
+  it('shows the featured projects and every role and degree', () => {
     home();
     for (const p of projects.filter((p) => p.featured))
       expect(document.getElementById(p.id), p.id).toHaveTextContent(p.name);
     for (const r of [...roles, ...education])
       expect(document.getElementById(r.id), r.id).toBeInTheDocument();
-    for (const g of stackGroups) expect(screen.getByText(g.group)).toBeInTheDocument();
   });
 
   it('puts exactly the four featured projects on the projects screen, with a link to the rest', () => {
@@ -118,7 +117,6 @@ describe('home page', () => {
       ...projects.filter((p) => p.featured).map((p) => p.id),
       ...roles.map((r) => r.id),
       ...education.map((e) => e.id),
-      'tools',
       'contact',
     ]) {
       const el = document.getElementById(id);

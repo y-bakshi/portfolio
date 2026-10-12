@@ -10,6 +10,8 @@
   color-scheme: light;
   /* the sticky header's height; the hero, the snap offsets and the back to top button all use it */
   --header-h: 80px;
+  /* the footer's height, so the last screen can be sized to leave room for it */
+  --footer-h: 48px;
   --ground: #e8e0d2; /* ivory */
   --panel: #f4efe5;
   --ink: #0e1d61; /* deep atlas navy */

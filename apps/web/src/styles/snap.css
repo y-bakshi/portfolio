@@ -7,17 +7,41 @@
     scroll-padding-top: var(--header-h);
   }
 
-  /* the projects, the experience and the education each fill one screen, with the tiles and the roles spread to fit it */
+  /* the projects and the experience each fill one screen, with the tiles and the roles spread to fit it */
   .work,
-  #record,
-  #education {
+  #record {
     display: flex;
     flex-direction: column;
     min-height: calc(100svh - var(--header-h));
     padding-bottom: 12px;
   }
 
-  /* a compact heading on these two screens, so the content below it has the room */
+  /* the last screen: the education, the contact band and the footer share one window */
+  .finale {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--header-h) - var(--footer-h));
+  }
+
+  #education {
+    flex: 1;
+    padding-bottom: 28px;
+  }
+
+  /* a tighter contact band and footer, so the education, the band and the footer fit one window */
+  .finale .contact {
+    padding: clamp(28px, 3.5vw, 44px) 0 clamp(20px, 2.5vw, 32px);
+  }
+
+  .finale .contact-title {
+    font-size: clamp(2.2rem, 4.4vw, 3.8rem);
+  }
+
+  .site-footer {
+    padding-bottom: 20px;
+  }
+
+  /* a compact heading on these screens, so the content below it has the room */
   .work .section-card,
   #record .section-card,
   #education .section-card {
@@ -48,5 +72,71 @@
   #record .record-item,
   #education .record-item {
     padding-block: 16px;
+  }
+}
+
+/* On a window that is wide but not very tall, tighten the three one-screen layouts so each still fits. */
+@media (min-width: 901px) and (min-height: 640px) and (max-height: 880px) and (hover: hover) {
+  .work .section-card,
+  #record .section-card,
+  #education .section-card {
+    padding-block: 6px;
+  }
+
+  .tiles {
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .tile {
+    gap: 4px;
+    padding: 10px 16px;
+  }
+
+  .tile .row-head h3 {
+    font-size: 1.25rem;
+  }
+
+  .tile .row-line {
+    font-size: 0.9rem;
+  }
+
+  .tile .row-body > p {
+    margin-top: 4px;
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+
+  .tile .row-body .row-role {
+    font-size: 0.8rem;
+  }
+
+  .tile .stack-list {
+    margin-top: 5px;
+    font-size: 0.8rem;
+  }
+
+  .tile .row-link,
+  .tile-trace summary {
+    min-height: 34px;
+  }
+
+  #record .record-list,
+  #education .record-list {
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  #record .record-item,
+  #education .record-item {
+    padding-block: 12px;
+  }
+
+  .finale .contact {
+    padding: 24px 0 16px;
+  }
+
+  .finale .contact-title {
+    font-size: clamp(2rem, 3.4vw, 3rem);
   }
 }

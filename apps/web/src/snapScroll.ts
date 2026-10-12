@@ -3,9 +3,11 @@ import { useLayoutEffect } from 'react';
 /** A wide, tall screen with a real pointer. Phones and short windows scroll freely. */
 const WIDE = '(min-width: 901px) and (min-height: 640px) and (hover: hover)';
 /** The sections that start a screen, in page order. */
-const SCREENS = '.ask, .work, .record, .tools, .contact';
+const SCREENS = '.ask, .work, #record, .finale';
 /** After a step, ignore input for this long so a trackpad's momentum does not skip a screen. */
 const LOCK_MS = 900;
+/** A screen taller than the window by less than this share of the window counts as one stop. */
+const SLACK = 0.12;
 /** Focus here means a key press belongs to that control, not to the page. */
 const OWN_KEYS = 'input, textarea, select, button, a, summary, [contenteditable]';
 
@@ -21,8 +23,21 @@ function stops(header: number) {
   );
   const all: number[] = [];
   tops.forEach((top, i) => {
-    const end = i + 1 < tops.length ? tops[i + 1] : maxY + view;
+    const last = i === tops.length - 1;
+    const end = last ? maxY + view : tops[i + 1];
+    const overflow = end - (top + view);
+    if (overflow <= 0) {
+      all.push(top);
+      return;
+    }
+    // a screen only a little taller than the window gets one stop, not a tiny extra step: the last
+    // screen ends at the bottom of the page, the others at their top
+    if (overflow < view * SLACK) {
+      all.push(last ? end - view : top);
+      return;
+    }
     all.push(top);
+    // a section taller than the window gets further stops, the last with its end in view
     for (let s = top; end - (s + view) > 4;) {
       s = Math.min(s + view, end - view);
       all.push(s);

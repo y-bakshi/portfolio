@@ -1,12 +1,4 @@
-import {
-  answerFor,
-  education,
-  projects,
-  roles,
-  smallProjects,
-  stackGroups,
-  suggestions,
-} from './content';
+import { answerFor, education, projects, roles, smallProjects, suggestions } from './content';
 
 const ids = [...projects, ...roles, ...education].map((x) => x.id);
 
@@ -46,11 +38,9 @@ describe('content data', () => {
     }
   });
 
-  it('keeps the smaller projects and skill groups filled in', () => {
+  it('keeps the smaller projects filled in', () => {
     expect(smallProjects.length).toBeGreaterThan(0);
     smallProjects.forEach((p) => expect(p.line.length, p.name).toBeGreaterThan(30));
-    expect(stackGroups.length).toBeGreaterThan(0);
-    stackGroups.forEach((g) => expect(g.items.length, g.group).toBeGreaterThan(10));
   });
 });
 
@@ -66,7 +56,7 @@ describe('the guide answers', () => {
     ['Has he used Rust?', ['procwatch']],
     ['Any gemini story work?', ['story-generator']],
     ['Tell me about his education', ['asu', 'manipal']],
-    ['What skills and tools does he use?', ['tools']],
+    ['What skills and tools does he use?', []],
     ['What is his career history?', ['thryv', 'insight']],
     ['How can I contact him?', ['contact']],
   ];
@@ -85,7 +75,7 @@ describe('the guide answers', () => {
   });
 
   it('only cites things that exist on the page', () => {
-    const allowed = new Set([...ids, 'tools', 'contact']);
+    const allowed = new Set([...ids, 'contact']);
     for (const [q] of cases)
       for (const id of answerFor(q).cites) expect(allowed.has(id), `${q} cites ${id}`).toBe(true);
   });
