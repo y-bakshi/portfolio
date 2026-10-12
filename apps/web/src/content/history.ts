@@ -51,6 +51,7 @@ export const education: Entry[] = [
   {
     id: 'manipal',
     mark: 'MUJ',
+    logo: '/logos/manipal.png',
     title: 'Bachelor of Information Technology',
     org: 'Manipal University Jaipur',
     when: 'Aug 2017 to Aug 2021',

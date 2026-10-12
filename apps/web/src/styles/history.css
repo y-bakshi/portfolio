@@ -74,7 +74,7 @@
   display: grid;
   align-self: center;
   place-items: center;
-  width: 112px;
+  width: 148px;
   height: 64px;
   color: var(--ink);
   font-family: var(--display);
