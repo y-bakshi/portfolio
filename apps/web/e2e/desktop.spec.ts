@@ -55,6 +55,13 @@ test.describe('wide screens', () => {
     expect(box!.width).toBeGreaterThan(250);
   });
 
+  test('the closed chat panel is out of keyboard reach', async ({ page }) => {
+    await openHome(page);
+    await expect(page.locator('#dock-open')).toHaveJSProperty('inert', true);
+    await bar(page).click();
+    await expect(page.locator('#dock-open')).toHaveJSProperty('inert', false);
+  });
+
   test('the page does not move while an answer streams in', async ({ page }) => {
     await openHome(page);
     await bar(page).click();
