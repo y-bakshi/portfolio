@@ -22,6 +22,7 @@ export const roles: Entry[] = [
   {
     id: 'tcs-dev',
     mark: 'TCS',
+    logo: '/logos/tcs.svg',
     title: 'ServiceNow developer',
     org: 'Tata Consultancy Services',
     when: 'Sep 2022 to May 2024',
@@ -30,6 +31,7 @@ export const roles: Entry[] = [
   {
     id: 'tcs-ase',
     mark: 'TCS',
+    logo: '/logos/tcs.svg',
     title: 'Assistant systems engineer',
     org: 'Tata Consultancy Services',
     when: 'Nov 2021 to Sep 2022',
