@@ -43,6 +43,7 @@ export const education: Entry[] = [
   {
     id: 'asu',
     mark: 'ASU',
+    logo: '/logos/asu.png',
     title: 'MS, Computer Software Engineering',
     org: 'Arizona State University',
     when: 'Jan 2025 to Dec 2026',
