@@ -113,6 +113,9 @@ test.describe('phones', () => {
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
         page.viewportSize()!.width,
       );
+      // the page rests on one screen at a time, so bring this one up as a swipe would
+      await page.evaluate((s) => document.querySelector(s)!.scrollIntoView(), section);
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
       await page.locator(`${section} .swipe-dot`).nth(1).click();
       await expect(page.locator(`${section} .swipe-dot`).nth(1)).toHaveAttribute(
         'aria-current',
