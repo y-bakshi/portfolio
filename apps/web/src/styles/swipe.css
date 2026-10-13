@@ -22,10 +22,16 @@
   }
 
   .swipe > * {
-    flex: 0 0 calc(100% - 8px);
+    flex: 0 0 calc(100% - 24px);
     min-width: 0;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+  }
+
+  /* a little room after the last card, so it rests where the others do */
+  .swipe::after {
+    content: '';
+    flex: 0 0 24px;
   }
 
   .swipe-dots {
