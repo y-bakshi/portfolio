@@ -3,7 +3,7 @@ import { Answer, answerFor, projects } from '../content';
 import { prefersReducedMotion, type Status } from './shared';
 import { Chips, Thread, type Exchange } from './Thread';
 import { useFollowNewest } from './useFollowNewest';
-import { useIsMobile, usePinToVisualViewport, useScrolled } from './useViewport';
+import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } from './useViewport';
 
 /**
  * The guide's state and behaviour. On wide screens the conversation shows in the hero; on phones it
@@ -37,6 +37,7 @@ export function useGuide() {
   useEffect(() => clearTimers, []);
 
   usePinToVisualViewport(open, isMobile);
+  useFollowPageEnd(open, isMobile);
   useEffect(() => {
     if (open) inputRef.current?.focus({ preventScroll: true });
   }, [open]);

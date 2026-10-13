@@ -27,4 +27,20 @@ test.describe('wide screens with the chat bar open', () => {
       }
     });
   }
+
+  test('opening the chat at the end of the page keeps the footer in view', async ({ page }) => {
+    test.skip((page.viewportSize()?.width ?? 0) < 901, 'the bar is a full-screen chat on phones');
+    await openHome(page);
+    await page.evaluate(() => window.scrollTo({ top: 99999, behavior: 'instant' }));
+    await bar(page).click();
+    await expect(page.locator('.dock')).toHaveClass(/is-open/);
+    const gap = () =>
+      page.evaluate(
+        () =>
+          document.querySelector('.dock')!.getBoundingClientRect().top -
+          document.querySelector('.site-footer')!.getBoundingClientRect().bottom,
+      );
+    // the page follows down to its new end, so the footer ends where the bar begins
+    await expect.poll(gap).toBeGreaterThanOrEqual(-1);
+  });
 });
