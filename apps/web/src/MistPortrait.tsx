@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FORM_MS, TILE, token, type P } from './portrait/config';
+import { makePacer } from './portrait/pace';
 import { drawBuckets, makeBuckets, stepParticles } from './portrait/particles';
 import { sampleParticles } from './portrait/sample';
 import {
@@ -22,12 +23,17 @@ export function MistPortrait({
   alt,
   width,
   height,
+  onFormed,
 }: {
   src: string;
   alt: string;
   width: number;
   height: number;
+  /** Called once, when the portrait is finished or is shown as a plain picture. */
+  onFormed?: () => void;
 }) {
+  const formedRef = useRef(onFormed);
+  formedRef.current = onFormed;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [still, setStill] = useState(
     () =>
@@ -36,10 +42,12 @@ export function MistPortrait({
   );
 
   useEffect(() => {
-    if (still) return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    if (still || !canvas || !ctx) {
+      formedRef.current?.(); // a plain picture is finished at once
+      return;
+    }
 
     const INK = token('--ink', [14, 29, 97]);
     const small = window.innerWidth < 700;
@@ -53,6 +61,7 @@ export function MistPortrait({
     let visible = false;
     let mouse: { x: number; y: number } | null = null;
     let dead = false;
+    let announced = false;
     let portrait: HTMLImageElement | null = null;
     let tilesX = 0;
     let tilesY = 0;
@@ -61,10 +70,7 @@ export function MistPortrait({
     let tileDark = new Float32Array(0); // tone of each tile, 0 = ground, 1 = full ink
     let activeTiles: number[] = [];
     let ready = false; // particles sampled
-    let stride = 1; // draw every Nth particle; raised if frames run long
-    let lastNow = 0;
-    let smoothedDt = 16.7;
-    let measured = 0;
+    const pace = makePacer();
     const specks = makeSpecks();
     const buckets = makeBuckets();
 
@@ -90,15 +96,15 @@ export function MistPortrait({
       frame = 0;
       if (dead) return;
 
-      // If frames are running long, draw every other particle so slower devices stay smooth.
-      if (lastNow && now - lastNow < 100) {
-        smoothedDt = smoothedDt * 0.9 + (now - lastNow) * 0.1;
-        if (++measured > 30 && smoothedDt > 40 && stride === 1) stride = 2; // under about 25 fps
-      }
-      lastNow = now;
+      // if frames are running long, draw every other particle so slower devices stay smooth
+      const stride = pace(now);
       ctx.clearRect(0, 0, cw, ch);
       const t = started ? Math.min(1, Math.max(0, (now - started) / FORM_MS)) : 0;
       const formed = t >= 1;
+      if (formed && !announced) {
+        announced = true;
+        formedRef.current?.();
+      }
       const mx = mouse?.x ?? -9999;
       const my = mouse?.y ?? -9999;
       let moving = false;
