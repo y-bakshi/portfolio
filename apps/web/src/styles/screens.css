@@ -27,6 +27,24 @@
     scroll-snap-align: end;
   }
 
+  /* the cards share the height of the screen, so no screen is left half empty */
+  .work,
+  #record,
+  #education {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .work .swipe,
+  #record .swipe,
+  #education .swipe {
+    flex: 1;
+  }
+
+  .swipe .record-item {
+    align-content: center;
+  }
+
   /* a section's padding below it is only breathing room, so it does not add a second screen */
   .work,
   #record,
