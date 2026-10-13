@@ -22,6 +22,20 @@
     scroll-snap-align: start;
   }
 
+  /* the contact band and the footer under it share the last screen, the content in the middle of it */
+  .contact {
+    --footer-touch: 137px;
+    align-content: center;
+    min-height: calc(100svh - var(--header-h) - var(--footer-touch));
+    min-height: calc(100dvh - var(--header-h) - var(--footer-touch));
+  }
+
+  /* the footer's last 58px sit behind the chat bar, so the text above them is the part you read */
+  .site-footer {
+    min-height: 0;
+    padding-bottom: 70px;
+  }
+
   /* the footer under the contact band is a stop of its own, so the page can rest at its very end */
   .site-footer {
     scroll-snap-align: end;
