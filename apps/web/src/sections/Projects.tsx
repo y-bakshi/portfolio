@@ -1,6 +1,7 @@
 import type { Guide } from '../Guide';
 import { projects } from '../content';
 import { ProjectTile } from './ProjectTile';
+import { Swipe } from './Swipe';
 
 const featured = projects.filter((p) => p.featured);
 
@@ -18,11 +19,11 @@ export function Projects({ marked }: Pick<Guide, 'marked'>) {
           See all projects
         </a>
       </div>
-      <div className="tiles">
+      <Swipe as="div" className="tiles" label="Projects">
         {featured.map((p) => (
           <ProjectTile key={p.id} p={p} marked={marked} />
         ))}
-      </div>
+      </Swipe>
     </section>
   );
 }

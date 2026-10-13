@@ -1,0 +1,32 @@
+/* On a touch screen the page rests on one screen at a time, as it does on a wide window (see snap.css):
+   a swipe up or down moves from the introduction to the projects, the work history, the education
+   and the contact band. A section taller than the screen still scrolls freely within itself. */
+
+@media (hover: none) and (pointer: coarse) and (max-width: 900px) {
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: var(--header-h);
+  }
+
+  /* each screen fills the space between the header and the chat bar, which is 56px tall */
+  .ask,
+  .work,
+  #record,
+  #education,
+  .contact {
+    min-height: calc(100svh - var(--header-h) - 56px);
+    scroll-snap-align: start;
+  }
+
+  /* the footer under the contact band is a stop of its own, so the page can rest at its very end */
+  .site-footer {
+    scroll-snap-align: end;
+  }
+
+  /* a section's padding below it is only breathing room, so it does not add a second screen */
+  .work,
+  #record,
+  #education {
+    padding-bottom: 16px;
+  }
+}

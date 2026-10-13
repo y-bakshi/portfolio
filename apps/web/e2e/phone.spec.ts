@@ -99,4 +99,25 @@ test.describe('phones', () => {
     const h = (await page.getByRole('banner').boundingBox())!;
     expect(h.height).toBeLessThan(80);
   });
+
+  test('projects, roles and degrees are cards to swipe through, one dot each', async ({ page }) => {
+    await openHome(page);
+    for (const [section, cards] of [
+      ['#work', 4],
+      ['#record', 4],
+      ['#education', 2],
+    ] as const) {
+      const row = page.locator(`${section} .swipe`);
+      await expect(row.locator('> *')).toHaveCount(cards);
+      await expect(page.locator(`${section} .swipe-dot`)).toHaveCount(cards);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+        page.viewportSize()!.width,
+      );
+      await page.locator(`${section} .swipe-dot`).nth(1).click();
+      await expect(page.locator(`${section} .swipe-dot`).nth(1)).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+    }
+  });
 });

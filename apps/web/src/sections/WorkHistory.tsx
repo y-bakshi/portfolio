@@ -1,5 +1,6 @@
 import type { Guide } from '../Guide';
 import { OrgMark } from './OrgMark';
+import { Swipe } from './Swipe';
 import { roles } from '../content';
 
 /** The work history list. */
@@ -11,7 +12,7 @@ export function WorkHistory({ marked }: Pick<Guide, 'marked'>) {
           Work history
         </h2>
       </div>
-      <ol className="record-list">
+      <Swipe as="ol" className="record-list" label="Work history">
         {roles.map((r) => (
           <li
             key={r.id}
@@ -29,7 +30,7 @@ export function WorkHistory({ marked }: Pick<Guide, 'marked'>) {
             </div>
           </li>
         ))}
-      </ol>
+      </Swipe>
     </section>
   );
 }
