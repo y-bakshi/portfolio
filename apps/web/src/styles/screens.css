@@ -10,6 +10,11 @@
     scroll-padding-top: var(--header-h);
   }
 
+  /* the page rests with the strip in view, not scrolled up under the header */
+  .ask {
+    scroll-margin-top: var(--wip-h);
+  }
+
   /* each screen fills the space between the header and the chat bar, which is 58px tall */
   .ask,
   .work,

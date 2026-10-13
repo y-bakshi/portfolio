@@ -26,6 +26,8 @@
   --field: #fbf8f1; /* the chat input, a touch lighter than the panel */
   --placeholder: #5a6288; /* placeholder text in the chat input */
   --scrim: rgba(14, 29, 97, 0.35); /* the dim layer behind the open chat on phones */
+  --wip: #ffe600; /* the work in progress strip at the top, until launch */
+  --wip-h: 18px;
   --shadow: #040720; /* hard shadows: near-black navy, darker than the ink so they separate from navy fills */
 
   --display: 'Instrument Sans Variable', 'Arial Narrow', Arial, sans-serif;

@@ -22,6 +22,15 @@ describe('home page', () => {
     expect(screen.getByRole('navigation', { name: /main/i })).toBeInTheDocument();
   });
 
+  it('has the thin work in progress strip above the header', () => {
+    home();
+    const strip = screen.getByRole('note');
+    expect(strip).toHaveTextContent('This site is a work in progress.');
+    expect(strip.nextElementSibling?.tagName).toBe('HEADER');
+    // the repeated text is decoration; screen readers get the sentence once
+    expect(strip.querySelectorAll('[aria-hidden="true"] span').length).toBeGreaterThan(10);
+  });
+
   it('offers a skip link that points at the main content', () => {
     home();
     const skip = screen.getByRole('link', { name: /skip/i });

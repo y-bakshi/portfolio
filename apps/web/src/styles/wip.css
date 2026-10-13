@@ -1,0 +1,24 @@
+/* The work in progress strip above the header. It scrolls away with the page; the header stays. */
+
+.wip {
+  position: relative;
+  z-index: 21;
+  height: var(--wip-h);
+  overflow: hidden;
+  background: var(--wip);
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: calc(var(--wip-h) - 1px);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.wip-run {
+  display: flex;
+  gap: 28px;
+  width: max-content;
+}
