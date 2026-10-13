@@ -62,26 +62,6 @@
   margin-top: 0;
 }
 
-.tile-trace summary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-family: var(--display);
-  font-weight: 700;
-  color: var(--action);
-  cursor: pointer;
-}
-
-.tile-trace[open] {
-  flex-basis: 100%;
-}
-
-@media (hover: hover) {
-  .row:hover .tile-trace summary {
-    color: var(--ink);
-  }
-}
-
 /* the shared card for coursework, on the all-projects page */
 .more-card {
   display: block;

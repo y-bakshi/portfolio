@@ -116,8 +116,7 @@
     font-size: 0.8rem;
   }
 
-  .tile .row-link,
-  .tile-trace summary {
+  .tile .row-link {
     min-height: 44px;
   }
 

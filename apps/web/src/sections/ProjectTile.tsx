@@ -1,13 +1,12 @@
 import type { Guide } from '../Guide';
 import type { Project } from '../content';
-import { Trace } from '../parts';
 
 /** The links a project has: the case study for TestPilot, otherwise any public source or demo. */
 function ProjectLinks({ p }: { p: Project }) {
   if (p.id === 'testpilot')
     return (
       <a className="row-link" href="/projects/testpilot/">
-        Read the TestPilot case study
+        Case study
       </a>
     );
   if (!p.links) return null;
@@ -53,10 +52,6 @@ export function ProjectTile({ p, marked }: { p: Project } & Pick<Guide, 'marked'
         </ul>
         <div className="tile-actions">
           <ProjectLinks p={p} />
-          <details className="tile-trace">
-            <summary>How it runs</summary>
-            <Trace steps={p.trace} label={`${p.name} pipeline`} />
-          </details>
         </div>
       </div>
     </article>

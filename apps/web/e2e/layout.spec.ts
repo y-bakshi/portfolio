@@ -41,7 +41,7 @@ test('the header stays on one row and stays visible while scrolling', async ({ p
 
 test('the open page opens at the top when a case study link is followed', async ({ page }) => {
   await openHome(page);
-  const link = page.getByRole('link', { name: /read the testpilot case study/i });
+  const link = page.getByRole('link', { name: /^case study/i });
   await link.scrollIntoViewIfNeeded();
   expect(await page.evaluate(() => scrollY)).toBeGreaterThan(300);
   await link.click();
