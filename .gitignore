@@ -23,3 +23,6 @@ ASSET_BRIEF.md
 # Logs and temporary output
 *.log
 coverage/
+
+# Local state from the Cloudflare command line tool
+.cloudflare/
