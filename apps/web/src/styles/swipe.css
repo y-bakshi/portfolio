@@ -14,7 +14,11 @@
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     /* room for the card shadow, which the scroll area would otherwise clip */
-    padding: 14px 8px 14px 0;
+    padding: 14px 8px 14px;
+    /* the row runs out to both edges of the screen, so tilted cards are not cut off at the page margin */
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
     /* every card is as tall as the tallest, so they are one size, like a hand of cards */
     align-items: stretch;
   }

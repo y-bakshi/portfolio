@@ -22,12 +22,14 @@ export function Swipe({
     let frame = 0;
     const update = () => {
       const kids = [...el.children] as HTMLElement[];
+      // a card at rest sits one page margin in from the edge of the row
+      const rest = parseFloat(getComputedStyle(el).paddingLeft) || 0;
       const stride = kids.length > 1 ? kids[1].offsetLeft - kids[0].offsetLeft : el.clientWidth;
-      const gap = (k: HTMLElement) => Math.abs(k.offsetLeft - el.scrollLeft);
+      const gap = (k: HTMLElement) => Math.abs(k.offsetLeft - rest - el.scrollLeft);
       setAt(kids.reduce((best, k, i) => (gap(k) < gap(kids[best]) ? i : best), 0));
       // how far each card is from the front, -1 to 1: the styles fan the cards out by it
       kids.forEach((k) => {
-        const d = Math.max(-1, Math.min(1, (k.offsetLeft - el.scrollLeft) / stride));
+        const d = Math.max(-1, Math.min(1, (k.offsetLeft - rest - el.scrollLeft) / stride));
         k.style.setProperty('--d', String(d));
         k.style.setProperty('--a', String(Math.abs(d)));
       });
