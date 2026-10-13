@@ -39,7 +39,22 @@
   .work .swipe,
   #record .swipe,
   #education .swipe {
+    flex: 0 1 auto;
+    min-height: 0;
     margin-block: auto;
+  }
+
+  /* these three are exactly one screen tall: on a phone too short for the tallest card, the row of
+     cards scrolls up and down inside the screen rather than pushing its dots under the chat bar */
+  .work,
+  #record,
+  #education {
+    height: calc(100svh - var(--header-h) - 58px);
+    height: calc(100dvh - var(--header-h) - 58px);
+  }
+
+  .swipe-dots {
+    flex: none;
   }
 
   /* a section's padding below it is only breathing room, so it does not add a second screen */
