@@ -118,7 +118,7 @@
 
   .tile .row-link,
   .tile-trace summary {
-    min-height: 34px;
+    min-height: 44px;
   }
 
   #record .record-list,

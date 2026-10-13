@@ -42,7 +42,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #2a3568;
+  background: var(--light-off);
   transition: background-color 160ms var(--ease-out);
 }
 

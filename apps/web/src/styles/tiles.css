@@ -58,14 +58,14 @@
 }
 
 .tile .row-link {
-  min-height: 40px;
+  min-height: 44px;
   margin-top: 0;
 }
 
 .tile-trace summary {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   font-family: var(--display);
   font-weight: 700;
   color: var(--action);
