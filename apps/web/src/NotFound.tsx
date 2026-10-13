@@ -1,11 +1,12 @@
 import { DotGrid } from './DotGrid';
-import { SiteHeader } from './parts';
+import { SiteHeader, WipBanner } from './parts';
 
 /** The page for an address that does not exist. */
 export function NotFound() {
   return (
     <>
       <DotGrid />
+      <WipBanner />
       <SiteHeader />
       <main id="main" className="all">
         <div className="section-card">

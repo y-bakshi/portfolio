@@ -18,8 +18,9 @@ const OWN_KEYS = 'input, textarea, select, button, a, summary, [contenteditable]
 function stops(header: number) {
   const view = window.innerHeight - header;
   const maxY = document.documentElement.scrollHeight - window.innerHeight;
-  const tops = [...document.querySelectorAll<HTMLElement>(SCREENS)].map(
-    (el) => el.getBoundingClientRect().top + window.scrollY - header,
+  // the first screen starts at the top of the page, above the strip and the header
+  const tops = [...document.querySelectorAll<HTMLElement>(SCREENS)].map((el, i) =>
+    i === 0 ? 0 : el.getBoundingClientRect().top + window.scrollY - header,
   );
   const all: number[] = [];
   tops.forEach((top, i) => {

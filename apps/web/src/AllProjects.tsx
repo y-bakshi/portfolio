@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { projects, smallProjects } from './content';
 import { DotGrid } from './DotGrid';
-import { SiteHeader } from './parts';
+import { SiteHeader, WipBanner } from './parts';
 import { ProjectTile } from './sections/ProjectTile';
 
 /** Every project: the four featured, the rest, and the shared card for coursework. */
@@ -15,6 +15,7 @@ export function AllProjects() {
   return (
     <>
       <DotGrid />
+      <WipBanner />
       <SiteHeader />
       <main id="main" className="all">
         <p className="case-back">

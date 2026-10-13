@@ -1,6 +1,6 @@
 import { projects } from './content';
 import { DotGrid } from './DotGrid';
-import { SiteHeader, Trace } from './parts';
+import { SiteHeader, Trace, WipBanner } from './parts';
 
 const project = projects.find((p) => p.id === 'testpilot')!;
 
@@ -9,6 +9,7 @@ export function CaseStudy() {
   return (
     <>
       <DotGrid />
+      <WipBanner />
       <SiteHeader />
       <main id="main" className="case">
         <p className="case-back">

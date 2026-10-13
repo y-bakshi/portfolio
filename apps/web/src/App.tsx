@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { DotGrid } from './DotGrid';
 import { GuideDock, useGuide } from './Guide';
-import { SiteHeader } from './parts';
+import { SiteHeader, WipBanner } from './parts';
 import { useSnapScroll } from './snapScroll';
 import { Contact } from './sections/Contact';
 import { Education } from './sections/Education';
@@ -23,6 +23,7 @@ export function Home() {
   return (
     <>
       <DotGrid />
+      <WipBanner />
       <SiteHeader />
       <main id="main">
         <Hero isMobile={isMobile} thread={thread} feedRef={g.refs.feedRef} />

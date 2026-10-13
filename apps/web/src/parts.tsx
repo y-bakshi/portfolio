@@ -1,6 +1,20 @@
 import type { MouseEvent } from 'react';
 import { DotGrid } from './DotGrid';
 
+/** A thin strip at the very top that says the site is unfinished. Remove it at launch. */
+export function WipBanner() {
+  return (
+    <div className="wip" role="note">
+      <span className="sr-only">This site is a work in progress.</span>
+      <div className="wip-run" aria-hidden="true">
+        {Array.from({ length: 48 }, (_, i) => (
+          <span key={i}>Work in progress</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** The sticky header: the name and the section links. */
 export function SiteHeader() {
   /** On the home page a link to "/" does nothing, so scroll to the top instead. */
