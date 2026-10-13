@@ -1,18 +1,22 @@
 # Deployment
 
-Status: deployment plan. No Firebase configuration, Cloud Run service, backend container, or workflow is implemented.
+Status: the frontend deploys to Cloudflare (see below). The backend sections are still a plan: no Cloud Run service or backend container exists, and some older documents still describe the Firebase Hosting setup that Cloudflare replaced.
 
 ## Topology
 
-Static frontend: Firebase Hosting. Planned API: FastAPI container on Cloud Run. Prefer same-origin `/api/v1/*` hosting rewrites; keep the publication independent of backend availability. Hosting integration imposes a 60-second request timeout, so API deadlines must be shorter. [Firebase integration](https://firebase.google.com/docs/hosting/serverless-overview)
+Static frontend: Cloudflare Workers static assets, on the domain `yashbakshi.com` (registered at Cloudflare, so DNS, TLS and hosting are one account). The build folder is served as it is; any address that is not a file or a page shows `404.html`. See [ADR-006](../decisions/ADR-006-cloudflare-hosting.md). The backend is not built yet; when it is, keep the publication independent of its availability.
 
 ## Frontend Release
 
-1. Configure the correct Firebase project, domain, security headers, cache rules, and trailing-slash handling for the case study pages (each is a real directory page, so no SPA fallback is needed).
-2. Set reviewed public build variables and build from the committed lockfile.
-3. Run `npm run check` and `npm run build` in `apps/web/`.
-4. Deploy `apps/web/dist/` to an access-restricted preview environment and verify deep links, assets, and contact actions.
-5. Promote only after integrated release checks and launch approval.
+1. The site address lives in one place, `SITE` in `apps/web/vite.site.ts`. Every canonical and social-preview URL, `robots.txt` and `sitemap.xml` are generated from it at build time.
+2. `apps/web/wrangler.jsonc` points Cloudflare at `./dist`, with `404-page` handling and trailing-slash handling for the case study pages (each is a real directory page, so there is no single-page fallback).
+3. Security headers (a content security policy, no framing, no MIME sniffing) and one-year caching for the hashed files in `/assets/` are in `apps/web/public/_headers`.
+4. Connect the GitHub repository in the Cloudflare dashboard (Workers and Pages, create, import a repository). Set the root directory to `apps/web`, the build command to `npm ci && npm run build` and the deploy command to `npx wrangler deploy`. Every pull request then gets a preview address, and a merge to `main` deploys.
+5. Add the domain to the Worker as a custom domain, and check deep links, the 404 page, assets and the contact links on the live site.
+
+## Redirect domain and renewal
+
+The free `yashbakshi.dev` year at Name.com renews at $22.99, against $12.20 at Cloudflare. Do not let it renew at Name.com: unlock it, get the authorization code and transfer it to Cloudflare before the renewal date, then redirect it to `yashbakshi.com`.
 
 ## Backend Release
 
