@@ -14,7 +14,9 @@
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     /* room for the card shadow, which the scroll area would otherwise clip */
-    padding: 0 8px 10px 0;
+    padding: 14px 8px 14px 0;
+    /* every card is as tall as the tallest, so they are one size, like a hand of cards */
+    align-items: stretch;
   }
 
   .swipe::-webkit-scrollbar {
@@ -22,16 +24,51 @@
   }
 
   .swipe > * {
-    flex: 0 0 calc(100% - 24px);
+    flex: 0 0 calc(100% - 52px);
     min-width: 0;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+    /* --d is set by the script: 0 for the card in front, up to 1 or -1 for its neighbours */
+    transform: rotate(calc(var(--d, 0) * 4deg)) scale(calc(1 - var(--a, 0) * 0.1));
+    transform-origin: 50% 50%;
+  }
+
+  /* on a phone the cards, their logos and their text are larger, to fill the screen */
+  .swipe .record-item h3 {
+    font-size: 1.5rem;
+  }
+
+  .swipe .record-item p:not(.record-when) {
+    font-size: 1.1rem;
+  }
+
+  .swipe .org-mark {
+    width: 240px;
+    height: 76px;
+  }
+
+  .swipe .tile {
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .swipe .tile .row-head h3 {
+    font-size: 1.8rem;
+  }
+
+  .swipe .tile .row-body > p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .swipe .tile .row-role {
+    font-size: 0.88rem;
   }
 
   /* a little room after the last card, so it rests where the others do */
   .swipe::after {
     content: '';
-    flex: 0 0 24px;
+    flex: 0 0 52px;
   }
 
   .swipe-dots {

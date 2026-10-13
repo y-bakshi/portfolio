@@ -27,7 +27,7 @@
     scroll-snap-align: end;
   }
 
-  /* the cards share the height of the screen, so no screen is left half empty */
+  /* the cards sit in the middle of the screen, so no screen is left half empty */
   .work,
   #record,
   #education {
@@ -35,14 +35,11 @@
     flex-direction: column;
   }
 
+  /* the row of cards, one size, rests in the middle of what is left of the screen */
   .work .swipe,
   #record .swipe,
   #education .swipe {
-    flex: 1;
-  }
-
-  .swipe .record-item {
-    align-content: center;
+    margin-block: auto;
   }
 
   /* a section's padding below it is only breathing room, so it does not add a second screen */

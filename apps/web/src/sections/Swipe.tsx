@@ -19,13 +19,31 @@ export function Swipe({
   useEffect(() => {
     const el = list.current;
     if (!el) return;
-    const onScroll = () => {
+    let frame = 0;
+    const update = () => {
       const kids = [...el.children] as HTMLElement[];
+      const stride = kids.length > 1 ? kids[1].offsetLeft - kids[0].offsetLeft : el.clientWidth;
       const gap = (k: HTMLElement) => Math.abs(k.offsetLeft - el.scrollLeft);
       setAt(kids.reduce((best, k, i) => (gap(k) < gap(kids[best]) ? i : best), 0));
+      // how far each card is from the front, -1 to 1: the styles fan the cards out by it
+      kids.forEach((k) => {
+        const d = Math.max(-1, Math.min(1, (k.offsetLeft - el.scrollLeft) / stride));
+        k.style.setProperty('--d', String(d));
+        k.style.setProperty('--a', String(Math.abs(d)));
+      });
     };
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+    update();
     el.addEventListener('scroll', onScroll, { passive: true });
-    return () => el.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      el.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   const go = (i: number) =>
