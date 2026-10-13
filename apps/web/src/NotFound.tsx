@@ -12,16 +12,19 @@ export function NotFound() {
           <h1 className="section-title">Page not found</h1>
         </div>
         <article className="row more-card">
-          <p>There is nothing at this address. It may have moved, or the link may have a typo.</p>
+          <p>
+            I couldn’t find that page. The link may be old or have a typo. The home page and my
+            projects are a click away.
+          </p>
           <ul className="row-links">
             <li>
               <a className="row-link" href="/">
-                Home
+                Go home
               </a>
             </li>
             <li>
               <a className="row-link" href="/projects/">
-                All projects
+                See my projects
               </a>
             </li>
           </ul>

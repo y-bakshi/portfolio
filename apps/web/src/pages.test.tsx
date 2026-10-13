@@ -180,8 +180,8 @@ describe('not found page', () => {
     render(<NotFound />);
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByRole('main')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
-    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Go home' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /see my projects/i })).toHaveAttribute(
       'href',
       '/projects/',
     );
