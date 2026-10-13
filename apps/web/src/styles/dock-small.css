@@ -61,5 +61,5 @@
 }
 
 .dock-form input::placeholder {
-  color: #5a6288;
+  color: var(--placeholder);
 }

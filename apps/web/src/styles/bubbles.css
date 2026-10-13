@@ -131,3 +131,16 @@
     margin-top: 12px;
   }
 }
+
+/* the introduction waits, empty and invisible, until the portrait has formed, then fades in and types */
+.ask-lede {
+  transition: opacity 240ms var(--ease-out);
+}
+
+.ask-lede.is-waiting {
+  opacity: 0;
+}
+
+.ask-rest {
+  visibility: hidden;
+}

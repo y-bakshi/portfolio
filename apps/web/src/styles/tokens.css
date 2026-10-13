@@ -12,6 +12,8 @@
   --header-h: 80px;
   /* the footer's height, so the last screen can be sized to leave room for it */
   --footer-h: 48px;
+  /* the room the projects screen keeps at the bottom, the height of the open chat bar */
+  --bar-room: 144px;
   --ground: #e8e0d2; /* ivory */
   --panel: #f4efe5;
   --ink: #0e1d61; /* deep atlas navy */
@@ -20,6 +22,10 @@
   --action: #1a2e8a;
   --action-ink: #f4efe5;
   --mark: #b89a5a; /* gold */
+  --light-off: #2a3568; /* an unlit status light */
+  --field: #fbf8f1; /* the chat input, a touch lighter than the panel */
+  --placeholder: #5a6288; /* placeholder text in the chat input */
+  --scrim: rgba(14, 29, 97, 0.35); /* the dim layer behind the open chat on phones */
   --shadow: #040720; /* hard shadows: near-black navy, darker than the ink so they separate from navy fills */
 
   --display: 'Instrument Sans Variable', 'Arial Narrow', Arial, sans-serif;

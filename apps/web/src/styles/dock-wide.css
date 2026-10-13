@@ -25,4 +25,9 @@
     transform: translateY(-50%);
     box-shadow: 0 0 0 4px var(--panel);
   }
+
+  /* while the bar is open the page ends above it, so the last section can be scrolled fully into view */
+  html:has(.dock.is-open) body {
+    padding-bottom: var(--bar-room);
+  }
 }
