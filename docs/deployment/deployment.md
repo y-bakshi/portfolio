@@ -10,9 +10,10 @@ Static frontend: Cloudflare Workers static assets, on the domain `yashbakshi.com
 
 1. The site address lives in one place, `SITE` in `apps/web/vite.site.ts`. Every canonical and social-preview URL, `robots.txt` and `sitemap.xml` are generated from it at build time.
 2. `apps/web/wrangler.jsonc` points Cloudflare at `./dist`, with `404-page` handling and trailing-slash handling for the case study pages (each is a real directory page, so there is no single-page fallback).
-3. Security headers (a content security policy, no framing, no MIME sniffing) and one-year caching for the hashed files in `/assets/` are in `apps/web/public/_headers`.
-4. Connect the GitHub repository in the Cloudflare dashboard (Workers and Pages, create, import a repository). Set the root directory to `apps/web`, the build command to `npm ci && npm run build` and the deploy command to `npx wrangler deploy`. Every pull request then gets a preview address, and a merge to `main` deploys.
-5. Add the domain to the Worker as a custom domain, and check deep links, the 404 page, assets and the contact links on the live site.
+3. `workers.dev` and the public preview addresses are turned off in the same file (`workers_dev` and `preview_urls`), so the site is only reachable on its own domain. A toggle flipped in the dashboard would be undone by the next deploy, so this is set in the file. The cost: Cloudflare builds no per-pull-request preview links; GitHub's checks and the local dev server still work.
+4. Security headers (a content security policy, no framing, no MIME sniffing) and one-year caching for the hashed files in `/assets/` are in `apps/web/public/_headers`.
+5. Connect the GitHub repository in the Cloudflare dashboard (Workers and Pages, create, import a repository). Set the root directory to `apps/web`, the build command to `npm ci && npm run build` and the deploy command to `npx wrangler deploy`. Every pull request then gets a preview address, and a merge to `main` deploys.
+6. Add the domain to the Worker as a custom domain, and check deep links, the 404 page, assets and the contact links on the live site.
 
 ## Redirect domain and renewal
 

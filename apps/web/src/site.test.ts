@@ -1,3 +1,4 @@
+import wrangler from '../wrangler.jsonc?raw';
 import { PAGES, SITE, robotsTxt, sitePlugin, sitemapXml } from '../vite.site';
 
 describe('site files', () => {
@@ -19,5 +20,20 @@ describe('site files', () => {
     expect(transform('<a href="%SITE%/x"></a><b>%SITE%</b>')).toBe(
       '<a href="https://example.test/x"></a><b>https://example.test</b>',
     );
+  });
+});
+
+describe('wrangler.jsonc', () => {
+  // each deploy applies this file, so a toggle flipped in the dashboard would be undone by the next one
+  const active = wrangler.replace(/^\s*\/\/.*$/gm, '');
+
+  it('turns off the workers.dev address and the public preview addresses', () => {
+    expect(active).toMatch(/"workers_dev":\s*false/);
+    expect(active).toMatch(/"preview_urls":\s*false/);
+  });
+
+  it('serves the build folder with the not-found page', () => {
+    expect(active).toMatch(/"directory":\s*"\.\/dist"/);
+    expect(active).toMatch(/"not_found_handling":\s*"404-page"/);
   });
 });
