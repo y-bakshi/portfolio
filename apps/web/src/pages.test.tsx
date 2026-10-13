@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import Home from './App';
 import AllProjects from './AllProjects';
 import CaseStudy from './CaseStudy';
+import NotFound from './NotFound';
 import { education, projects, roles, smallProjects } from './content';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
@@ -171,5 +172,18 @@ describe('all projects page', () => {
     }
     for (const sp of smallProjects)
       expect(screen.getByText(sp.name, { exact: false })).toBeInTheDocument();
+  });
+});
+
+describe('not found page', () => {
+  it('has one h1, a main landmark and a way back', () => {
+    render(<NotFound />);
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /all projects/i })).toHaveAttribute(
+      'href',
+      '/projects/',
+    );
   });
 });

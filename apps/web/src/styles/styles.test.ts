@@ -130,7 +130,8 @@ describe('index.html', () => {
   it('has a language, a description and a social preview', () => {
     expect(indexHtml).toMatch(/<html lang="en"/);
     expect(indexHtml).toMatch(/name="description"/);
-    expect(indexHtml).toMatch(/property="og:image" content="\/og\.png"/);
+    // the site address is filled in at build time, so the preview image is an absolute URL
+    expect(indexHtml).toMatch(/property="og:image" content="%SITE%\/og\.png"/);
     expect(indexHtml).toMatch(/<title>Yash Bakshi<\/title>/);
   });
 });

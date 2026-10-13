@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { sitePlugin } from './vite.site';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), sitePlugin()],
   // every page is its own HTML file, so there is no single-page fallback
   appType: 'mpa',
   build: {
@@ -11,6 +12,7 @@ export default defineConfig({
         main: 'index.html',
         projects: 'projects/index.html',
         testpilot: 'projects/testpilot/index.html',
+        notfound: '404.html',
       },
     },
   },
