@@ -33,6 +33,11 @@
     transform-origin: 50% 50%;
   }
 
+  /* a card taller than its text keeps the date, logo and text at the same height as every other card */
+  .swipe .record-item {
+    align-content: start;
+  }
+
   /* on a phone the cards, their logos and their text are larger, to fill the screen */
   .swipe .record-item h3 {
     font-size: 1.5rem;
