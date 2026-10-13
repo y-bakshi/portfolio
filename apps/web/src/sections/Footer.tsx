@@ -4,7 +4,7 @@ export function Footer() {
     <footer className="site-footer">
       <p>Yash Bakshi</p>
       <p>
-        © 2026. Work in progress. Icons by{' '}
+        © 2026. Icons by{' '}
         <a href="https://www.flaticon.com" target="_blank" rel="noopener noreferrer">
           Flaticon
         </a>

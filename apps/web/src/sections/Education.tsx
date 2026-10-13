@@ -1,5 +1,6 @@
 import type { Guide } from '../Guide';
 import { OrgMark } from './OrgMark';
+import { Swipe } from './Swipe';
 import { education } from '../content';
 
 /** The education list. */
@@ -11,7 +12,7 @@ export function Education({ marked }: Pick<Guide, 'marked'>) {
           Education
         </h2>
       </div>
-      <ol className="record-list">
+      <Swipe as="ol" className="record-list" label="Education">
         {education.map((e) => (
           <li
             key={e.id}
@@ -29,7 +30,7 @@ export function Education({ marked }: Pick<Guide, 'marked'>) {
             </div>
           </li>
         ))}
-      </ol>
+      </Swipe>
     </section>
   );
 }
