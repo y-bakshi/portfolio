@@ -12,6 +12,13 @@ export function Hero({
   // the introduction is typed once the portrait has formed
   const [formed, setFormed] = useState(false);
   const onFormed = useCallback(() => setFormed(true), []);
+  // a phone draws the portrait about 700 pixels wide, so it gets the smaller file; chosen once, so turning
+  // the phone does not restart the animation
+  const [portrait] = useState(() =>
+    isMobile
+      ? { src: '/portrait-760.webp', width: 760, height: 743 }
+      : { src: '/portrait.webp', width: 1100, height: 1075 },
+  );
   return (
     <section className="ask" aria-labelledby="ask-title">
       <h1 id="ask-title" className="sr-only">
@@ -19,9 +26,9 @@ export function Hero({
       </h1>
       <figure className="portrait">
         <MistPortrait
-          src="/portrait.webp"
-          width={1100}
-          height={1075}
+          src={portrait.src}
+          width={portrait.width}
+          height={portrait.height}
           alt="Illustrated portrait of Yash Bakshi in a beanie and sunglasses, looking down"
           onFormed={onFormed}
         />
