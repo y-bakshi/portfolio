@@ -8,4 +8,6 @@ export interface Env {
   DB: D1Database;
   /** The address the site is served from; the only origin allowed to change anything. */
   SITE_ORIGIN?: string;
+  /** Secret that signs the chat cookie. Set with `wrangler secret put`; locally in .dev.vars. */
+  SESSION_SECRET: string;
 }
