@@ -78,7 +78,12 @@ export function createAdmission(options: ProtectOptions = {}): Admission {
           rule,
           key: by === 'visitor' ? visitor : network,
         }));
-        const limit = await guard.check(`limits:${kind}`, checks);
+        // while developing on this machine the question limits can be switched off; the cap stays
+        const bypass =
+          env.LIMITS_DEV_BYPASS === 'true' && new URL(request.url).hostname === 'localhost';
+        const limit = bypass
+          ? { allowed: true as const }
+          : await guard.check(`limits:${kind}`, checks);
         if (!limit.allowed) return { ok: false, error: tooMany(limit.retryAtMs, now) };
         if (!spends) return { ok: true, settle: async () => {}, release: async () => {} };
 

@@ -46,6 +46,8 @@ export interface Env {
   ACCESS_AUD?: string;
   /** Exactly 'true' lets /admin skip Access, on localhost only. For local development. */
   ADMIN_DEV_BYPASS?: string;
+  /** Exactly 'true' skips the question limits (not the spending cap), on localhost only. */
+  LIMITS_DEV_BYPASS?: string;
   /** Secret that signs the chat cookie. Set with `wrangler secret put`; locally in .dev.vars. */
   SESSION_SECRET: string;
 }

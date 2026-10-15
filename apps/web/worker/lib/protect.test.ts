@@ -37,6 +37,31 @@ describe('createAdmission', () => {
     expect((await admit('chat')).ok).toBe(true);
   });
 
+  it('skips the question limits on localhost when the dev switch is on, but never elsewhere', async () => {
+    const local = new Request('http://localhost:8788/api/chat', {
+      method: 'POST',
+      headers: { cookie: 'chat=c.sig' },
+    });
+    const on = setup({ month: 1e12, day: 1e12 }, { LIMITS_DEV_BYPASS: 'true' });
+    for (let i = 0; i < 100; i++) expect((await on.admit('chat', local)).ok).toBe(true);
+    // the same switch does nothing for a real address
+    for (let i = 0; i < 20; i++) expect((await on.admit('chat')).ok).toBe(true);
+    expect((await on.admit('chat')).ok).toBe(false);
+    // and without the switch, localhost is limited like anyone else
+    const off = setup({ month: 1e12, day: 1e12 });
+    for (let i = 0; i < 20; i++) expect((await off.admit('chat', local)).ok).toBe(true);
+    expect((await off.admit('chat', local)).ok).toBe(false);
+  });
+
+  it('keeps the spending cap even when the question limits are off', async () => {
+    const local = new Request('http://localhost:8788/api/chat', { method: 'POST' });
+    const s = setup({ month: 1e12, day: 20_000 }, { LIMITS_DEV_BYPASS: 'true' });
+    expect((await s.admit('chat', local, 10_000)).ok).toBe(true);
+    expect((await s.admit('chat', local, 10_000)).ok).toBe(true);
+    const refused = (await s.admit('chat', local, 10_000)) as Refused;
+    expect(refused.error.code).toBe('unavailable');
+  });
+
   it('counts the network daily limit across different chats', async () => {
     const s = setup({ month: 1e12, day: 1e12 });
     for (let i = 0; i < 150; i++) {

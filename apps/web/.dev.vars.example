@@ -1,2 +1,5 @@
 # Local secrets for `wrangler dev`. Copy this file to .dev.vars (which git ignores) and change the value.
 SESSION_SECRET=replace-me-with-a-long-random-string
+
+# Local development only: skip the question limits on localhost (the spending cap stays on).
+# LIMITS_DEV_BYPASS=true
