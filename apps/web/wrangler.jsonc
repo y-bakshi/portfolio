@@ -1,13 +1,29 @@
 {
-  // the site is plain static files: Cloudflare serves the build folder and shows 404.html for any other address
+  // the site is plain static files, with a small API under /api: Cloudflare serves the build folder,
+  // shows 404.html for any other address, and runs the Worker only for addresses under /api
   "name": "portfolio",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // the site is served from its own domain only: no workers.dev address and no public preview addresses
   "workers_dev": false,
   "preview_urls": false,
+  "vars": {
+    "SITE_ORIGIN": "https://yashbakshi.com",
+  },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/*"],
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "guide",
+      // replace with the id from `wrangler d1 create guide` before the first deploy
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "worker/migrations",
+    },
+  ],
 }
