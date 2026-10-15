@@ -1,4 +1,10 @@
-import type { Ai, D1Database, Fetcher, Vectorize } from '@cloudflare/workers-types';
+import type {
+  Ai,
+  D1Database,
+  DurableObjectNamespace,
+  Fetcher,
+  Vectorize,
+} from '@cloudflare/workers-types';
 
 /** Everything the Worker is given by Cloudflare: bindings, plain variables and secrets. */
 export interface Env {
@@ -20,4 +26,16 @@ export interface Env {
   LLM_PROVIDER?: string;
   /** Lowest retrieval score (0 to 1) that is still answered from the notes. */
   RAG_MIN_SCORE?: string;
+  /** Rate-limit counters and the spend total (class Guard). */
+  GUARD: DurableObjectNamespace;
+  /** Secret for the keyed hashes that stand in for IP addresses. */
+  HMAC_SECRET: string;
+  /** Secret for Cloudflare Turnstile. Without it the check is skipped unless REQUIRE_TURNSTILE is "true". */
+  TURNSTILE_SECRET?: string;
+  REQUIRE_TURNSTILE?: string;
+  /** Spending caps in millionths of a US dollar (defaults: 5,000,000 a month, 500,000 a day). */
+  BUDGET_MONTH_MICRO_USD?: string;
+  BUDGET_DAY_MICRO_USD?: string;
+  /** Set to "true" to stop all paid answers at once. */
+  KILL_SWITCH?: string;
 }

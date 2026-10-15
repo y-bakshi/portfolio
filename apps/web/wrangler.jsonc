@@ -26,6 +26,11 @@
   //   5. index the notes: see "Rebuilding the index" in docs/architecture/rag.md
   // "ai": { "binding": "AI" },
   // "vectorize": [{ "binding": "VECTORIZE", "index_name": "guide-chunks" }],
+  // once a day (03:17 UTC) the Worker deletes saved chats, messages and events older than 90 days
+  "triggers": { "crons": ["17 3 * * *"] },
+  // rate-limit counters and the spend total live in a small Durable Object
+  "durable_objects": { "bindings": [{ "name": "GUARD", "class_name": "Guard" }] },
+  "migrations": [{ "tag": "v1-guard", "new_sqlite_classes": ["Guard"] }],
   "d1_databases": [
     {
       "binding": "DB",
