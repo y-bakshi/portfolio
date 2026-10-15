@@ -132,6 +132,6 @@ describe('index.html', () => {
     expect(indexHtml).toMatch(/name="description"/);
     // the site address is filled in at build time, so the preview image is an absolute URL
     expect(indexHtml).toMatch(/property="og:image" content="%SITE%\/og\.png"/);
-    expect(indexHtml).toMatch(/<title>Yash Bakshi<\/title>/);
+    expect(indexHtml).toMatch(/<title>Yash Bakshi \| Software engineer<\/title>/);
   });
 });
