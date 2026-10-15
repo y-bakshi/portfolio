@@ -17,6 +17,15 @@
     "html_handling": "auto-trailing-slash",
     "run_worker_first": ["/api/*"],
   },
+  // The model-backed guide (docs/architecture/rag.md). Turn it on in this order:
+  //   1. uncomment "ai" below (Workers AI: embeddings and the fallback chat model)
+  //   2. set the secret:  wrangler secret put GEMINI_API_KEY
+  //   3. create the index:  wrangler vectorize create guide-chunks --dimensions=768 --metric=cosine
+  //      and uncomment "vectorize" below (without it, the notes are searched in D1, which is fine here)
+  //   4. add "LLM_PROVIDER": "gemini" to vars (and optionally "GEMINI_MODEL", "RAG_MIN_SCORE")
+  //   5. index the notes: see "Rebuilding the index" in docs/architecture/rag.md
+  // "ai": { "binding": "AI" },
+  // "vectorize": [{ "binding": "VECTORIZE", "index_name": "guide-chunks" }],
   "d1_databases": [
     {
       "binding": "DB",
