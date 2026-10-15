@@ -86,6 +86,21 @@ test.describe('the stored chat', () => {
     await expect(page.getByRole('button', { name: 'Show TestPilot on the page' })).toBeVisible();
   });
 
+  test('after a refresh the conversation waits for the portrait, then comes back', async ({
+    page,
+  }) => {
+    await mockApi(page);
+    await askOnce(page);
+    await page.reload();
+    const saved = answers(page).filter({ hasText: SERVED }).first();
+    // while the portrait is still forming, neither the saved answers nor the open chat are there
+    await expect(saved).toBeHidden();
+    await expect(page.locator('.dock')).not.toHaveClass(/is-open/);
+    // the introduction types once the portrait has formed, and the saved chat returns with it
+    await expect(saved).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('.dock')).toHaveClass(/is-open/);
+  });
+
   test('the server copy restores the chat even when the browser copy is gone', async ({ page }) => {
     await mockApi(page);
     await askOnce(page);

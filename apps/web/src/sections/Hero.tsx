@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { MistPortrait } from '../MistPortrait';
 import { Lede } from './Lede';
 import type { Guide } from '../Guide';
@@ -8,10 +8,14 @@ export function Hero({
   isMobile,
   thread,
   feedRef,
-}: Pick<Guide, 'isMobile' | 'thread'> & { feedRef: Guide['refs']['feedRef'] }) {
-  // the introduction is typed once the portrait has formed
-  const [formed, setFormed] = useState(false);
-  const onFormed = useCallback(() => setFormed(true), []);
+  formed,
+  onFormed,
+}: Pick<Guide, 'isMobile' | 'thread'> & {
+  feedRef: Guide['refs']['feedRef'];
+  /** True once the portrait has formed. The introduction types, and a saved chat comes back, after it. */
+  formed: boolean;
+  onFormed: () => void;
+}) {
   // a phone draws the portrait about 700 pixels wide, so it gets the smaller file; chosen once, so turning
   // the phone does not restart the animation
   const [portrait] = useState(() =>
@@ -38,7 +42,7 @@ export function Hero({
           start={formed}
           text="I’m Yash Bakshi, a software engineer working across AI applications, backend services and cloud delivery. The guide in the corner is an assistant that answers questions about my projects from my own notes."
         />
-        {!isMobile && thread}
+        {!isMobile && formed && thread}
       </div>
     </section>
   );

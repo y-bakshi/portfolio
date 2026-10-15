@@ -51,4 +51,16 @@ export const facts: Fact[] = [
     title: 'Availability',
     text: 'Yash is looking for full-time software engineering roles and is available to start from January 2027.',
   },
+  {
+    id: 'fact:this-guide',
+    sourceId: 'general',
+    title: 'How this guide (the portfolio chat) works',
+    text: 'The guide on this page is a chat Yash built for his portfolio. It is separate from GuardianAI, which is a different project. The guide searches Yash’s own project notes by meaning, hands the closest notes to a Gemini model, and answers only from them, with buttons that jump to the project, role or degree it used. When the notes do not cover a question it says so and points to the contact section instead of guessing.',
+  },
+  {
+    id: 'fact:this-guide-stack',
+    sourceId: 'general',
+    title: 'How this guide is built and run',
+    text: 'The site and the guide run on Cloudflare: the page is served as static files and the chat is a small Worker with a D1 database. Questions are matched to notes with Gemini embeddings. The guide has rate limits per visitor and a hard monthly spending cap, and it records only anonymous question and answer text, with no IP addresses, for 90 days to improve the notes.',
+  },
 ];

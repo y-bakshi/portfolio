@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DotGrid } from './DotGrid';
 import { GuideDock, useGuide } from './Guide';
 import { SiteHeader, WipBanner } from './parts';
@@ -11,7 +11,10 @@ import { Projects } from './sections/Projects';
 import { WorkHistory } from './sections/WorkHistory';
 
 export function Home() {
-  const g = useGuide();
+  // the portrait forms first; the introduction and any saved chat come after it
+  const [formed, setFormed] = useState(false);
+  const onFormed = useCallback(() => setFormed(true), []);
+  const g = useGuide(formed);
   const { isMobile, thread, marked } = g;
   useSnapScroll();
 
@@ -26,7 +29,13 @@ export function Home() {
       <WipBanner />
       <SiteHeader />
       <main id="main">
-        <Hero isMobile={isMobile} thread={thread} feedRef={g.refs.feedRef} />
+        <Hero
+          isMobile={isMobile}
+          thread={thread}
+          feedRef={g.refs.feedRef}
+          formed={formed}
+          onFormed={onFormed}
+        />
         <Projects marked={marked} />
         <WorkHistory marked={marked} />
         <div className="finale">

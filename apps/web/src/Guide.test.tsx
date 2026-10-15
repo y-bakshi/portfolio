@@ -5,7 +5,16 @@ import Home from './App';
 import { answerStream, cannedGuide, fakeApi } from './test/fake-api';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
-vi.mock('./MistPortrait', () => ({ MistPortrait: () => <div data-testid="portrait" /> }));
+vi.mock('./MistPortrait', async () => {
+  const { useEffect } = await import('react');
+  // a stand-in portrait that is finished at once, as the real one is with reduced motion
+  return {
+    MistPortrait: ({ onFormed }: { onFormed?: () => void }) => {
+      useEffect(() => onFormed?.(), [onFormed]);
+      return <div data-testid="portrait" />;
+    },
+  };
+});
 
 // the page's own guide is the API; these are the answers it gives in these tests
 const renderHome = () => {

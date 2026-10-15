@@ -10,9 +10,10 @@ import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } fr
 
 /**
  * The guide's state and behaviour. On wide screens the conversation shows in the hero; on phones it
- * shows inside the chat itself.
+ * shows inside the chat itself. A chat that was open before a refresh opens again once the portrait
+ * has formed (`portraitFormed`), so the page loads in order: portrait first, then the conversation.
  */
-export function useGuide() {
+export function useGuide(portraitFormed = true) {
   const saved = useRef(loadUi());
   const [question, setQuestion] = useState(saved.current.draft);
   const chat = useChat();
@@ -26,11 +27,22 @@ export function useGuide() {
   const isMobile = useIsMobile();
   /** Phones show the conversation inside the chat; wide screens show it in the hero. */
   const showLog = isMobile;
-  const [open, setOpen] = useState(saved.current.open);
+  const [open, setOpen] = useState(false);
+  const pendingOpen = useRef(saved.current.open);
+  useEffect(() => {
+    if (portraitFormed && pendingOpen.current) {
+      pendingOpen.current = false;
+      restoredOpen.current = true; // restored, not opened by the visitor, so it takes no focus
+      setOpen(true);
+    }
+  }, [portraitFormed]);
   const scrolled = useScrolled();
 
   // this tab remembers whether the chat was open and what was typed but not sent
-  useEffect(() => saveUi({ open, draft: question }), [open, question]);
+  // (nothing is saved while a saved open chat waits for the portrait, or a second refresh would forget it)
+  useEffect(() => {
+    if (!pendingOpen.current) saveUi({ open, draft: question });
+  }, [open, question]);
 
   const clearTimers = () => {
     timers.current.forEach((t) => window.clearTimeout(t));

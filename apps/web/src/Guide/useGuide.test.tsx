@@ -6,7 +6,16 @@ import { SAVED_NOTICE } from './copy';
 import { answerStream, fakeApi, sse } from '../test/fake-api';
 
 vi.mock('../DotGrid', () => ({ DotGrid: () => null }));
-vi.mock('../MistPortrait', () => ({ MistPortrait: () => <div data-testid="portrait" /> }));
+vi.mock('../MistPortrait', async () => {
+  const { useEffect } = await import('react');
+  // a stand-in portrait that is finished at once, as the real one is with reduced motion
+  return {
+    MistPortrait: ({ onFormed }: { onFormed?: () => void }) => {
+      useEffect(() => onFormed?.(), [onFormed]);
+      return <div data-testid="portrait" />;
+    },
+  };
+});
 
 const calls = (fn: ReturnType<typeof fakeApi>, key: string) =>
   fn.mock.calls.filter(([url, init]) => `${init?.method ?? 'GET'} ${url}` === key);
