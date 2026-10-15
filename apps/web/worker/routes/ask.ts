@@ -6,7 +6,7 @@ import { appendMessage, recentTurns } from '../lib/chats';
 import { validCites } from '../lib/cites';
 import { ApiError } from '../lib/http';
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, redact } from '../lib/redact';
-import { admit, ensureChat, readJsonObject, type Ctx } from './visitor';
+import { admit, ensureChat, readJsonObject, track, type Ctx } from './visitor';
 
 /** How many earlier messages an answerer is shown (6 turns is 6 messages). */
 export const HISTORY_TURNS = 6;
@@ -60,6 +60,10 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
       throw error;
     }
 
+    // the first question of a chat, then every question by its length only: never the words
+    if (history.turns.length === 0) await track(c, deps, 'chat_started', undefined, history.chatId);
+    await track(c, deps, 'question_asked', { length: question.length }, history.chatId);
+
     const { readable, writable } = new TransformStream<Uint8Array>();
     const writer = writable.getWriter();
     let open = true;
@@ -97,10 +101,23 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
           now,
         );
         await admitted.settle(result.meta?.costMicroUsd ?? 0);
+        const { model, topScore, inputTokens, outputTokens, costMicroUsd } = result.meta ?? {};
+        await track(
+          c,
+          deps,
+          'answer_shown',
+          { latencyMs, model, topScore, inputTokens, outputTokens, costMicroUsd },
+          history.chatId,
+        );
+        // the model was set up but the built-in keyword guide answered: the fallback was used
+        if (model === 'keyword' && c.env.LLM_PROVIDER) {
+          await track(c, deps, 'fallback_used', { reason: 'keyword' }, history.chatId);
+        }
         await send('done', { text, cites });
       } catch (error) {
         console.error('chat answer failed', error);
         await admitted.release().catch(() => {});
+        await track(c, deps, 'error', { code: 'internal' }, history.chatId);
         await send('error', { code: 'internal', message: 'The guide could not answer just now.' });
       } finally {
         await writer.close().catch(() => {});

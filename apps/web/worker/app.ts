@@ -3,6 +3,7 @@ import { bodyLimit } from 'hono/body-limit';
 import { defaultDeps, type Deps } from './deps';
 import type { Env } from './env';
 import { ApiError, errorBody, fromSiteOrigin } from './lib/http';
+import { retryAfterSeconds } from './lib/protect';
 import { registerChatRoutes } from './routes/chat';
 
 export type AppEnv = { Bindings: Env; Variables: { requestId: string } };
@@ -69,7 +70,11 @@ export function createApp(deps: Partial<Deps> = {}) {
 
   app.onError((err, c) => {
     const requestId = c.get('requestId') ?? crypto.randomUUID();
-    if (err instanceof ApiError) return c.json(errorBody(err, requestId), err.status);
+    if (err instanceof ApiError) {
+      const wait = retryAfterSeconds(err);
+      if (wait > 0) c.header('retry-after', String(wait));
+      return c.json(errorBody(err, requestId), err.status);
+    }
     // an unexpected failure: say nothing about the cause to the caller, and keep it for the logs
     console.error('unhandled error', requestId, err);
     return c.json(

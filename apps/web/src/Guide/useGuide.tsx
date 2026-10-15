@@ -3,6 +3,7 @@ import { projects } from '../content';
 import { prefersReducedMotion } from './shared';
 import { loadUi, saveUi } from './storage';
 import { Chips, Thread } from './Thread';
+import { trackCiteClick } from './track';
 import { useChat } from './useChat';
 import { useFollowNewest } from './useFollowNewest';
 import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } from './useViewport';
@@ -95,6 +96,7 @@ export function useGuide() {
   };
 
   const show = (id: string) => {
+    trackCiteClick(id);
     const el = document.getElementById(id);
     if (!el) {
       // only the four featured projects are on this page; the rest are on the all-projects page

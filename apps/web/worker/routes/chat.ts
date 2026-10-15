@@ -5,7 +5,7 @@ import { deleteChat, listMessages, ownsMessage, setFeedback } from '../lib/chats
 import { ApiError } from '../lib/http';
 import { clearSessionCookie, isSecureRequest } from '../lib/session';
 import { registerAskRoute } from './ask';
-import { admit, chatIdOf, ensureChat, readJsonObject } from './visitor';
+import { admit, chatIdOf, ensureChat, readJsonObject, track } from './visitor';
 
 /** The chat routes: session, restore, ask, clear and feedback. */
 export function registerChatRoutes(app: Hono<AppEnv>, deps: Deps) {
@@ -54,6 +54,7 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: Deps) {
         throw new ApiError(404, 'not_found', 'There is no such answer in your chat.');
       }
       await setFeedback(c.env.DB, messageId, value, deps.clock());
+      await track(c, deps, 'feedback', { value }, chatId);
     } catch (error) {
       await admitted.release();
       throw error;

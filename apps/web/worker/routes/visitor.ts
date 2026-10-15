@@ -3,6 +3,7 @@ import type { AppEnv } from '../app';
 import type { Deps } from '../deps';
 import type { Admitted, AdmissionKind } from '../lib/admission';
 import { chatExists, createChat, touchChat } from '../lib/chats';
+import { recordEvent, type EventType } from '../lib/events';
 import { ApiError } from '../lib/http';
 import {
   createSession,
@@ -51,8 +52,24 @@ export async function admit(
   maxCostMicroUsd: number,
 ): Promise<Admitted> {
   const outcome = await deps.admission.admit(c.req.raw, c.env, { kind, maxCostMicroUsd });
-  if (!outcome.ok) throw outcome.error;
+  if (!outcome.ok) {
+    // the scope is which limit was hit, or the budget when the spending cap or kill switch was
+    const scope = outcome.error.code === 'rate_limited' ? kind : 'budget';
+    await track(c, deps, 'rate_limited', { scope });
+    throw outcome.error;
+  }
   return outcome;
+}
+
+/** Records a usage event for the owner's view. It never throws, so it can never fail a request. */
+export function track(
+  c: Ctx,
+  deps: Deps,
+  type: EventType,
+  data?: Record<string, unknown>,
+  chatId?: string | null,
+) {
+  return recordEvent(c.env.DB, deps.clock, { type, chatId: chatId ?? null, data });
 }
 
 /** The JSON object in the request body, or a 400. */
