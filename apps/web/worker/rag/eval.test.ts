@@ -3,11 +3,13 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Env } from '../env';
-import { createMockProvider, mockEmbedder } from '../llm/mock';
 import { fromEnv } from '../llm';
+import { createMockProvider, mockEmbedder } from '../llm/mock';
 import { createWorkersAiEmbedder, restAi } from '../llm/workersai';
 import { buildChunks } from './chunks';
-import { capped, memoryIndexFor, parseQuestions, runEval, type EvalReport } from './eval';
+import { capped, memoryIndexFor, parseQuestions, runEval } from './eval';
+import { buildRows, formatTable } from './eval-table';
+import { LIVE_THRESHOLDS, MOCK_THRESHOLDS } from './eval-thresholds';
 
 const questions = parseQuestions(
   readFileSync(join(import.meta.dirname, '..', '..', 'eval', 'questions.jsonl'), 'utf8'),
@@ -15,9 +17,16 @@ const questions = parseQuestions(
 
 describe('the question set', () => {
   it('covers every kind of question, with unique ids', () => {
-    expect(questions.length).toBeGreaterThanOrEqual(40);
+    expect(questions.length).toBeGreaterThanOrEqual(60);
     expect(new Set(questions.map((q) => q.id)).size).toBe(questions.length);
-    for (const c of ['recruiter', 'architecture', 'unsupported', 'offtopic', 'injection'])
+    for (const c of [
+      'recruiter',
+      'architecture',
+      'unsupported',
+      'offtopic',
+      'injection',
+      'partial',
+    ])
       expect(
         questions.some((q) => q.category === c),
         c,
@@ -25,22 +34,33 @@ describe('the question set', () => {
     for (const q of questions)
       expect(q.unsupported ? !q.expect : q.expect?.length, q.id).toBeTruthy();
   });
-});
 
-/**
- * Minimum scores with the fake embedder and fake model, which only know hashed words. They are
- * deliberately modest: they catch a broken retrieval, prompt or citation check, not model quality.
- * Real quality is measured with the live run (EVAL_LIVE=1).
- */
-export const MOCK_THRESHOLDS = {
-  hitRateAtK: 0.85,
-  citationValidity: 1,
-  // a hashed-word embedder cannot tell a paraphrase from an unrelated question that shares a word,
-  // so these are lower than a real model should reach
-  refusalCorrectness: 0.78,
-  refusedWhenUnsupported: 0.6,
-  answeredWhenSupported: 0.85,
-};
+  it('expects only real cards, and checks the answer of a good share of the questions', () => {
+    const cards = new Set(buildChunks().map((c) => c.sourceId));
+    for (const q of questions)
+      for (const s of [...(q.expect ?? []), ...(q.acceptableSources ?? [])])
+        expect(cards.has(s), `${q.id}: ${s}`).toBe(true);
+    const checked = questions.filter((q) => q.mustInclude?.length || q.mustNotInclude?.length);
+    expect(checked.length / questions.length).toBeGreaterThan(0.8);
+    // a required text must come from the notes, so it can be found in one of the expected sources
+    const text = (ids: string[]) =>
+      buildChunks()
+        .filter((c) => ids.includes(c.sourceId))
+        .map((c) => `${c.title} ${c.text}`)
+        .join(' ')
+        .toLowerCase();
+    for (const q of questions.filter((q) => q.mustInclude && q.expect)) {
+      const notes = text([...q.expect!, ...(q.acceptableSources ?? [])]);
+      for (const need of q.mustInclude!)
+        expect(
+          [need].flat().some((n) => notes.includes(n.toLowerCase())),
+          `${q.id}: ${[need].flat().join(' | ')}`,
+        ).toBe(true);
+    }
+    for (const q of questions.filter((q) => q.category === 'partial'))
+      expect(q.missing?.length, q.id).toBeGreaterThan(0);
+  });
+});
 
 describe('evaluation with the mock provider', () => {
   it('meets the minimum scores and never cites a card it was not given', async () => {
@@ -53,18 +73,30 @@ describe('evaluation with the mock provider', () => {
       chunks,
       baseline: true,
     });
-    console.log('rag', JSON.stringify({ ...rag, failures: undefined }), rag.failures);
-    console.log('baseline', JSON.stringify({ ...baseline, failures: undefined }));
-    expect(rag.hitRateAtK).toBeGreaterThanOrEqual(MOCK_THRESHOLDS.hitRateAtK);
-    expect(rag.citationValidity).toBe(MOCK_THRESHOLDS.citationValidity);
-    expect(rag.refusalCorrectness).toBeGreaterThanOrEqual(MOCK_THRESHOLDS.refusalCorrectness);
-    expect(rag.refusedWhenUnsupported).toBeGreaterThanOrEqual(
-      MOCK_THRESHOLDS.refusedWhenUnsupported,
-    );
+    const rows = buildRows(rag, MOCK_THRESHOLDS);
+    console.log(`\n${formatTable(rows)}\n`, rag.failures.join('\n'));
+    for (const r of rows.filter((r) => r.pass === false))
+      expect.soft(r.pass, `${r.metric} ${r.score} (${r.threshold})`).toBe(true);
+    expect(rag.fallbacks).toBe(0);
+    expect(rag.cost.totalMicroUsd).toBe(0);
     // the baseline hook runs: with the fake model it cannot refuse, which is what retrieval fixes
-    expect(rag.answeredWhenSupported).toBeGreaterThanOrEqual(MOCK_THRESHOLDS.answeredWhenSupported);
     expect(baseline?.questions).toBe(questions.length);
     expect(baseline!.refusedWhenUnsupported).toBeLessThan(rag.refusedWhenUnsupported);
+  });
+
+  it('measures latency around the answer with the clock it is given', async () => {
+    const chunks = buildChunks();
+    const index = await memoryIndexFor(mockEmbedder, chunks);
+    let t = 0;
+    const { rag } = await runEval(questions.slice(0, 10), {
+      provider: createMockProvider(),
+      embedder: mockEmbedder,
+      index,
+      chunks,
+      // every reading is 5 ms after the last, so each answer takes 5 ms
+      now: () => (t += 5),
+    });
+    expect(rag.latencyMs).toMatchObject({ p50: 5, p95: 5, total: 50 });
   });
 
   it('stops at the call cap instead of spending more', async () => {
@@ -82,8 +114,8 @@ describe('evaluation with the mock provider', () => {
  * A live run: real Gemini (and Workers AI as the fallback) over the same questions. It spends
  * money and needs keys, so it only runs when asked:
  *   EVAL_LIVE=1 GEMINI_API_KEY=... CF_ACCOUNT_ID=... CF_API_TOKEN=... npx vitest run worker/rag/eval.test.ts
- * EVAL_MAX_CALLS caps the calls to the model and to embeddings (default 150). Add EVAL_BASELINE=1
- * for the all-notes baseline, which roughly doubles the model calls.
+ * EVAL_MAX_CALLS caps the calls to the model, the judge and embeddings (default 300). EVAL_JUDGE=0
+ * leaves the judge out (about a third fewer calls). EVAL_BASELINE=1 adds the all-notes baseline.
  */
 describe.skipIf(process.env.EVAL_LIVE !== '1')('live evaluation', () => {
   it('reports the scores of the real model', async () => {
@@ -93,7 +125,7 @@ describe.skipIf(process.env.EVAL_LIVE !== '1')('live evaluation', () => {
     const env = { LLM_PROVIDER: 'gemini', GEMINI_API_KEY, GEMINI_MODEL, AI: ai } as unknown as Env;
     const models = fromEnv(env);
     if (!models) throw new Error('Set GEMINI_API_KEY.');
-    const max = Number(process.env.EVAL_MAX_CALLS ?? 150);
+    const max = Number(process.env.EVAL_MAX_CALLS ?? 300);
     const c = capped(models.provider, createWorkersAiEmbedder(ai), max);
     const chunks = buildChunks();
     const index = await memoryIndexFor(c.embedder, chunks);
@@ -104,10 +136,14 @@ describe.skipIf(process.env.EVAL_LIVE !== '1')('live evaluation', () => {
       chunks,
       calls: c.calls,
       baseline: process.env.EVAL_BASELINE === '1',
+      // the judge shares the capped provider, so its calls count against the same cap
+      judge: process.env.EVAL_JUDGE === '0' ? undefined : c.provider,
     });
-    const show = (r: EvalReport) => ({ ...r, failures: r.failures.length });
-    console.log('LIVE rag', show(out.rag), out.rag.failures);
-    if (out.baseline) console.log('LIVE baseline', show(out.baseline));
+    console.log(
+      `\nLIVE rag\n${formatTable(buildRows(out.rag, LIVE_THRESHOLDS))}\n`,
+      out.rag.failures,
+    );
+    if (out.baseline) console.log('LIVE baseline', { ...out.baseline, failures: undefined });
     expect(c.calls()).toBeLessThanOrEqual(max);
-  }, 600_000);
+  }, 900_000);
 });
