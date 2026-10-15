@@ -121,15 +121,16 @@ export async function getSummary(
     .bind(...range)
     .all<Question>();
 
-  // a user message and the assistant message right after it (same chat, next seq)
+  // a user message and the assistant message right after it (same chat, next seq). A refusal is
+  // found by its words, not by empty cites: it now carries the contact card as a way forward.
   const weak = await db
     .prepare(
       `SELECT u.text AS text, a.top_score AS score, u.created_at AS at,
-        (a.cites_json = '[]' AND lower(a.text) LIKE '%not in my notes%') AS refused
+        (lower(a.text) LIKE '%not in my notes%') AS refused
        FROM messages u JOIN messages a ON a.chat_id = u.chat_id AND a.seq = u.seq + 1
        WHERE u.role = 'user' AND a.role = 'assistant' AND u.created_at BETWEEN ? AND ?
          AND ((a.top_score IS NOT NULL AND a.top_score < ?)
-           OR (a.cites_json = '[]' AND lower(a.text) LIKE '%not in my notes%'))
+           OR lower(a.text) LIKE '%not in my notes%')
        ORDER BY u.created_at DESC LIMIT 50`,
     )
     .bind(...range, lowScore)

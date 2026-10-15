@@ -1,17 +1,23 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { buildApp } from './build';
+import type { Deps } from './deps';
 import type { Env } from './env';
 import { capsFrom } from './lib/budget';
 import { createAdmission } from './lib/protect';
 import { cookieOf, json, parseSse, SECRET, SITE } from './test/harness';
 import { localGuard } from './test/local-guard';
+import { createMockProvider, mockEmbedder } from './llm/mock';
+import { createRagAnswerer } from './rag/answer';
+import { buildChunks } from './rag/chunks';
+import { CONTACT_POINTER } from './rag/gap';
+import { memoryIndexFor } from './rag/eval';
 import { testDb } from './test/sqlite-d1';
 
 const IP = '203.0.113.77';
 
 /** The real app, wired as in production, with an in-memory database, guard and a clock the test moves. */
-function setup(vars: Record<string, string> = {}) {
+function setup(vars: Record<string, string> = {}, overrides: Partial<Deps> = {}) {
   let now = Date.UTC(2026, 9, 14, 12, 0, 0);
   const clock = () => now;
   const env = {
@@ -22,7 +28,11 @@ function setup(vars: Record<string, string> = {}) {
     ...vars,
   } as unknown as Env;
   const guard = localGuard(clock, capsFrom(env));
-  const app = buildApp(env, { clock, admission: createAdmission({ clock, guard: () => guard }) });
+  const app = buildApp(env, {
+    clock,
+    admission: createAdmission({ clock, guard: () => guard }),
+    ...overrides,
+  });
   const call = (path: string, init: RequestInit = {}, cookie?: string) =>
     app.request(
       `${SITE}${path}`,
@@ -144,5 +154,43 @@ describe('the wired app', () => {
     const { call } = setup();
     expect([401, 403]).toContain((await call('/api/admin/summary')).status);
     expect([401, 403]).toContain((await call('/admin')).status);
+  });
+
+  it('answers a question the notes cannot answer with a pointer to Yash, and records what was missing', async () => {
+    const chunks = buildChunks();
+    const answerer = createRagAnswerer({} as Env, {
+      models: { provider: createMockProvider(), embedder: mockEmbedder },
+      index: await memoryIndexFor(mockEmbedder, chunks),
+      chunks,
+      // the question below scores about 0.1: related notes, but not enough to answer
+      minScore: 0.12,
+      contactMinScore: 0.05,
+    });
+    const { env, post, events } = setup({}, { answerer });
+    const cookie = cookieOf(await post('/api/session', {}))!;
+    const res = await post('/api/chat', { message: 'What is his exact graduation date?' }, cookie);
+    const done = parseSse(await res.text()).at(-1)!;
+    expect(done.event).toBe('done');
+    const shown = done.data as { text: string; cites: string[] };
+    expect(shown.text).toMatch(/not in my notes/i);
+    expect(shown.text).toContain(CONTACT_POINTER);
+    expect(shown.cites).toContain('contact');
+
+    // the stored message is what the visitor saw, with the contact card, so the owner can find the gap
+    const stored = (await env.DB.prepare(
+      "SELECT text, cites_json, top_score FROM messages WHERE role = 'assistant'",
+    ).all()) as { results: { text: string; cites_json: string; top_score: number }[] };
+    expect(stored.results).toHaveLength(1);
+    expect(stored.results[0].text).toBe(shown.text);
+    expect(JSON.parse(stored.results[0].cites_json)).toEqual(shown.cites);
+    expect(stored.results[0].top_score).toBeGreaterThan(0.05);
+
+    const shownEvent = (await events()).find((e) => e.type === 'answer_shown')!;
+    expect(JSON.parse(shownEvent.data_json!)).toMatchObject({
+      model: 'none',
+      costMicroUsd: 0,
+      latencyMs: expect.any(Number),
+      topScore: stored.results[0].top_score,
+    });
   });
 });

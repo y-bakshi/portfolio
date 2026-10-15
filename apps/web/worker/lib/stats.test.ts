@@ -98,6 +98,17 @@ beforeEach(async () => {
     text: 'That is not in my notes.',
     score: null,
   });
+  // a refusal that points to the contact card is still a gap; a good answer that cites contact is not
+  exchange('c1', 3, ago(0, 4), 'What is his GPA?', {
+    text: 'That is not in my notes yet. Yash can answer this himself.',
+    cites: ['asu', 'contact'],
+    score: 0.6,
+  });
+  exchange('c1', 5, ago(0, 6), 'How do I reach him?', {
+    text: 'By email or a booked call.',
+    cites: ['contact'],
+    score: 0.9,
+  });
   exchange('c3', 5, ago(40), 'Ancient question', { text: 'x', score: 0.1 });
   const id = db.raw.prepare("SELECT id FROM messages WHERE text = 'It plans.' LIMIT 1").get() as {
     id: string;
@@ -158,16 +169,20 @@ describe('getSummary', () => {
     const s = await getSummary(db, at(t));
     expect(s.lowConfidence.map((q) => q.text)).toEqual([
       'Where did you graduate?',
+      'What is his GPA?',
       'Do you know Rust?',
       'What is your salary?',
     ]);
-    expect(s.lowConfidence[1]).toMatchObject({ score: 0.35, refused: false });
-    expect(s.lowConfidence[1].at).toBe(new Date(ago(0, 5)).toISOString());
+    expect(s.lowConfidence[2]).toMatchObject({ score: 0.35, refused: false });
+    expect(s.lowConfidence[2].at).toBe(new Date(ago(0, 5)).toISOString());
     const refused = s.lowConfidence.find((q) => q.text === 'Where did you graduate?');
     expect(refused).toMatchObject({ score: null, refused: true });
     // strong answers and answers outside the window are left out
     expect(s.lowConfidence.map((q) => q.text)).not.toContain('Ancient question');
-    expect(s.lowConfidence).toHaveLength(3);
+    const gpa = s.lowConfidence.find((q) => q.text === 'What is his GPA?');
+    expect(gpa).toMatchObject({ score: 0.6, refused: true });
+    expect(s.lowConfidence.map((q) => q.text)).not.toContain('How do I reach him?');
+    expect(s.lowConfidence).toHaveLength(4);
   });
 
   it('widens the window with days, and clamps it', async () => {

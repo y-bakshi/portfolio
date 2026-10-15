@@ -133,7 +133,9 @@ async function score(
       failures.push(`${q.id}: the keyword fallback answered`);
     }
     const given = new Set((result.meta?.retrievalIds ?? []).map((id) => byId.get(id)?.sourceId));
-    const citesOk = result.cites.every((c) => registryIds.has(c) && given.has(c));
+    // the contact card on a refusal is the way forward, not a claim, so it was never retrieved
+    const way = (c: string) => c === 'contact' && refused(result);
+    const citesOk = result.cites.every((c) => registryIds.has(c) && (given.has(c) || way(c)));
     if (citesOk) valid++;
     else failures.push(`${q.id}: a citation was not a retrieved card (${result.cites.join(', ')})`);
 

@@ -6,7 +6,15 @@ import type { ChatRequest, ChatResult } from '../llm/types';
 import { buildChunks, registryIds } from './chunks';
 import { MarkerStripper, stripMarkers, validateCites } from './citations';
 import { indexFromEnv } from './indexes';
-import { buildMessages, NOT_IN_NOTES } from './prompt';
+import {
+  contactFloor,
+  looksLikeInjection,
+  NEAR_MISS,
+  NOT_IN_NOTES,
+  NOT_IN_NOTES_RE,
+  withPointer,
+} from './gap';
+import { buildMessages } from './prompt';
 import { retrieve, type Retrieval } from './retrieve';
 import type { Chunk, VectorIndex } from './types';
 
@@ -15,6 +23,8 @@ export type RagOptions = {
   minScore?: number;
   /** How many of the retrieved notes go into the prompt. */
   notesInPrompt?: number;
+  /** Lowest top score that still gets the pointer to Yash. Else RAG_CONTACT_MIN_SCORE, else 60% of minScore. */
+  contactMinScore?: number;
   models?: Models;
   index?: VectorIndex;
   chunks?: Chunk[];
@@ -29,8 +39,8 @@ export function keywordResult(question: string, model = 'keyword'): AnswerResult
   return { ...answerFor(question), meta: { model } };
 }
 
-type Plan =
-  { refuse: AnswerResult } | { request: ChatRequest; given: Chunk[]; retrieval: Retrieval };
+type Asked = { request: ChatRequest; given: Chunk[]; retrieval: Retrieval; question: string };
+type Plan = { refuse: AnswerResult } | Asked;
 
 /** Answers from retrieved notes with a model. It never throws: a failure becomes the keyword answer. */
 export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer {
@@ -43,34 +53,48 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
     options.minScore ??
     (Number.isFinite(fromVar) ? fromVar : (models.embedder.suggestedMinScore ?? DEFAULT_MIN_SCORE));
   const take = options.notesInPrompt ?? 4;
+  const contactVar =
+    env.RAG_CONTACT_MIN_SCORE === undefined ? NaN : Number(env.RAG_CONTACT_MIN_SCORE);
+  const floor = contactFloor(
+    minScore,
+    options.contactMinScore ?? (Number.isFinite(contactVar) ? contactVar : undefined),
+  );
 
   async function plan(question: string, history: Turn[]): Promise<Plan> {
     const retrieval = await retrieve(question, { embedder: models!.embedder, index, chunks });
     // no hits at all means the index was never filled: let the keyword guide answer
     if (!retrieval.hits.length) throw new Error('the notes index is empty');
-    if (retrieval.topScore < minScore)
+    const { topScore } = retrieval;
+    const meta = { model: 'none', topScore, costMicroUsd: 0 };
+    // far from every note: nothing to point to, and Yash is not the one to ask
+    if (topScore < floor || looksLikeInjection(question))
+      return { refuse: { text: NOT_IN_NOTES, cites: [], meta: { ...meta, retrievalIds: [] } } };
+    const near = retrieval.hits.slice(0, take).map((h) => h.chunk);
+    // close to the notes but not enough to answer: refuse, point to Yash, show the nearest cards
+    if (topScore < minScore) {
+      const g = withPointer(NEAR_MISS, question, [], near, registryIds);
       return {
-        refuse: {
-          text: NOT_IN_NOTES,
-          cites: [],
-          meta: { model: 'none', retrievalIds: [], topScore: retrieval.topScore, costMicroUsd: 0 },
-        },
+        refuse: { text: g.text, cites: g.cites, meta: { ...meta, retrievalIds: g.retrieved } },
       };
-    const given = retrieval.hits.slice(0, take).map((h) => h.chunk);
+    }
     const request = {
-      messages: buildMessages(question, given, history),
+      messages: buildMessages(question, near, history),
       maxOutputTokens: MAX_OUTPUT_TOKENS,
     };
-    return { request, given, retrieval };
+    return { request, given: near, retrieval, question };
   }
 
-  /** Checks the citations, removes the markers, and attaches what the answer cost. */
-  function finish(raw: string, p: Extract<Plan, { request: ChatRequest }>, r?: ChatResult) {
-    const text = stripMarkers(raw);
-    const refused = !text || /not in my notes/i.test(text);
+  /** Checks the citations, removes the markers, adds the way forward, and attaches the cost. */
+  function finish(raw: string, p: Asked, r?: ChatResult) {
+    let text = stripMarkers(raw) || 'That is not in my notes.';
+    let cites = validateCites(raw, p.given, registryIds).sourceIds;
+    if (NOT_IN_NOTES_RE.test(text)) {
+      const g = withPointer(text, p.question, cites, p.given, registryIds);
+      ({ text, cites } = g);
+    }
     return {
-      text: text || NOT_IN_NOTES,
-      cites: refused ? [] : validateCites(raw, p.given, registryIds).sourceIds,
+      text,
+      cites,
       meta: {
         model: r?.model ?? 'unknown',
         retrievalIds: p.given.map((c) => c.id),
@@ -81,6 +105,10 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
       },
     } satisfies AnswerResult;
   }
+
+  /** What finish() added after the text the visitor already saw, so the stream ends equal to the stored text. */
+  const tail = (shown: string, done: AnswerResult) =>
+    done.text.startsWith(shown) ? done.text.slice(shown.length) : '';
 
   return {
     async answer(question, history) {
@@ -109,14 +137,18 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
         const source = models.provider.chatStream?.(p.request);
         if (!source) {
           const r = await models.provider.chat(p.request);
-          for (const piece of wordPieces(stripMarkers(r.text))) yield piece;
-          return finish(r.text, p, r);
+          const done = finish(r.text, p, r);
+          for (const piece of wordPieces(done.text)) yield piece;
+          return done;
         }
         for (let step = await source.next(); ; step = await source.next()) {
           if (step.done) {
-            const tail = strip.flush();
-            if (tail.trim()) yield tail;
-            return finish(raw, p, step.value);
+            const rest = strip.flush();
+            if (rest.trim()) yield rest;
+            const done = finish(raw, p, step.value);
+            const extra = tail(stripMarkers(raw), done);
+            if (extra) yield extra;
+            return done;
           }
           raw += step.value;
           const out = strip.push(step.value);
