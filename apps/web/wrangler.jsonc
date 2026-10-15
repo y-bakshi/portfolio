@@ -1,6 +1,6 @@
 {
   // the site is plain static files, with a small API under /api: Cloudflare serves the build folder,
-  // shows 404.html for any other address, and runs the Worker only for addresses under /api
+  // shows 404.html for any other address, and runs the Worker only for addresses under /api and the owner page at /admin
   "name": "portfolio",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
@@ -15,7 +15,7 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
-    "run_worker_first": ["/api/*"],
+    "run_worker_first": ["/api/*", "/admin", "/admin/*"],
   },
   // The model-backed guide (docs/architecture/rag.md). Turn it on in this order:
   //   1. uncomment "ai" below (Workers AI: embeddings and the fallback chat model)

@@ -14,6 +14,8 @@ Cloudflare D1 (SQLite) is the store. The Worker is the only client; there is no 
 | `events`         | `id`, `chat_id`, `type`, `data_json`, `created_at`                                                                                                                              | Usage analytics: `chat_started`, `question_asked`, `answer_shown`, `cite_clicked`, `feedback`, `rate_limited`, `fallback_used`, `error`. |
 | `chunks` (later) | `id`, `source_id`, `title`, `text`, `content_hash`, `updated_at`                                                                                                                | The text of each retrieval chunk; the vectors live in Vectorize.                                                                         |
 
+Events carry only the random chat id and a small JSON `data_json` whose keys are checked per type (numbers, thumbs of 1 or -1, and short codes such as a model name or card id; never free text; 1 KB at most). `worker/lib/events.ts` writes them and never throws; `worker/lib/stats.ts` reads them, with `messages` and `feedback`, for the owner page. Question text lives only in `messages`.
+
 Money is stored as integer millionths of a dollar. Timestamps are integer milliseconds (UTC).
 
 ## Privacy and retention

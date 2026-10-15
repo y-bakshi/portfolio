@@ -38,4 +38,10 @@ export interface Env {
   BUDGET_DAY_MICRO_USD?: string;
   /** Set to "true" to stop all paid answers at once. */
   KILL_SWITCH?: string;
+  /** Cloudflare Access team, for example `myteam.cloudflareaccess.com`. Unset: /admin refuses all. */
+  ACCESS_TEAM_DOMAIN?: string;
+  /** The audience tag of the Access application that protects /admin. Unset: /admin refuses all. */
+  ACCESS_AUD?: string;
+  /** Exactly 'true' lets /admin skip Access, on localhost only. For local development. */
+  ADMIN_DEV_BYPASS?: string;
 }
