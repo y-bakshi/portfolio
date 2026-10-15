@@ -24,14 +24,13 @@
     flex: 1 0 0;
   }
 
-  /* the conversation fills the space between the header and the open bar. The code keeps the newest
-     question in view and older text fades out at the top; when an exchange is taller than the column
-     it can be scrolled by hand, with a thin scrollbar. */
+  /* the conversation fills the space between the header and the open bar. It is not scrollable by
+     hand and shows no scrollbar; the code keeps the newest question in view (pinned under the fade
+     when the exchange is taller than the column) and older text fades out at the top. */
   .feed {
     align-self: start;
     height: calc(100svh - var(--header-h) - 144px);
-    overflow-y: auto;
-    scrollbar-width: thin;
+    overflow: hidden;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 72px);
     mask-image: linear-gradient(to bottom, transparent 0, #000 72px);
   }
