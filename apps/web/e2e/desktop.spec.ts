@@ -17,69 +17,6 @@ test.describe('wide screens', () => {
     expect(header.height).toBe(token);
   });
 
-  test('one scroll moves to the projects, the next to the experience, and back up again', async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await openHome(page);
-    const header = await page.evaluate(
-      () => document.getElementById('main')!.previousElementSibling!.getBoundingClientRect().height,
-    );
-    const topOf = (id: string) =>
-      page.locator(id).evaluate((el) => Math.round(el.getBoundingClientRect().top));
-    await page.mouse.move(700, 500);
-
-    await page.mouse.wheel(0, 100);
-    await expect.poll(() => topOf('#work'), { timeout: 5000 }).toBe(header);
-
-    await page.waitForTimeout(1000);
-    await page.mouse.wheel(0, 100);
-    await expect.poll(() => topOf('#record'), { timeout: 5000 }).toBe(header);
-
-    await page.waitForTimeout(1000);
-    await page.mouse.wheel(0, 100);
-    // the footer overlaps the contact band by a pixel, so the last screen can sit one pixel low
-    await expect
-      .poll(
-        async () => {
-          const t = await topOf('#education');
-          return t >= header && t <= header + 1;
-        },
-        { timeout: 5000 },
-      )
-      .toBe(true);
-
-    await page.waitForTimeout(1000);
-    await page.mouse.wheel(0, -100);
-    await expect.poll(() => topOf('#record'), { timeout: 5000 }).toBe(header);
-  });
-
-  for (const height of [800, 900]) {
-    test(`scrolling back up from the bottom retraces each screen at ${height}px high`, async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 1280, height });
-      await openHome(page);
-      const header = await page
-        .getByRole('banner')
-        .evaluate((el) => el.getBoundingClientRect().height);
-      const topOf = (id: string) =>
-        page.locator(id).evaluate((el) => Math.round(el.getBoundingClientRect().top));
-      // the last screen (education, contact and footer) fills the window from the bottom of the page
-      await page.evaluate(() => window.scrollTo({ top: 1e6, behavior: 'instant' }));
-      await expect.poll(() => topOf('.finale')).toBeLessThanOrEqual(header + 1);
-      await page.mouse.move(700, 400);
-
-      for (const id of ['#record', '#work']) {
-        await page.mouse.wheel(0, -100);
-        await expect.poll(() => topOf(id), { timeout: 5000 }).toBe(header);
-        await page.waitForTimeout(1000);
-      }
-      await page.mouse.wheel(0, -100);
-      await expect.poll(() => page.evaluate(() => Math.round(scrollY)), { timeout: 5000 }).toBe(0);
-    });
-  }
-
   test('the last screen holds the education, the contact band and the footer in one window', async ({
     page,
   }) => {
@@ -134,8 +71,8 @@ test.describe('wide screens', () => {
   test('the four featured projects all fit on the projects screen', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await openHome(page);
-    await page.keyboard.press('PageDown');
-    // wait for the scroll to settle with the screen at the top, just under the header
+    await page.evaluate(() => document.querySelector('#work')!.scrollIntoView());
+    // the screen rests at the top, just under the header
     await expect
       .poll(() =>
         page.locator('#work').evaluate((el) => Math.round(el.getBoundingClientRect().top)),
@@ -182,6 +119,22 @@ test.describe('wide screens', () => {
     await expect
       .poll(() => page.locator('.dock').evaluate((el) => getComputedStyle(el).clipPath))
       .toContain('calc(');
+  });
+
+  test('a long answer starts below the fade, so its first line can be read', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await cannedGuide(page);
+    await openHome(page);
+    await bar(page).click();
+    await askChip(page, 'Show me his backend experience');
+    await expect(page.locator('.feed .msg-answer').last()).toBeVisible();
+    const gap = await page.evaluate(() => {
+      const feed = document.querySelector('.feed')!.getBoundingClientRect();
+      const answers = document.querySelectorAll('.feed .msg-answer');
+      return answers[answers.length - 1].getBoundingClientRect().top - feed.top;
+    });
+    // the feed fades out over its top 72px
+    expect(gap).toBeGreaterThanOrEqual(72);
   });
 
   test('answers appear beside the portrait and keep earlier ones', async ({ page }) => {

@@ -10,11 +10,14 @@ export function Hero({
   feedRef,
   formed,
   onFormed,
+  showThread,
 }: Pick<Guide, 'isMobile' | 'thread'> & {
   feedRef: Guide['refs']['feedRef'];
   /** True once the portrait has formed. The introduction types, and a saved chat comes back, after it. */
   formed: boolean;
   onFormed: () => void;
+  /** Whether the conversation shows yet: once the portrait has formed, or at once if the visitor asks. */
+  showThread: boolean;
 }) {
   // a phone draws the portrait about 700 pixels wide, so it gets the smaller file; chosen once, so turning
   // the phone does not restart the animation
@@ -42,7 +45,7 @@ export function Hero({
           start={formed}
           text="I’m Yash Bakshi, a software engineer working across AI applications, backend services and cloud delivery. The guide in the corner is an assistant that answers questions about my projects from my own notes."
         />
-        {!isMobile && formed && thread}
+        {!isMobile && showThread && thread}
       </div>
     </section>
   );

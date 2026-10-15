@@ -54,8 +54,13 @@
 
 @media (min-width: 901px) {
   .ask {
+    /* the hero is wider than the other sections, so the larger chat column does not shrink the portrait */
+    --ask-w: max(100%, min(1272px, calc(100vw - 2 * var(--gutter) - 16px)));
+    width: var(--ask-w);
+    margin-inline: calc((100% - var(--ask-w)) / 2);
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(260px, 23rem);
+    /* the chat gets the wider column so a long answer stays short enough to read from its first line */
+    grid-template-columns: minmax(0, 1fr) clamp(23rem, 38vw, 34rem);
     gap: clamp(24px, 3vw, 48px);
     /* the hero fills the first screen, so Projects starts below the fold */
     min-height: calc(100svh - var(--header-h));
@@ -65,9 +70,9 @@
 
   /* as large as the window height allows */
   .ask .portrait {
-    width: min(calc(100% + clamp(0px, 3vw, 44px)), calc((100svh - 180px) * 1.023));
+    width: min(calc(100% + clamp(0px, 6vw, 110px)), calc((100svh - 180px) * 1.023));
     min-width: 420px;
-    margin: 0 0 0 calc(-1 * clamp(0px, 3vw, 44px));
+    margin: 0 0 0 calc(-1 * clamp(0px, 6vw, 110px));
   }
 }
 

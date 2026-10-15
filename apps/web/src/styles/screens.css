@@ -1,12 +1,10 @@
-/* On a touch screen the page rests on one screen at a time, as it does on a wide window (see snap.css):
-   a swipe up or down moves from the introduction to the projects, the work history, the education
-   and the contact band. A section taller than the screen still scrolls freely within itself. */
+/* On a touch screen each section fills one screen, as it does on a wide window (see snap.css). The page
+   scrolls freely: nothing snaps or steps between the screens. */
 
 @media (hover: none) and (pointer: coarse) and (max-width: 900px) {
   html {
     /* the introduction can be a pixel wider than a phone, which would let the page wobble sideways */
     overflow-x: clip;
-    scroll-snap-type: y mandatory;
     scroll-padding-top: var(--header-h);
   }
 
@@ -24,7 +22,6 @@
     min-height: calc(100svh - var(--header-h) - 58px);
     /* the browser's toolbars slide away while scrolling, so the screen follows the visible height */
     min-height: calc(100dvh - var(--header-h) - 58px);
-    scroll-snap-align: start;
   }
 
   /* the contact band and the footer under it share the last screen, the content in the middle of it */
@@ -39,11 +36,6 @@
   .site-footer {
     min-height: 0;
     padding-bottom: 70px;
-  }
-
-  /* the footer under the contact band is a stop of its own, so the page can rest at its very end */
-  .site-footer {
-    scroll-snap-align: end;
   }
 
   /* the cards sit in the middle of the screen, so no screen is left half empty */

@@ -1,6 +1,5 @@
-/* The projects and the experience each fill one screen on a wide, tall window. The page steps between
-   screens with a small script (snapScroll.ts) rather than with CSS scroll snapping, which cannot move a
-   page on one small wheel step. Phones and short windows scroll freely. */
+/* The projects and the experience each fill one screen on a wide, tall window. The page scrolls freely;
+   nothing snaps or steps between the screens. Phones and short windows lay out the same way. */
 
 @media (min-width: 901px) and (min-height: 640px) and (hover: hover) {
   html {

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { DotGrid } from './DotGrid';
 import { GuideDock, useGuide } from './Guide';
 import { SiteHeader, WipBanner } from './parts';
-import { useSnapScroll } from './snapScroll';
 import { Contact } from './sections/Contact';
 import { Education } from './sections/Education';
 import { Footer } from './sections/Footer';
@@ -16,7 +15,6 @@ export function Home() {
   const onFormed = useCallback(() => setFormed(true), []);
   const g = useGuide(formed);
   const { isMobile, thread, marked } = g;
-  useSnapScroll();
 
   useEffect(() => {
     const id = window.location.hash.slice(1);
@@ -34,6 +32,8 @@ export function Home() {
           thread={thread}
           feedRef={g.refs.feedRef}
           formed={formed}
+          // a saved conversation waits for the portrait; a question asked now does not
+          showThread={formed || g.asked !== ''}
           onFormed={onFormed}
         />
         <Projects marked={marked} />
