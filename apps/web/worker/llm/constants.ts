@@ -2,7 +2,7 @@
  * The default Gemini model. The owner must confirm this name and its price on Google's pages
  * before launch; models are renamed and retired. Override it with the GEMINI_MODEL variable.
  */
-export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash-lite';
+export const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
 
 /** The Workers AI chat model used as the fallback, and the embedding model. Confirm both. */
 export const WORKERS_AI_CHAT_MODEL = '@cf/meta/llama-3.1-8b-instruct';
@@ -16,6 +16,10 @@ export const PROVIDER_TIMEOUT_MS = 15_000;
 export type Price = { input: number; output: number };
 
 export const PRICES: Record<string, Price> = {
+  // $0.30 in, $2.50 out per million tokens (Google's pricing page, 2026-10-15)
+  'gemini-3.5-flash-lite': { input: 300_000, output: 2_500_000 },
+  // $0.25 in, $1.50 out per million tokens (same page)
+  'gemini-3.1-flash-lite': { input: 250_000, output: 1_500_000 },
   // about $0.25 in, $1.50 out per million tokens
   'gemini-2.5-flash-lite': { input: 250_000, output: 1_500_000 },
   // about $1.50 in, $7.50 out per million tokens
