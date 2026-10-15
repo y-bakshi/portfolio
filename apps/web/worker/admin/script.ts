@@ -3,7 +3,7 @@
  * so everything is built with createElement and textContent: there is no innerHTML anywhere.
  * (No backticks or dollar-brace inside, so the string needs no escaping.)
  */
-export const ADMIN_JS = `
+export const ADMIN_JS = `(function () {
 'use strict';
 var SVG = 'http://www.w3.org/2000/svg';
 
@@ -123,4 +123,5 @@ Array.prototype.forEach.call(buttons, function (b) {
   });
 });
 load(30);
+})();
 `;
