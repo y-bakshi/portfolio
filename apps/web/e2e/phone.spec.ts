@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { askChip, bar, input, openHome, ready } from './helpers';
+import { askChip, cannedGuide, bar, input, openHome, ready } from './helpers';
 
 test.describe('phones', () => {
   test('the open chat takes the whole visible screen and locks the page behind it', async ({
@@ -74,6 +74,7 @@ test.describe('phones', () => {
   });
 
   test('a navigation button closes the chat and shows the card', async ({ page }) => {
+    await cannedGuide(page);
     await openHome(page);
     await bar(page).click();
     await askChip(page, 'What has Yash built with RAG?');
@@ -86,6 +87,7 @@ test.describe('phones', () => {
   });
 
   test('the chat input is reachable and typing asks a question', async ({ page }) => {
+    await cannedGuide(page);
     await openHome(page);
     await bar(page).click();
     await expect(input(page)).toBeFocused();

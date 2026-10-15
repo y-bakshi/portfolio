@@ -1,5 +1,5 @@
 import type { Env } from './env';
-import { answerFor } from '../src/content';
+import { unavailableAnswer } from '../src/content';
 import { openAdmission, type Admission } from './lib/admission';
 import type { Answerer } from './lib/answerer';
 import { systemClock, type Clock } from './lib/clock';
@@ -20,14 +20,14 @@ export type Deps = {
   verifyHuman: (request: Request, env: Env) => Promise<boolean>;
 };
 
-/** The built-in keyword guide, as an answerer. It never costs anything. */
-export const keywordAnswerer: Answerer = {
-  answer: async (question) => answerFor(question),
+/** Used when no model is set up: every question gets the plain "cannot answer just now" reply. */
+export const unavailableAnswerer: Answerer = {
+  answer: async () => ({ ...unavailableAnswer, meta: { model: 'unavailable' } }),
 };
 
 export const defaultDeps: Deps = {
   admission: openAdmission,
-  answerer: keywordAnswerer,
+  answerer: unavailableAnswerer,
   clock: systemClock,
   newId: () => crypto.randomUUID(),
   verifyHuman: async () => true,

@@ -106,14 +106,14 @@ describe('the wired app', () => {
     expect((await post('/api/chat', { message: 'later' }, cookie)).status).toBe(200);
   });
 
-  it('stops paid answers when the spending cap is reached, and says the built-in answers still work', async () => {
+  it('stops paid answers when the spending cap is reached, and says the projects and contact are still open', async () => {
     const { post, events } = setup({ BUDGET_DAY_MICRO_USD: '1' });
     const cookie = cookieOf(await post('/api/session', {}))!;
     const res = await post('/api/chat', { message: 'hello' }, cookie);
     expect(res.status).toBe(503);
     const body = (await res.json()) as { error: { code: string; message: string } };
     expect(body.error.code).toBe('unavailable');
-    expect(body.error.message).toMatch(/built-in answers/i);
+    expect(body.error.message).toMatch(/contact section are still open/i);
     expect(JSON.parse((await events()).find((e) => e.type === 'rate_limited')!.data_json!)).toEqual(
       {
         scope: 'budget',

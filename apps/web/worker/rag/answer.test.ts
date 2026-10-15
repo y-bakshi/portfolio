@@ -6,7 +6,7 @@ import { mockEmbedder } from '../llm/mock';
 import type { ChatRequest, ChatResult, LlmProvider } from '../llm/types';
 import { createRagAnswerer } from './answer';
 import { buildChunks } from './chunks';
-import { createAnswerer, keywordAnswerer } from './create';
+import { createAnswerer, unavailableAnswerer } from './create';
 import { memoryIndexFor } from './eval';
 
 const reply = (text: string): ChatResult => ({
@@ -66,7 +66,7 @@ describe('createRagAnswerer', () => {
     expect(out.cites).not.toContain('made-up');
   });
 
-  it('falls back to the keyword answer when the model fails', async () => {
+  it('says it cannot answer when the model fails', async () => {
     const onError = vi.fn();
     const chunks = buildChunks();
     const index = await memoryIndexFor(mockEmbedder, chunks);
@@ -85,18 +85,20 @@ describe('createRagAnswerer', () => {
       onError,
     });
     const out = await answerer.answer('What has Yash built with RAG?', []);
-    expect(out.cites).toEqual(['testpilot']);
-    expect(out.meta?.model).toBe('keyword');
+    expect(out.cites).toEqual(['contact']);
+    expect(out.meta?.model).toBe('unavailable');
     expect(onError).toHaveBeenCalled();
   });
 
-  it('falls back when the index has never been filled', async () => {
+  it('says it cannot answer when the index has never been filled', async () => {
     const answerer = createRagAnswerer({} as Env, {
       models: { provider: { chat: async () => reply('x') }, embedder: mockEmbedder },
       index: { upsert: async () => {}, query: async () => [], remove: async () => {} },
       chunks: buildChunks(),
     });
-    expect((await answerer.answer('Has he worked with agents?', [])).meta?.model).toBe('keyword');
+    expect((await answerer.answer('Has he worked with agents?', [])).meta?.model).toBe(
+      'unavailable',
+    );
   });
 
   it('streams text without markers, even when a marker is split across pieces', async () => {
@@ -152,12 +154,12 @@ describe('createRagAnswerer', () => {
 });
 
 describe('createAnswerer', () => {
-  it('uses the keyword guide when no provider is configured', () => {
-    expect(createAnswerer({} as Env)).toBe(keywordAnswerer);
+  it('says it cannot answer when no provider is configured', () => {
+    expect(createAnswerer({} as Env)).toBe(unavailableAnswerer);
   });
 
   it('uses the retrieval answerer when the mock provider is selected', async () => {
     const answerer = createAnswerer({ LLM_PROVIDER: 'mock' } as Env);
-    expect(answerer).not.toBe(keywordAnswerer);
+    expect(answerer).not.toBe(unavailableAnswerer);
   });
 });

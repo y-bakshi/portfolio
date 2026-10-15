@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { answerFor, type Answer } from '../content';
+import { unavailableAnswer, type Answer } from '../content';
 import { askStream, clearChat, loadChat, sendFeedback, startSession } from './api';
 import { toExchanges, toMessages } from './exchanges';
 import { createReveal, wordsOf } from './reveal';
@@ -14,7 +14,7 @@ import {
 } from './storage';
 import type { Exchange } from './Thread';
 
-/** How long "thinking" lasts before a built-in answer starts to appear. */
+/** How long "thinking" lasts before an answer starts to appear. */
 const THINK_MS = 450;
 
 /** The answer for the question in progress. Only an answer the server stored has an id. */
@@ -30,8 +30,8 @@ const asExchange = (q: string, a: Current): Exchange => ({
 
 /**
  * The conversation: what was asked, what was answered, and keeping it. The chat is kept on the
- * server and mirrored in this browser. When the API cannot answer, the built-in guide does, so
- * the visitor never sees an error.
+ * server and mirrored in this browser. When the API cannot answer, the guide says so plainly and
+ * points at the cards and the contact block.
  */
 export function useChat() {
   const [history, setHistory] = useState<Exchange[]>(() => toExchanges(loadMirror()));
@@ -132,12 +132,12 @@ export function useChat() {
       };
     } catch {
       if (!live()) return;
-      // the API is down, slow or refusing: answer from the built-in notes, and store nothing
+      // the API is down, slow or refusing: say so plainly, and store nothing
       writer.cancel();
       writer = createReveal(setShown);
       reveal.current = writer;
       setShown('');
-      final = answerFor(q);
+      final = unavailableAnswer;
       await pause(reduce ? 0 : Math.max(0, THINK_MS - (Date.now() - started)));
       if (!live()) return;
       setStatus('answering');

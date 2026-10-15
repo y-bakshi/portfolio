@@ -34,7 +34,7 @@ A SQLite-backed Durable Object class, `Guard` (binding `GUARD`), keeps the count
 - **Limits.** Fixed windows, one counter per rule and key; a refused request counts nothing. Starting rules (one table in `limits.ts`): chat 3 a minute and 20 a day per chat, 40 a day per network; session 10 a minute per network; feedback 30 a day per network.
 - **Budget.** Integer micro-USD. `reserve` holds the largest possible cost against the UTC day and month caps (defaults 500,000 and 5,000,000, set by `BUDGET_DAY_MICRO_USD` and `BUDGET_MONTH_MICRO_USD`); `settle` records the real cost and frees the rest; `release` frees all of it. A reservation not settled or released within 5 minutes is kept as spent at its reserved amount, so a failure cannot cause overspend.
 - **Kill switch.** A `killed` flag in the budget object, or the `KILL_SWITCH` variable set to `true`, makes every paid request fail with 503.
-- **Refusals.** Over a limit gives 429 `rate_limited` with `retryAt`; the cap or kill switch gives 503 `unavailable` with `retryAt`. The client then falls back to the built-in keyword answers. If the Guard itself cannot be reached, the request is refused rather than allowed.
+- **Refusals.** Over a limit gives 429 `rate_limited` with `retryAt`; the cap or kill switch gives 503 `unavailable` with `retryAt`. The client then shows the plain "cannot answer just now" reply, stored nowhere. If the Guard itself cannot be reached, the request is refused rather than allowed.
 
 Retention: a daily cron (03:17 UTC) deletes messages, feedback, events and chats past 90 days (`worker/lib/retention.ts`).
 

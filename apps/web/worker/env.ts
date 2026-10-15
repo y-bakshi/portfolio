@@ -22,7 +22,7 @@ export interface Env {
   GEMINI_API_KEY?: string;
   /** Gemini model name. Defaults to the one in worker/llm/constants.ts. */
   GEMINI_MODEL?: string;
-  /** 'gemini', 'workers-ai' or 'mock'. Unset means the keyword guide answers. */
+  /** 'gemini', 'workers-ai' or 'mock'. Unset means the guide says it cannot answer. */
   LLM_PROVIDER?: string;
   /** Lowest retrieval score (0 to 1) that is still answered from the notes. */
   RAG_MIN_SCORE?: string;

@@ -1,4 +1,11 @@
-import { answerFor, education, projects, roles, smallProjects, suggestions } from './content';
+import {
+  education,
+  projects,
+  roles,
+  smallProjects,
+  suggestions,
+  unavailableAnswer,
+} from './content';
 
 // only the file names matter here, so the files are listed and never loaded
 const logoFiles = Object.keys(import.meta.glob('../public/logos/*'));
@@ -53,54 +60,13 @@ describe('content data', () => {
   });
 });
 
-describe('the guide answers', () => {
-  const cases: [string, string[]][] = [
-    ['What has Yash built with RAG?', ['testpilot']],
-    ['Show me his backend experience', ['thryv', 'testpilot']],
-    ['Has he worked with agents?', ['guardianai']],
-    ['What cloud work has he done?', ['citywatch', 'face-recognition', 'testpilot']],
-    ['Has he built a compiler?', ['catscript']],
-    ['Any streaming or kafka work?', ['streaming-pipeline']],
-    ['What edge computing has he done?', ['edge-inference']],
-    ['Has he used Rust?', ['procwatch']],
-    ['Any gemini story work?', ['story-generator']],
-    ['Tell me about his education', ['asu', 'manipal']],
-    ['What skills and tools does he use?', []],
-    ['What is his career history?', ['thryv', 'insight']],
-    ['How can I contact him?', ['contact']],
-  ];
-
-  it.each(cases)('answers "%s" and cites its sources', (question, expected) => {
-    const answer = answerFor(question);
-    expect(answer.text.length).toBeGreaterThan(30);
-    for (const id of expected) expect(answer.cites, question).toContain(id);
+describe('the guide when it cannot answer', () => {
+  it('says so plainly and points at the contact block', () => {
+    expect(unavailableAnswer.text).toMatch(/cannot answer just now/i);
+    expect(unavailableAnswer.cites).toEqual(['contact']);
   });
 
-  it('answers every suggested question with at least one source', () => {
-    for (const q of suggestions) {
-      const a = answerFor(q);
-      expect(a.cites.length, q).toBeGreaterThan(0);
-    }
-  });
-
-  it('only cites things that exist on the page', () => {
-    const allowed = new Set([...ids, 'contact']);
-    for (const [q] of cases)
-      for (const id of answerFor(q).cites) expect(allowed.has(id), `${q} cites ${id}`).toBe(true);
-  });
-
-  it('says plainly when the notes do not cover a question', () => {
-    const a = answerFor('What is his favourite colour?');
-    expect(a.cites).toEqual([]);
-    expect(a.text).toMatch(/not in the notes/i);
-  });
-
-  it('does not treat a short keyword inside another word as a match', () => {
-    // "ci" is a backend keyword, but it sits inside "specific" and "decision"
-    expect(answerFor('Tell me something specific about his decision making').cites).toEqual([]);
-  });
-
-  it('never claims the contact links are placeholders', () => {
-    expect(answerFor('How can I contact him?').text).not.toMatch(/placeholder/i);
+  it('keeps some suggested questions to start from', () => {
+    expect(suggestions.length).toBeGreaterThan(0);
   });
 });

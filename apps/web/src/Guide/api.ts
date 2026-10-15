@@ -1,7 +1,7 @@
 /**
  * The browser's side of the chat API. Every call is same-origin, sends the chat cookie, and gives
  * up after a timeout. Failures come back as one error type, so the guide can fall back to its
- * built-in answers without caring what went wrong.
+ * plain "cannot answer" message without caring what went wrong.
  */
 import type { Rating, SavedMessage } from './storage';
 import { getTurnstileToken } from './turnstile';

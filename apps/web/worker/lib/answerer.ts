@@ -18,8 +18,8 @@ export type AnswerMeta = {
 export type AnswerResult = { text: string; cites: string[]; meta?: AnswerMeta };
 
 /**
- * Anything that can answer a visitor's question. The keyword guide and the retrieval-backed model
- * both implement it, so the chat route does not care which one it is talking to.
+ * Anything that can answer a visitor's question. The retrieval-backed model and the "cannot answer"
+ * stand-in both implement it, so the chat route does not care which one it is talking to.
  */
 export interface Answerer {
   /** The whole answer at once. */

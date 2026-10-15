@@ -35,7 +35,7 @@ export function retryAfterSeconds(error: ApiError, nowMs: number = Date.now()): 
   return Math.max(1, Math.ceil((Date.parse(error.retryAt) - nowMs) / 1000));
 }
 
-const RESTING = 'The built-in answers still work.';
+const RESTING = 'The projects on this page and the contact section are still open.';
 
 function tooMany(retryAtMs: number, nowMs: number) {
   const message = `That is a lot of questions in a short time. Please try again in ${waitPhrase(retryAtMs - nowMs)}. ${RESTING}`;

@@ -1,4 +1,4 @@
-import { answerFor } from '../../src/content/answers';
+import { unavailableAnswer } from '../../src/content/answers';
 import type { Env } from '../env';
 import { wordPieces, type AnswerResult, type Answerer, type Turn } from '../lib/answerer';
 import { fromEnv, type Models } from '../llm';
@@ -35,8 +35,8 @@ const DEFAULT_MIN_SCORE = 0.35;
 const MAX_OUTPUT_TOKENS = 400;
 
 /** The old keyword answer, used whenever the model path cannot answer. */
-export function keywordResult(question: string, model = 'keyword'): AnswerResult {
-  return { ...answerFor(question), meta: { model } };
+export function unavailableResult(): AnswerResult {
+  return { ...unavailableAnswer, meta: { model: 'unavailable' } };
 }
 
 type Asked = { request: ChatRequest; given: Chunk[]; retrieval: Retrieval; question: string };
@@ -119,7 +119,7 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
         return finish(r.text, p, r);
       } catch (error) {
         options.onError?.(error);
-        return keywordResult(question);
+        return unavailableResult();
       }
     },
 
@@ -161,7 +161,7 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
         options.onError?.(error);
         // text already shown stays; a different answer cannot replace it half way
         if (sent && p && 'request' in p) return finish(raw, p);
-        const fallback = keywordResult(question);
+        const fallback = unavailableResult();
         for (const piece of wordPieces(fallback.text)) yield piece;
         return fallback;
       }

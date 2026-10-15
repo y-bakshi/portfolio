@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { askChip, bar, input, openHome, ready } from './helpers';
+import { askChip, cannedGuide, bar, input, openHome, ready } from './helpers';
 
 test.describe('wide screens', () => {
   test('the hero fills the first screen, so projects start below the fold', async ({ page }) => {
@@ -106,6 +106,7 @@ test.describe('wide screens', () => {
   test('a guide button for a project that is not on the home page opens the all-projects page', async ({
     page,
   }) => {
+    await cannedGuide(page);
     await openHome(page);
     await bar(page).click();
     await input(page).fill('Tell me about the rust process monitor');
@@ -184,6 +185,7 @@ test.describe('wide screens', () => {
   });
 
   test('answers appear beside the portrait and keep earlier ones', async ({ page }) => {
+    await cannedGuide(page);
     await openHome(page);
     await bar(page).click();
     await askChip(page, 'What has Yash built with RAG?');
@@ -237,6 +239,7 @@ test.describe('wide screens', () => {
   test('a navigation button jumps to its card, highlights it, and a way back to the top appears', async ({
     page,
   }) => {
+    await cannedGuide(page);
     await openHome(page);
     await bar(page).click();
     await askChip(page, 'What has Yash built with RAG?');

@@ -12,8 +12,8 @@
     "sourceId": "testpilot",
     "kind": "project",
     "title": "TestPilot: role and stack",
-    "text": "Yash's part in TestPilot: Owned everything except the frontend on a four-person team: the AI pipeline, model fine-tuning, defect prediction, CI/CD and the backend. Built with FastAPI, Qwen via Ollama, RAG, pgvector, Random Forest, Docker, Cloud Run. The pipeline runs: Read repository, then Retrieve coding standards, then Draft tests, then Critique gate, then Keep or redraft.",
-    "contentHash": "1cf9f8c9e77392"
+    "text": "Yash's part in TestPilot: Owned all of it but the frontend: AI pipeline, fine-tuning, defect prediction, CI/CD, backend. Built with FastAPI, Qwen via Ollama, RAG, pgvector, Random Forest, Docker, Cloud Run. The pipeline runs: Read repository, then Retrieve coding standards, then Draft tests, then Critique gate, then Keep or redraft.",
+    "contentHash": "00682bb95b5095"
   },
   {
     "id": "project:citywatch#detail",
@@ -60,8 +60,8 @@
     "sourceId": "guardianai",
     "kind": "project",
     "title": "GuardianAI: role and stack",
-    "text": "Yash's part in GuardianAI: Designed the two-lane chat architecture and built the safety data pipeline, on a four-person team. Built with Next.js, TypeScript, FastAPI, Claude, PostgreSQL, Mapbox, WebSockets. The pipeline runs: Incident map and feeds, then Route the question, then Summary path, then ReAct path, then Safety response. Links: Live demo: https://city-watch-frontend.vercel.app/.",
-    "contentHash": "02359cf1853ffc"
+    "text": "Yash's part in GuardianAI: Designed the two-lane chat and built the data pipeline. Built with Next.js, TypeScript, FastAPI, Claude, PostgreSQL, Mapbox, WebSockets. The pipeline runs: Incident map and feeds, then Route the question, then Summary path, then ReAct path, then Safety response. Links: Live demo: https://city-watch-frontend.vercel.app/.",
+    "contentHash": "06f0e870c951b3"
   },
   {
     "id": "project:catscript#detail",

@@ -4,7 +4,7 @@
 
 `npm run check`, `npm run build`, `npm run format:check`, `npm test` and `npm run e2e` run in `apps/web/`. `npm test` runs Vitest with React Testing Library in jsdom: 60 tests across four files.
 
-- **`content.test.ts`:** data integrity (unique ids, complete projects, valid trace indentation, dated roles) and the guide's answers: each topic cites the right sources, every cited id exists on the page, an unknown question gets an honest miss, and short keywords do not match inside other words.
+- **`content.test.ts`:** data integrity (unique ids, complete projects, valid trace indentation, dated roles) and the "cannot answer just now" reply the guide shows when the API fails.
 - **`Guide.test.tsx`:** the chat in the page: closed and inert by default, opens and focuses the input, Escape closes and returns focus, suggested and typed questions are answered, the answer is announced once, earlier exchanges are kept, empty submits are ignored, a cited card is scrolled to, focused and highlighted, and the thinking, answering and ready states run in order.
 - **`pages.test.tsx`:** the home page and the case study: one h1, landmarks, skip link, every section and card, real contact links, the portrait's description, and no guide on the case study.
 - **`styles/styles.test.ts`:** every stylesheet is imported in a fixed order and stays under 600 lines, no CSS targets a class no component uses, every class a component names has a rule, text colour pairs keep at least 4.5:1 contrast, and `index.html` asks no third party for fonts.

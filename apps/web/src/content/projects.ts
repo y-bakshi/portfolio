@@ -8,7 +8,7 @@ export const projects: Project[] = [
     line: 'Writes tests, then argues with them.',
     detail:
       'Generates pytest, Jest and JUnit tests and ranks defect-prone files in public GitHub repositories. It retrieves the five most relevant coding-standard chunks first, drafts the tests against them, and an LLM critique loop regenerates anything scoring below 0.6.',
-    role: 'Owned everything except the frontend on a four-person team: the AI pipeline, model fine-tuning, defect prediction, CI/CD and the backend.',
+    role: 'Owned all of it but the frontend: AI pipeline, fine-tuning, defect prediction, CI/CD, backend.',
     stack: [
       'FastAPI',
       'Qwen via Ollama',
@@ -73,7 +73,7 @@ export const projects: Project[] = [
     line: 'Two ways to answer a safety question.',
     detail:
       'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed. The team later renamed it CityWatch, which is the name its live demo shows. It is a different project from the AWS Ideathon entry below.',
-    role: 'Designed the two-lane chat architecture and built the safety data pipeline, on a four-person team.',
+    role: 'Designed the two-lane chat and built the data pipeline.',
     stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
     links: [{ label: 'Live demo', href: 'https://city-watch-frontend.vercel.app/' }],
     trace: [

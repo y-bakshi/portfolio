@@ -2,11 +2,37 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { motion } from './test/setup';
 import Home from './App';
+import { answerStream, cannedGuide, fakeApi } from './test/fake-api';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
 vi.mock('./MistPortrait', () => ({ MistPortrait: () => <div data-testid="portrait" /> }));
 
-const renderHome = () => render(<Home />);
+// the page's own guide is the API; these are the answers it gives in these tests
+const renderHome = () => {
+  cannedGuide({
+    'What has Yash built with RAG?': [
+      'TestPilot is the RAG project. It retrieves coding standards first.',
+      ['testpilot'],
+    ],
+    'Has he worked with agents?': [
+      'GuardianAI has a ReAct path for open-ended questions.',
+      ['guardianai'],
+    ],
+    'Tell me about his education': [
+      'Arizona State University, after a degree in India.',
+      ['asu', 'manipal'],
+    ],
+    'Tell me about the rust process monitor': [
+      'ProcWatch is a Rust terminal monitor.',
+      ['procwatch'],
+    ],
+    'What cloud work has he done?': [
+      'CityWatch and the face recognition pipeline are both AWS.',
+      ['citywatch', 'face-recognition', 'testpilot'],
+    ],
+  });
+  return render(<Home />);
+};
 
 const bar = () => screen.getByRole('button', { name: /^ask the guide/i });
 const panel = () => document.getElementById('dock-open') as HTMLElement;
@@ -134,7 +160,24 @@ describe('the guide chat', () => {
     motion.reduce = false;
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderHome();
+    // a model takes a moment to start answering
+    fakeApi({
+      'GET /api/chat': () => Response.json({ messages: [] }),
+      'POST /api/session': () => Response.json({ ok: true }),
+      'POST /api/chat': () =>
+        new Promise<Response>((resolve) =>
+          setTimeout(
+            () =>
+              resolve(
+                answerStream('CityWatch and the face recognition pipeline are both AWS.', [
+                  'citywatch',
+                ]),
+              ),
+            800,
+          ),
+        ),
+    });
+    render(<Home />);
     await user.click(bar());
     const chip = within(panel()).getByRole('button', { name: 'What cloud work has he done?' });
     await user.click(chip);
@@ -144,9 +187,12 @@ describe('the guide chat', () => {
       vi.advanceTimersByTime(500);
     });
     expect(chip).toBeDisabled();
-    await act(async () => {
-      vi.advanceTimersByTime(4000);
-    });
+    // the answer arrives, is revealed word by word, and the chip comes back
+    for (let i = 0; i < 40 && chip.hasAttribute('disabled'); i++) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(200);
+      });
+    }
     expect(chip).toBeEnabled();
     expect(
       screen.getByText(/CityWatch and the face recognition pipeline/, { selector: '.msg-answer' }),

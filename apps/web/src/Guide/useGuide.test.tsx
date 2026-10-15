@@ -3,41 +3,10 @@ import userEvent from '@testing-library/user-event';
 import Home from '../App';
 import { CHAT_KEY, UI_KEY } from './storage';
 import { SAVED_NOTICE } from './copy';
+import { answerStream, fakeApi, sse } from '../test/fake-api';
 
 vi.mock('../DotGrid', () => ({ DotGrid: () => null }));
 vi.mock('../MistPortrait', () => ({ MistPortrait: () => <div data-testid="portrait" /> }));
-
-const enc = new TextEncoder();
-const sse = (event: string, data: unknown) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
-
-function answerStream(text: string, cites: string[], ids = ['u1', 'a1']) {
-  const pieces = [
-    sse('meta', { userMessageId: ids[0], assistantMessageId: ids[1] }),
-    ...text.split(/(?<=\s)/).map((t) => sse('token', { text: t })),
-    sse('done', { text, cites }),
-  ];
-  return new Response(
-    new ReadableStream({
-      start(c) {
-        pieces.forEach((p) => c.enqueue(enc.encode(p)));
-        c.close();
-      },
-    }),
-  );
-}
-
-type Handler = (url: string, init: RequestInit) => Response | Promise<Response>;
-
-/** Fakes the API: each handler is looked up by "METHOD /path"; anything else fails like an outage. */
-function fakeApi(handlers: Record<string, Handler>) {
-  const fn = vi.fn(async (url: string, init: RequestInit = {}) => {
-    const handler = handlers[`${init.method ?? 'GET'} ${url}`];
-    if (!handler) throw new TypeError('offline');
-    return handler(url, init);
-  });
-  vi.stubGlobal('fetch', fn);
-  return fn;
-}
 
 const calls = (fn: ReturnType<typeof fakeApi>, key: string) =>
   fn.mock.calls.filter(([url, init]) => `${init?.method ?? 'GET'} ${url}` === key);
@@ -122,7 +91,7 @@ describe('the stored guide chat', () => {
     expect(screen.getByText('Kept answer', { selector: '.msg-answer' })).toBeInTheDocument();
   });
 
-  it('falls back to the built-in answer on a server error, and offers no thumbs for it', async () => {
+  it('says it cannot answer on a server error, and offers no thumbs for it', async () => {
     fakeApi({
       'GET /api/chat': transcript([]),
       'POST /api/session': ok,
@@ -135,24 +104,23 @@ describe('the stored guide chat', () => {
       within(panel()).getByRole('button', { name: 'What has Yash built with RAG?' }),
     );
     expect(
-      await screen.findByText(/TestPilot is the RAG project/, { selector: '.msg-answer' }),
+      await screen.findByText(/cannot answer just now/, { selector: '.msg-answer' }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Good answer' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Show TestPilot on the page' })).toBeInTheDocument();
   });
 
   it.each([
     ['rate limited', () => new Response('{}', { status: 429 })],
     ['an error event', () => new Response(sse('error', { code: 'internal', message: 'No.' }))],
     ['a stream that ends early', () => new Response(sse('meta', { userMessageId: 'a' }))],
-  ])('falls back when the API is %s', async (_name, reply) => {
+  ])('says it cannot answer when the API is %s', async (_name, reply) => {
     fakeApi({ 'GET /api/chat': transcript([]), 'POST /api/session': ok, 'POST /api/chat': reply });
     const user = userEvent.setup();
     render(<Home />);
     await user.click(bar());
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
-      await screen.findByText(/Arizona State University, after/, { selector: '.msg-answer' }),
+      await screen.findByText(/cannot answer just now/, { selector: '.msg-answer' }),
     ).toBeInTheDocument();
   });
 

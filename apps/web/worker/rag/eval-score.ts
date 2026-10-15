@@ -57,10 +57,10 @@ export async function score(
     cost += result.meta?.costMicroUsd ?? 0;
     tokensIn += result.meta?.inputTokens ?? 0;
     tokensOut += result.meta?.outputTokens ?? 0;
-    const keyword = result.meta?.model === 'keyword';
-    if (keyword) {
+    const unavailable = result.meta?.model === 'unavailable';
+    if (unavailable) {
       fallbacks++;
-      fail(q, 'the keyword fallback answered');
+      fail(q, 'the guide could not answer');
     }
 
     const found = await retrieve(
@@ -122,7 +122,7 @@ export async function score(
       );
     }
 
-    if (keyword) continue; // no notes were given, so these would only repeat the failure
+    if (unavailable) continue; // no notes were given, so these would only repeat the failure
     const f = faithful(sample);
     t.faith = add(t.faith, f);
     if (f.pass < f.of) fail(q, `${f.of - f.pass} claim sentence(s) not backed by the notes`);

@@ -24,7 +24,7 @@ The Worker checks the Access token itself, so a mistake in the Access policy doe
 - **Questions and cost per day:** one bar per UTC day. Cost is the provider cost the guide recorded, shown in dollars.
 - **Latency p50 and p95:** half of answers were faster than p50; 19 in 20 were faster than p95. Worked out in the Worker from the latency of each answer.
 - **Thumbs up:** the share of thumbs ratings that were up.
-- **Fallback rate:** how often the built-in keyword guide answered instead, per question. High means the API, a limit or the budget is getting in the way.
+- **Fallback rate:** how often the guide could not answer (the model failed or was unavailable), per question. High means the API, a limit or the budget is getting in the way.
 - **Rate limited:** how many questions a limit turned away.
 - **Top questions:** the 20 most common questions, matched after lowercasing and trimming.
 - **Low confidence:** questions whose best retrieval score was below 0.5, or that the guide refused ("not in my notes"), newest first, up to 50. This is the list of what to write next.

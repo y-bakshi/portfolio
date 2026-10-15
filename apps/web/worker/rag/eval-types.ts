@@ -68,7 +68,7 @@ export type EvalReport = {
   refusalCorrectness: number;
   refusedWhenUnsupported: number;
   answeredWhenSupported: number;
-  /** Answers that came from the keyword fallback because the model path failed. */
+  /** Answers where the guide could not answer because the model path failed. */
   fallbacks: number;
   latencyMs: { p50: number; p95: number; total: number };
   cost: {

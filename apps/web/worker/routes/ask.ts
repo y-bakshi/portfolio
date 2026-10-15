@@ -109,9 +109,9 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
           { latencyMs, model, topScore, inputTokens, outputTokens, costMicroUsd },
           history.chatId,
         );
-        // the model was set up but the built-in keyword guide answered: the fallback was used
-        if (model === 'keyword' && c.env.LLM_PROVIDER) {
-          await track(c, deps, 'fallback_used', { reason: 'keyword' }, history.chatId);
+        // the model was set up but could not answer: record that the guide failed the visitor
+        if (model === 'unavailable' && c.env.LLM_PROVIDER) {
+          await track(c, deps, 'fallback_used', { reason: 'unavailable' }, history.chatId);
         }
         await send('done', { text, cites });
       } catch (error) {

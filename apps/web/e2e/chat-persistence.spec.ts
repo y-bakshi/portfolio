@@ -116,14 +116,14 @@ test.describe('the stored chat', () => {
     await expect(page.locator('.msg-user')).toHaveCount(0);
   });
 
-  test('when the API fails the guide answers from its built-in notes', async ({ page }) => {
+  test('when the API fails the guide says it cannot answer', async ({ page }) => {
     await mockApi(page, { failAsk: true });
     await openHome(page);
     await bar(page).click();
     await askChip(page, QUESTION);
     await expect(
       answers(page)
-        .filter({ hasText: /TestPilot is the RAG project/ })
+        .filter({ hasText: /cannot answer just now/ })
         .first(),
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'Good answer' })).toHaveCount(0);

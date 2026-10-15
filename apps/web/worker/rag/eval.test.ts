@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import type { Env } from '../env';
 import { fromEnv } from '../llm';
 import { createMockProvider, mockEmbedder } from '../llm/mock';
-import { createWorkersAiEmbedder, restAi } from '../llm/workersai';
 import { buildChunks } from './chunks';
 import { capped, memoryIndexFor, parseQuestions, runEval } from './eval';
 import { buildRows, formatTable } from './eval-table';
@@ -111,22 +110,21 @@ describe('evaluation with the mock provider', () => {
 });
 
 /**
- * A live run: real Gemini (and Workers AI as the fallback) over the same questions. It spends
+ * A live run: real Gemini, for the answers and the embeddings, over the same questions. It spends
  * money and needs keys, so it only runs when asked:
- *   EVAL_LIVE=1 GEMINI_API_KEY=... CF_ACCOUNT_ID=... CF_API_TOKEN=... npx vitest run worker/rag/eval.test.ts
+ *   EVAL_LIVE=1 GEMINI_API_KEY=... npx vitest run worker/rag/eval.test.ts
+ * Use a billed key: the free tier allows about 20 answers a day, and embeddings 100 a minute.
  * EVAL_MAX_CALLS caps the calls to the model, the judge and embeddings (default 300). EVAL_JUDGE=0
  * leaves the judge out (about a third fewer calls). EVAL_BASELINE=1 adds the all-notes baseline.
  */
 describe.skipIf(process.env.EVAL_LIVE !== '1')('live evaluation', () => {
   it('reports the scores of the real model', async () => {
-    const { GEMINI_API_KEY, GEMINI_MODEL, CF_ACCOUNT_ID: acct, CF_API_TOKEN: token } = process.env;
-    if (!acct || !token) throw new Error('Set CF_ACCOUNT_ID and CF_API_TOKEN for embeddings.');
-    const ai = restAi(acct, token);
-    const env = { LLM_PROVIDER: 'gemini', GEMINI_API_KEY, GEMINI_MODEL, AI: ai } as unknown as Env;
+    const { GEMINI_API_KEY, GEMINI_MODEL } = process.env;
+    const env = { LLM_PROVIDER: 'gemini', GEMINI_API_KEY, GEMINI_MODEL } as unknown as Env;
     const models = fromEnv(env);
     if (!models) throw new Error('Set GEMINI_API_KEY.');
     const max = Number(process.env.EVAL_MAX_CALLS ?? 300);
-    const c = capped(models.provider, createWorkersAiEmbedder(ai), max);
+    const c = capped(models.provider, models.embedder, max);
     const chunks = buildChunks();
     const index = await memoryIndexFor(c.embedder, chunks);
     const out = await runEval(questions, {

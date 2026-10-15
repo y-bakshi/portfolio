@@ -10,7 +10,7 @@ import { registerEventRoutes } from './routes/events';
 
 /**
  * The whole API with the real pieces plugged in: the rate limits and spending cap, the bot check,
- * the model-backed answerer (or the keyword guide when no model is set up), the owner's view and
+ * the model-backed answerer (or one that says it cannot answer when no model is set up), the owner's view and
  * the browser events. Tests pass `overrides` to swap one piece for a fake.
  */
 export function buildApp(env: Env, overrides: Partial<Deps> = {}) {
