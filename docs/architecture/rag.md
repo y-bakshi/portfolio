@@ -56,7 +56,7 @@ Use `--local` instead of `--remote` for the local database. Re-run after any con
 | Best retrieval score | What happens | Cards in `cites` |
 |---|---|---|
 | below `contactMinScore` (default 60% of the answer threshold; `RAG_CONTACT_MIN_SCORE`), or the question tries to change the rules | plain refusal, model not called | none |
-| from `contactMinScore` up to the answer threshold | refusal, pointer to Yash, nearest cards, model not called | up to two related cards, then `contact` |
+| from `contactMinScore` up to the answer threshold | refusal, pointer to Yash, model not called | `contact` only |
 | at or above the threshold, the model says it is all "not in my notes" | the same | up to two related cards from the notes it saw, then `contact` |
 | at or above the threshold, the model answers part and names the missing part | the answer, then the pointer | the cards it cited, then `contact` |
 
