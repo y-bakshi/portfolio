@@ -1,6 +1,6 @@
 # API Design
 
-Status: the Worker, the `/api/health` route and the shared guards (request id, origin check, body limit, error format) are implemented. The chat routes are added phase by phase on the `feature/guide-chat` branch; this page is the contract they follow.
+Status: the Worker, `/api/health`, the shared guards (request id, origin check, body limit, error format) and the stored anonymous chat (`/api/session`, `/api/chat` GET, POST and DELETE, `/api/feedback`, answered by the keyword guide) are implemented. The remaining routes are added phase by phase on the `feature/guide-chat` branch; this page is the contract they follow.
 
 The API is a Hono app inside the same Cloudflare Worker that serves the site (`apps/web/worker/`). Only addresses under `/api` run code (`assets.run_worker_first`); every other address is served as a static file, so the API is same-origin: no CORS and the same cookie.
 

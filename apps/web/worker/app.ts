@@ -1,7 +1,9 @@
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
+import { defaultDeps, type Deps } from './deps';
 import type { Env } from './env';
 import { ApiError, errorBody, fromSiteOrigin } from './lib/http';
+import { registerChatRoutes } from './routes/chat';
 
 export type AppEnv = { Bindings: Env; Variables: { requestId: string } };
 
@@ -9,7 +11,7 @@ export type AppEnv = { Bindings: Env; Variables: { requestId: string } };
 export const MAX_BODY_BYTES = 8 * 1024;
 
 /** Builds the API. Only addresses under /api reach the Worker; the site itself is served as files. */
-export function createApp() {
+export function createApp(deps: Partial<Deps> = {}) {
   const app = new Hono<AppEnv>();
 
   // every response carries an id, so a failure can be traced from a report
@@ -57,6 +59,8 @@ export function createApp() {
     }
     return c.json(body);
   });
+
+  registerChatRoutes(app, { ...defaultDeps, ...deps });
 
   app.notFound((c) => {
     const error = new ApiError(404, 'not_found', 'There is nothing at this address.');

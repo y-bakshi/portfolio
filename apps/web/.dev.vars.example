@@ -1,0 +1,2 @@
+# Local secrets for `wrangler dev`. Copy this file to .dev.vars (which git ignores) and change the value.
+SESSION_SECRET=replace-me-with-a-long-random-string

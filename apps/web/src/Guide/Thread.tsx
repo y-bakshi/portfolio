@@ -1,8 +1,17 @@
-import { education, projects, roles, suggestions, type Answer } from '../content';
+import { education, projects, roles, suggestions } from '../content';
+import { Feedback } from './Feedback';
 import type { Status } from './shared';
+import type { Current } from './useChat';
+import type { Rating } from './storage';
 
-/** A finished question and its answer. */
-export type Exchange = { q: string; text: string; cites: string[] };
+/** A finished question and its answer. Only an answer the server stored has an id and can be rated. */
+export type Exchange = {
+  q: string;
+  text: string;
+  cites: string[];
+  id?: string;
+  rating?: Rating | null;
+};
 
 const nameFor = (id: string) =>
   projects.find((p) => p.id === id)?.name ??
@@ -35,12 +44,13 @@ type ThreadProps = {
   asked: string;
   status: Status;
   shown: string;
-  answer: Answer | null;
+  answer: Current | null;
   onShow: (id: string) => void;
+  onRate: (id: string, value: Rating) => void;
 };
 
 /** The whole conversation: earlier exchanges, then the question being answered. */
-export function Thread({ history, asked, status, shown, answer, onShow }: ThreadProps) {
+export function Thread({ history, asked, status, shown, answer, onShow, onRate }: ThreadProps) {
   return (
     <>
       {history.map((h, i) => (
@@ -48,6 +58,7 @@ export function Thread({ history, asked, status, shown, answer, onShow }: Thread
           <p className="msg msg-user">{h.q}</p>
           <p className="ask-lede msg-answer">{h.text}</p>
           <CiteList ids={h.cites} onShow={onShow} />
+          {h.id && <Feedback id={h.id} rating={h.rating} onRate={onRate} />}
         </div>
       ))}
       {asked && <p className="msg msg-user">{asked}</p>}
@@ -62,6 +73,9 @@ export function Thread({ history, asked, status, shown, answer, onShow }: Thread
         </p>
       )}
       {answer && status === 'ready' && <CiteList ids={answer.cites} onShow={onShow} />}
+      {answer?.id && status === 'ready' && (
+        <Feedback id={answer.id} rating={answer.rating} onRate={onRate} />
+      )}
     </>
   );
 }
