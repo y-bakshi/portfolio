@@ -87,6 +87,17 @@ describe('the Set-Cookie line', () => {
   it('decides Secure from the request address', () => {
     expect(isSecureRequest('https://yashbakshi.com/api/chat')).toBe(true);
     expect(isSecureRequest('http://localhost:8788/api/chat')).toBe(false);
+    // a phone on the same Wi-Fi trying the local server
+    expect(isSecureRequest('http://192.168.1.158:8788/api/chat')).toBe(false);
+    expect(isSecureRequest('http://10.0.0.5:8788/api/chat')).toBe(false);
+    expect(isSecureRequest('http://172.20.1.9:8788/api/chat')).toBe(false);
+    expect(isSecureRequest('http://100.79.179.12:8788/api/chat')).toBe(false);
+    expect(isSecureRequest('http://100.128.0.1/api/chat')).toBe(true);
+    // but never a public address, an unusual look-alike, or https
+    expect(isSecureRequest('http://8.8.8.8/api/chat')).toBe(true);
+    expect(isSecureRequest('http://172.32.0.1/api/chat')).toBe(true);
+    expect(isSecureRequest('http://192.168.1.158.evil.test/api/chat')).toBe(true);
+    expect(isSecureRequest('https://192.168.1.158/api/chat')).toBe(true);
     expect(isSecureRequest('http://127.0.0.1:8788/api/chat')).toBe(false);
     // plain http anywhere else is still marked Secure, so a misconfigured host fails loudly
     expect(isSecureRequest('http://example.com/api/chat')).toBe(true);

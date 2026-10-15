@@ -71,11 +71,28 @@ export function readCookie(header: string | null | undefined, name = COOKIE_NAME
 export const sessionFromHeader = (cookieHeader: string | null | undefined, secret: string) =>
   verifySession(readCookie(cookieHeader), secret);
 
-/** Secure everywhere except plain http on this computer, where the cookie would never be sent. */
+/** True for this computer and for a home or office network address (192.168.x.x, 10.x.x.x, 172.16-31.x.x) or a Tailscale one. */
+function isLocalHost(hostname: string) {
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]') return true;
+  const m = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/.exec(hostname);
+  if (!m) return false;
+  const [a, b] = [Number(m[1]), Number(m[2])];
+  // 100.64.0.0/10 is the range Tailscale hands out
+  return (
+    a === 10 ||
+    (a === 192 && b === 168) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 100 && b >= 64 && b <= 127)
+  );
+}
+
+/**
+ * Secure everywhere except plain http on this computer or its own network, where the cookie would
+ * never be sent. That lets a phone on the same Wi-Fi try the local server; a real site is https.
+ */
 export function isSecureRequest(url: string) {
   const { protocol, hostname } = new URL(url);
-  const local = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
-  return !(protocol === 'http:' && local);
+  return !(protocol === 'http:' && isLocalHost(hostname));
 }
 
 function attributes(secure: boolean, maxAge: number) {
