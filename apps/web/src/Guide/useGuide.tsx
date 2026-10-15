@@ -1,7 +1,9 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Answer, answerFor, projects } from '../content';
-import { prefersReducedMotion, type Status } from './shared';
-import { Chips, Thread, type Exchange } from './Thread';
+import { projects } from '../content';
+import { prefersReducedMotion } from './shared';
+import { loadUi, saveUi } from './storage';
+import { Chips, Thread } from './Thread';
+import { useChat } from './useChat';
 import { useFollowNewest } from './useFollowNewest';
 import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } from './useViewport';
 
@@ -10,14 +12,10 @@ import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } fr
  * shows inside the chat itself.
  */
 export function useGuide() {
-  const [question, setQuestion] = useState('');
-  const [asked, setAsked] = useState('');
-  /** Finished exchanges, oldest first. The one in progress lives in asked, answer and shown. */
-  const [history, setHistory] = useState<Exchange[]>([]);
-  const [answer, setAnswer] = useState<Answer | null>(null);
-  const [shown, setShown] = useState('');
-  const [announce, setAnnounce] = useState('');
-  const [status, setStatus] = useState<Status>('ready');
+  const saved = useRef(loadUi());
+  const [question, setQuestion] = useState(saved.current.draft);
+  const chat = useChat();
+  const { history, asked, answer, shown, announce, status } = chat;
   const [marked, setMarked] = useState<string | null>(null);
   const timers = useRef<number[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,8 +25,11 @@ export function useGuide() {
   const isMobile = useIsMobile();
   /** Phones show the conversation inside the chat; wide screens show it in the hero. */
   const showLog = isMobile;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(saved.current.open);
   const scrolled = useScrolled();
+
+  // this tab remembers whether the chat was open and what was typed but not sent
+  useEffect(() => saveUi({ open, draft: question }), [open, question]);
 
   const clearTimers = () => {
     timers.current.forEach((t) => window.clearTimeout(t));
@@ -38,8 +39,11 @@ export function useGuide() {
 
   usePinToVisualViewport(open, isMobile);
   useFollowPageEnd(open, isMobile);
+  // a chat restored open after a refresh does not steal focus; one the visitor opens does
+  const restoredOpen = useRef(saved.current.open);
   useEffect(() => {
-    if (open) inputRef.current?.focus({ preventScroll: true });
+    if (open && !restoredOpen.current) inputRef.current?.focus({ preventScroll: true });
+    restoredOpen.current = false;
   }, [open]);
   useFollowNewest({ feedRef, logRef, isMobile, asked, shown, status, count: history.length });
 
@@ -76,46 +80,9 @@ export function useGuide() {
     if (!q || status !== 'ready') return;
     setOpen(true);
     if (!showLog && window.scrollY > 0) window.scrollTo({ top: 0 });
-    clearTimers();
-    if (asked && answer)
-      setHistory((h) => [...h, { q: asked, text: answer.text, cites: answer.cites }]);
-    setAsked(q);
     setQuestion('');
-    setAnswer(null);
-    setShown('');
-    setAnnounce('');
     setMarked(null);
-    setStatus('thinking');
-
-    const result = answerFor(q);
-    const reduce = prefersReducedMotion();
-    timers.current.push(
-      window.setTimeout(
-        () => {
-          setAnswer(result);
-          setStatus('answering');
-          if (reduce) {
-            setShown(result.text);
-            setAnnounce(result.text);
-            setStatus('ready');
-            return;
-          }
-          const words = result.text.split(' ');
-          let i = 0;
-          const tick = () => {
-            i += 1;
-            setShown(words.slice(0, i).join(' '));
-            if (i < words.length) timers.current.push(window.setTimeout(tick, 28));
-            else {
-              setStatus('ready');
-              setAnnounce(result.text);
-            }
-          };
-          tick();
-        },
-        reduce ? 0 : 450,
-      ),
-    );
+    void chat.send(q);
   };
 
   const onSubmit = (e: FormEvent) => {
@@ -154,6 +121,7 @@ export function useGuide() {
       shown={shown}
       answer={answer}
       onShow={show}
+      onRate={chat.rate}
     />
   );
   const chipList = <Chips status={status} onAsk={ask} />;
@@ -167,6 +135,7 @@ export function useGuide() {
     shown,
     announce,
     status,
+    clear: chat.clear,
     marked,
     open,
     setOpen,

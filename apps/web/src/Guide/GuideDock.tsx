@@ -1,4 +1,5 @@
 import { Icon } from '../Icon';
+import { GUIDE_INTRO, SAVED_NOTICE } from './copy';
 import { statusLabel } from './shared';
 import { StatusLight } from './StatusLight';
 import type { Guide } from './useGuide';
@@ -17,6 +18,7 @@ export function GuideDock({ g }: { g: Guide }) {
     closeDock,
     onDockKey,
     scrolled,
+    clear,
     showLog,
     onSubmit,
     thread,
@@ -93,9 +95,7 @@ export function GuideDock({ g }: { g: Guide }) {
               <div className="dock-log" ref={refs.logRef}>
                 {!asked && (
                   <>
-                    <p className="chat-note">
-                      I answer from Yash’s project notes. The full version is still in development.
-                    </p>
+                    <p className="chat-note">{GUIDE_INTRO}</p>
                     {chipList}
                   </>
                 )}
@@ -105,6 +105,12 @@ export function GuideDock({ g }: { g: Guide }) {
             </>
           )}
           {!showLog && chipList}
+          <div className="chat-saved">
+            <p>{SAVED_NOTICE}</p>{' '}
+            <button type="button" className="chat-saved-clear" onClick={() => void clear()}>
+              Clear this chat
+            </button>
+          </div>
           <form className="dock-form" onSubmit={onSubmit}>
             <StatusLight status={status} />
             <label htmlFor="ask-input" className="sr-only">
