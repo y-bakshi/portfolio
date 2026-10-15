@@ -318,5 +318,357 @@
     "title": "Availability",
     "text": "Yash is looking for full-time software engineering roles and is available to start from January 2027.",
     "contentHash": "00bb1a9d69ee4c"
+  },
+  {
+    "id": "note:thryv-scope-and-numbers",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: scope and numbers",
+    "text": "Yash was a software engineering intern at Thryv from late May to mid August 2026, working on Java and Micronaut backend services. The main assignment was an initiative to move production services off a shared, schedule-based release train onto per-service pipelines with their own quality gates. He also added emergency-hotfix workflows, consolidated release pipelines, and fixed dependency vulnerabilities. By 15 August 2026 he had opened 40 pull requests across eight repositories, 34 of them merged, adding about 10,500 lines and removing about 2,000.",
+    "contentHash": "1d0fb5ef7e61e2"
+  },
+  {
+    "id": "note:thryv-build-once-promote-the-same-image-everywhere",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: build once, promote the same image everywhere",
+    "text": "Each service's pipeline built a container image once and promoted that identical image through integration, staging and production. Release tags were derived from the triggering tag on the same commit, and the deploy step resolved the image by commit SHA, so nothing was rebuilt between environments. Yash confirmed this by reading the shared deploy component's source instead of trusting its documentation. Two manual approvals sat between the three environments, and a build had to pass the build job and the load test before any release tag was cut.",
+    "contentHash": "0a2aa9c6ed634c"
+  },
+  {
+    "id": "note:thryv-approval-authority-enforced-by-the-job-not-the-click",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: approval authority enforced by the job, not the click",
+    "text": "The approval buttons in the pipeline can be pressed by anyone with access. Yash put the jobs that create the next promotion tag under a restricted CI context, so an approval from someone outside the approver group fails on context access and the promotion never happens. This turned release authority into something the system enforces rather than a convention. He also noted the limit: the restriction constrains the pipeline's tag-creation jobs, not people who push tags by hand.",
+    "contentHash": "030bc507d08341"
+  },
+  {
+    "id": "note:thryv-api-compatibility-checked-against-production-not-again",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: API compatibility checked against production, not against git",
+    "text": "Yash added a build step that downloads the API spec currently live in production and diffs it against the spec the build would ship, failing on any breaking change. He chose production over the previous commit because production is the contract consumers depend on: a breaking change merged weeks earlier but never deployed would pass a git-based check and stay green. He verified each gate twice, against the real spec and against a deliberately broken one. The checks cover six specs across four services.",
+    "contentHash": "12d910953a4682"
+  },
+  {
+    "id": "note:thryv-performance-gates-jmh-plus-k6",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: performance gates, JMH plus K6",
+    "text": "Yash added two layers of performance testing to services that had none. JMH microbenchmarks time hot-path methods, each with a regression ceiling that fails the build. K6 load tests send HTTP traffic to the running service and fail on the documented latency target, a failure-rate limit and a check-success rate. The first service got about 20 benchmarks across three classes and a K6 script over its four tracking endpoints; thresholds were calibrated from local baselines with a wide margin for noisy CI machines.",
+    "contentHash": "030a493f66d136"
+  },
+  {
+    "id": "note:thryv-the-global-thread-override-that-made-benchmarks-meanin",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: the global thread override that made benchmarks meaningless",
+    "text": "A reviewer found that the benchmark runner set the JMH thread count globally. That silently forced every benchmark to run single-threaded, including those annotated for 5 and 10 threads, so the multi-thread regression ceilings guarded nothing. Yash removed the override, re-measured genuine multi-threaded baselines and set ceilings from them. The runner now carries a comment explaining the trap, and a test fails if a renamed or removed benchmark leaves a stale threshold with no coverage.",
+    "contentHash": "1d293717725def"
+  },
+  {
+    "id": "note:thryv-why-the-benchmark-suite-took-40-minutes-and-the-0-ns-r",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: why the benchmark suite took 40 minutes, and the 0 ns result",
+    "text": "Early benchmark runs took over 40 minutes. Yash traced this to an over-broad include pattern that also matched classes JMH generates, which inherit the test entry point and re-ran the whole suite once per generated class. The first results also showed about 0 ns per call, because a stubbed Pub/Sub client returned a constant and the JIT removed the code as dead. He made the stub's return value depend on the event's fields and had each benchmark return it, so JMH consumes the result.",
+    "contentHash": "01dae3fd160bc1"
+  },
+  {
+    "id": "note:thryv-a-failing-ci-step-hid-its-own-report",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: a failing CI step hid its own report",
+    "text": "In CircleCI a failing step skips every later step, including the one that stores artifacts, so a benchmark regression would delete the report that explains it. Yash recorded the failure in an environment variable, uploaded the report, and failed the job afterwards. In Gradle he used a finalizer task rather than a final action, so the merged results and HTML report are produced even when a threshold assertion fails. He applied the same pattern in every service.",
+    "contentHash": "16d01d20870a41"
+  },
+  {
+    "id": "note:thryv-k6-details-that-avoid-false-greens-and-false-reds",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: K6 details that avoid false greens and false reds",
+    "text": "Yash added a checks-rate threshold next to the failed-request rate because K6's built-in failure metric treats a redirect as success, so a redirect-style regression would pass. In a second service he used an 80/20 read-write workload with separate latency thresholds for the slow write paths, so a fast read average cannot hide them, and marked an expected 404 as acceptable so it does not consume the error budget. Local runs there passed 2,817 of 2,817 checks with a 326 ms p95 against a 1,500 ms limit.",
+    "contentHash": "1cf726feeac660"
+  },
+  {
+    "id": "note:thryv-hermetic-harnesses-so-tests-never-touch-live-infrastru",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: hermetic harnesses so tests never touch live infrastructure",
+    "text": "To run benchmarks and load tests in CI, each service had to boot with no external dependency. Yash built stubbed Pub/Sub clients, an in-memory storage DAO, a mocked branding service and an auth bypass, and nine in-process stubs for one service covering the datastore, reCAPTCHA, task queue and identity tokens. The stubs live in the test source set so they never reach production. One CI-only failure came from a leftover local credentials file that had masked a missing credential step; he fixed the CI job.",
+    "contentHash": "18aa6757395f0e"
+  },
+  {
+    "id": "note:thryv-gates-that-started-report-only-on-purpose",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: gates that started report-only, on purpose",
+    "text": "Two of the four performance gates merged in report-only mode. Yash did not yet trust the CI baseline data enough to block builds on it, so the gate logged breaches and published the report while data accumulated, with a written plan to tighten the ceilings and switch to a hard failure after one to two weeks. His reasoning was that a gate which fires on executor noise teaches everyone to ignore it. He also recorded that the wide ceilings would catch only order-of-magnitude regressions.",
+    "contentHash": "030423ac185e5b"
+  },
+  {
+    "id": "note:thryv-keeping-benchmark-cost-off-every-pull-request",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: keeping benchmark cost off every pull request",
+    "text": "A reviewer asked whether it was intentional that the benchmark step sat in the shared build job, so every pull request paid for four fresh JVM forks with application context and database container startup. It was not. Yash moved the benchmark run to the main branch only, so PR builds skip it. In the same change he put the benchmark run and the Slack notification in one job, because separate CircleCI jobs cannot share a status variable.",
+    "contentHash": "1f2d0744c505e6"
+  },
+  {
+    "id": "note:thryv-replacing-a-live-gcp-contract-test-with-offline-avro-v",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: replacing a live-GCP contract test with offline Avro validation",
+    "text": "Yash's first Pub/Sub contract tests called the cloud schema-validation API, which needed a new production CI credential and failed with permission-denied in CI. A reviewer pointed out that Avro-JSON validation is pure Avro behaviour that can run offline. Yash deleted his own client class and rebuilt the suite to validate payloads against the same schema files that Terraform registers, which removed the credential, the single-environment limit and the apply-before-merge ordering. His demo lesson: sometimes the fix for \"I need a permission\" is to not need it.",
+    "contentHash": "02faf988dc57de"
+  },
+  {
+    "id": "note:thryv-avro-decoder-quirks-found-by-experiment",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: Avro decoder quirks found by experiment",
+    "text": "Writing the offline validator surfaced behaviours that did not match intuition. Avro's JSON decoder skips unknown fields only if they trail the known fields of a nested record, and fails when one comes first, which is how Jackson serialised one array element; Yash projected each payload onto the schema's declared fields before decoding. He also showed by direct experiment that missing fields are rejected even when the schema gives a default, nulls are rejected, and nullable unions need wrapped values that Jackson never emits.",
+    "contentHash": "05cc22900bdd28"
+  },
+  {
+    "id": "note:thryv-catching-his-own-wrong-terraform-prediction",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: catching his own wrong Terraform prediction",
+    "text": "Yash wrote in a pull request that a Terraform change would destroy and recreate a live Pub/Sub schema, with a brief not-found window as the risk. When he ran the real plan it showed two in-place updates and no destroy, and he posted that correction on his own PR before a reviewer raised it. It is one of several examples in his notes of finding his own mistake first, alongside correcting his own tag-version fix on another PR.",
+    "contentHash": "19e1881df07030"
+  },
+  {
+    "id": "note:thryv-how-the-hotfix-lane-works",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: how the hotfix lane works",
+    "text": "After an earlier incident in which a production fix was abandoned because the only route would also have shipped many unvetted changes, Yash built hotfix lanes for six services. A hotfix branch is cut from the exact commit running in production, runs the same gates as main, skips the integration deploy, and rejoins the normal chain at the staging approval. The same approval jobs and restricted context apply, so a hotfix is a narrower payload through the same gates, not a bypass. Runbooks also say when not to use it: when main is shippable, or when a rollback is faster.",
+    "contentHash": "01f7d5f7093a1b"
+  },
+  {
+    "id": "note:thryv-a-hotfix-must-not-roll-the-integration-environment-bac",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: a hotfix must not roll the integration environment backwards",
+    "text": "Yash's first design for one service let hotfix tags ride the normal release workflow. He rejected it himself in the PR description: a hotfix build is the production commit plus one fix, so deploying it to integration would silently roll integration back behind the main-derived build being tested, in the middle of an incident. He moved to a hotfix-only workflow that skips the integration deploy and meets the normal chain at staging.",
+    "contentHash": "1499effa4b2f94"
+  },
+  {
+    "id": "note:thryv-tag-collisions-a-wrong-first-fix-and-a-one-second-wind",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: tag collisions, a wrong first fix, and a one-second window",
+    "text": "Copilot flagged that two builds in the same minute would resolve to the same version, so the later publish could overwrite the first image. Yash appended the CI build number, then posted a self-correction on his own PR: CircleCI tag filters require a full-string match, so a four-segment tag would no longer match. The working fix was second-granularity timestamps, which keeps the three-segment shape and shrinks the collision window from 60 seconds to 1 second.",
+    "contentHash": "0408593b0d9a9a"
+  },
+  {
+    "id": "note:thryv-a-tag-guard-that-fails-loudly-on-a-real-collision",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: a tag guard that fails loudly on a real collision",
+    "text": "A naive idempotency guard treats any existing release tag as success, so a genuine collision reports green while the intended commit never promotes. Yash's guard skips only when the existing tag points at the same commit and otherwise fails, naming both SHAs. After Copilot pointed out a race between the check and the push, he wrapped the push to re-query and classify three outcomes, and tested all three against a local bare repository using a git wrapper that injected a concurrent tag push.",
+    "contentHash": "0dcbcec34f27b3"
+  },
+  {
+    "id": "note:thryv-folding-three-pipelines-into-one-traceable-run",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: folding three pipelines into one traceable run",
+    "text": "Staging and production releases ran as separate top-level workflows triggered by their own tags, so one release showed up as three unconnected pipeline runs. Yash folded both legs into the workflow triggered by the first tag using job dependencies, producing one graph from publish through integration, approval, staging, a second approval and production. The release and RC tags are still created, but only as audit history. His implementation for one scheduling service, covered by the first ticket he wrote himself, became the model cited in four sibling PRs.",
+    "contentHash": "0f46ac55f72c4e"
+  },
+  {
+    "id": "note:thryv-the-validator-that-passed-a-broken-tag-derivation",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: the validator that passed a broken tag derivation",
+    "text": "After the consolidation, a tag-creation step derived the production tag by stripping an `rc-` prefix from the triggering tag, but the pipeline now ran under a `ci-` tag, so it would have produced `r-ci-2026.0814.1200`. Yash found this by reading the shell body in one service and noted that `circleci config validate` passes it because the validator does not parse run blocks. The fix was then applied across the other services.",
+    "contentHash": "03beb02dec76d6"
+  },
+  {
+    "id": "note:thryv-a-lockfile-that-looked-clean-but-had-reverted-the-fix",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: a lockfile that looked clean but had reverted the fix",
+    "text": "Auditing two pull requests made by a shared dependency-fix automation, Yash found that one branch had a tidy lockfile but still resolved the vulnerable version. The tool adds a temporary yarn resolution to force the patch, then removes it and reverts package.json, but never re-resolves and checks the result, so yarn quietly moved the lock back. He added a mandatory check that the package manager still reports the patched version with a single descriptor, and documented the failure mode.",
+    "contentHash": "05170e166d5542"
+  },
+  {
+    "id": "note:thryv-the-one-front-end-change",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: the one front-end change",
+    "text": "Yash's only product-facing change swapped toast notifications for inline \"Copied\" feedback on a landing-page publish screen, using an existing shared copy button. Review found that he had migrated only the primary button and left the custom-domain one, and that the button was bound to a URL that ignores an attached custom domain. He fixed both, added 48 lines of tests, removed 120 lines of incidental CSS re-indentation, and found that a margin had no effect because the component's root is a tooltip wrapper.",
+    "contentHash": "0d0bb2eb75ff47"
+  },
+  {
+    "id": "note:thryv-the-demo-to-the-engineering-organisation",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: the demo to the engineering organisation",
+    "text": "Yash presented the migration to the product-development engineering organisation as a roughly four-minute live walkthrough, not slides. He traced one of his own documentation PRs from merge through the quality gates, integration deploy, the staging approval, staging, the production approval and production: one commit, one artifact, two human checkpoints and no manual redeploy. He closed on three points: verify rather than assume, make CI hermetic before gating on it, and sometimes avoid needing a new permission.",
+    "contentHash": "0dbcfd9c576e00"
+  },
+  {
+    "id": "note:thryv-technologies-used",
+    "sourceId": "thryv",
+    "kind": "fact",
+    "title": "Thryv: technologies used",
+    "text": "At Thryv Yash worked in Java 21 and Micronaut with Gradle multi-module builds and dependency locking, JUnit 5, Mockito and Testcontainers, PostgreSQL and Cloud Datastore, Google Cloud Pub/Sub, Storage, Tasks and GKE, Apache Avro, Terraform and CircleCI. He introduced JMH, K6 and openapi-diff to the team's services. Front-end work was Vue 3 in an Nx monorepo and a small React admin console. Static analysis and security tools included SpotBugs, Spotless, Jacoco, OWASP dependency-check and Veracode.",
+    "contentHash": "11bd72fb59a1cf"
+  },
+  {
+    "id": "note:infocenter-team-lead-role",
+    "sourceId": "insight",
+    "kind": "fact",
+    "title": "InfoCenter: team lead role",
+    "text": "At InfoCenter, an Insight Company, Yash led an eight-person ServiceNow delivery team across five concurrent client projects and mentored 12 developers in total, including four from other teams. He provided hands-on help when people were blocked and personally owned a separate client engagement end to end, covering ITSM workflows, CMDB and Discovery configuration, HRSD features, integrations, support and release management. Dates on the site are June to December 2024.",
+    "contentHash": "03ac51228eeb4f"
+  },
+  {
+    "id": "note:infocenter-quality-controls-and-coaching-effect",
+    "sourceId": "insight",
+    "kind": "fact",
+    "title": "InfoCenter: quality controls and coaching effect",
+    "text": "Yash set up peer review, implementation checklists, unit and regression testing, ServiceNow update-set validation and approval gates, and reports zero critical post-deployment defects across the five projects. His structured coaching and knowledge sharing reduced escalations by 30 percent, tracked through defect records and manager reporting. The escalations counted include technical blockers raised to senior engineers, client complaints, production incidents and delivery slips.",
+    "contentHash": "1bba3725d26750"
+  },
+  {
+    "id": "note:tcs-servicenow-developer-discovery-across-restricted-dmzs",
+    "sourceId": "tcs-dev",
+    "kind": "fact",
+    "title": "TCS ServiceNow developer: discovery across restricted DMZs",
+    "text": "Yash wrote a Python discovery tool for about 20 closed DMZ zones where ITOM Discovery could not reach. Starting from expected Cisco and other vendor device lists, it used command-line access and LLDP neighbour data from switches and routers to find connected devices. Each zone's data was collected on its own private server, and scheduled API jobs refreshed the ServiceNow CMDB every one to two hours, rotating across zones round-robin on separate threads so one zone could not block the others.",
+    "contentHash": "1f556d2b6df811"
+  },
+  {
+    "id": "note:tcs-servicenow-developer-portals-integrations-and-runbooks",
+    "sourceId": "tcs-dev",
+    "kind": "fact",
+    "title": "TCS ServiceNow developer: portals, integrations and runbooks",
+    "text": "Yash built or customised more than 100 Angular-based ServiceNow portals and request forms that prefilled and limited choices to the locations and devices each requester could access. Integrations included Azure IoT Hub device credentials feeding ITOM Discovery, a bidirectional ServiceNow and SolarWinds incident sync, and Amazon CloudWatch alerts that created or updated incidents (but did not discover AWS resources). His runbooks cut onboarding for new developers and support engineers from two weeks to five days.",
+    "contentHash": "16c5af5290d47b"
+  },
+  {
+    "id": "note:tcs-assistant-systems-engineer-scope-as-an-early-career-engi",
+    "sourceId": "tcs-ase",
+    "kind": "fact",
+    "title": "TCS assistant systems engineer: scope as an early-career engineer",
+    "text": "In his first role Yash supported RHEL, Docker and HPC operations around IBM Spectrum LSF job scheduling. He monitored CPU, memory, disk, node availability, queue and container health with Red Hat Satellite, Grafana, Prometheus and custom scripts, and the 99.9 percent uptime comes from formal SLA reports. He ran established deployment scripts, validated containers, checked logs and triaged emergency tickets under senior-engineer guidance; he did not own CI/CD, and a 25 percent deployment-time claim was withdrawn.",
+    "contentHash": "178d50f1040838"
+  },
+  {
+    "id": "note:asu-coursework-that-maps-to-projects",
+    "sourceId": "asu",
+    "kind": "fact",
+    "title": "ASU: coursework that maps to projects",
+    "text": "Several ASU courses produced projects on the site. SER 502 gave CatScript and a Prolog semantic evaluator; CSE 546 gave the serverless face recognition and edge inference work on AWS; CSE 511 gave the Kafka to Neo4j pipeline, a Neo4j graph analysis and a RocksDB key-value store (the RocksDB assignment scored 100/100, the graph assignment 60/60); SER 594 produced TestPilot; SER 541 produced the supply-chain traceability proposal and a signal-processing assignment. Course terms are not listed in the sources.",
+    "contentHash": "07bdf82f59a418"
+  },
+  {
+    "id": "note:manipal-nothing-beyond-the-site",
+    "sourceId": "manipal",
+    "kind": "fact",
+    "title": "Manipal: nothing beyond the site",
+    "text": "The sources add nothing to the site's entry for the Bachelor of Information Technology at Manipal University Jaipur (August 2017 to August 2021) beyond the résumé's coursework list: data structures and algorithms, database management systems, computer networks and object-oriented programming, plus the ServiceNow Certified System Administrator and ServiceNow Discovery certifications. No project, grade or thesis material was found.",
+    "contentHash": "03c5fde94b9e38"
+  },
+  {
+    "id": "note:testpilot-deployment-path-and-why-it-changed",
+    "sourceId": "testpilot",
+    "kind": "fact",
+    "title": "TestPilot: deployment path and why it changed",
+    "text": "TestPilot's final deployment is a React frontend on Vercel, a managed Postgres with pgvector and JWT auth, and a FastAPI plus Ollama backend in one container on Google Cloud Run with an NVIDIA L4 GPU. The April 2026 plan had named Modal as the primary compute option and Cloud Run as backup; the repository's commit on 11 April 2026 switched the backend to Cloud Run. The Cloud Run service can be kept warm with a minimum-instance setting to avoid cold starts before a demo.",
+    "contentHash": "16deef38469f3f"
+  },
+  {
+    "id": "note:guardianai-how-the-two-lane-chat-works-team-design",
+    "sourceId": "guardianai",
+    "kind": "fact",
+    "title": "GuardianAI: how the two-lane chat works (team design)",
+    "text": "The team's chat module routes each question with a rule-based Python classifier that makes no model call. Location questions take a fast lane that geocodes, queries the incident database and has Claude summarise in one streaming call, in about 1 to 2 seconds. People and group questions take a ReAct lane in which Claude calls tools in a loop capped at five iterations, in about 3 to 4 seconds. Incident cards are built server-side from database rows so the model cannot invent incidents.",
+    "contentHash": "03bc48d94cf3e1"
+  },
+  {
+    "id": "note:cv-studio-compile-pipeline-and-security-choices",
+    "sourceId": "cv-studio",
+    "kind": "fact",
+    "title": "CV Studio: compile pipeline and security choices",
+    "text": "CV Studio serialises a structured résumé into an approved LaTeX template, then compiles it asynchronously on the server: it snapshots the revision, writes TeX into an isolated temporary directory, runs pdflatex twice with shell escape disabled and a timeout, stores the log and PDF, and serves the PDF through an authenticated endpoint. Other safeguards are salted scrypt password hashing, HTTP-only same-site cookies, per-user query scoping and type- and size-limited uploads. Compilation does not yet run in a locked-down container.",
+    "contentHash": "0fb5df8d2eed25"
+  },
+  {
+    "id": "note:cv-studio-deliberately-separating-ai-from-the-write-path",
+    "sourceId": "cv-studio",
+    "kind": "fact",
+    "title": "CV Studio: deliberately separating AI from the write path",
+    "text": "The README states that AI is kept out of the document write path: a future provider adapter for Ollama or hosted models would return reviewable change proposals, and the user would approve a structured diff before anything changes a CV. No model output writes directly to a document. The AI layer is not implemented yet; the code carries TODO markers for it, for a Redis-backed compile worker, Alembic migrations and SSRF-safe job-link ingestion.",
+    "contentHash": "0dec6cda4637f6"
+  },
+  {
+    "id": "note:cv-studio-engineering-facts",
+    "sourceId": "cv-studio",
+    "kind": "fact",
+    "title": "CV Studio: engineering facts",
+    "text": "The repository has six commits, all on 21 September 2026 by Yash, and a CI workflow. The API is layered into routers, services, schemas, serializers and models; tests cover registration and sessions, user data isolation, CV editing, optimistic-concurrency conflicts, revisions, annotations and job-description persistence. The default database is SQLite, with PostgreSQL via Docker Compose. The web client uses React, Vite, Tiptap, shadcn/ui and Tailwind v4. No open-source licence has been chosen.",
+    "contentHash": "08b8adf5b3eb4a"
+  },
+  {
+    "id": "note:catscript-yash-s-documented-contribution",
+    "sourceId": "catscript",
+    "kind": "fact",
+    "title": "CatScript: Yash's documented contribution",
+    "text": "The team contribution log credits Yash with the language grammar and its PDF in EBNF, operator precedence, the AST and type hierarchy, and then the runtime value system with five types, arithmetic, comparison and logical operators with short-circuit evaluation, array operations, and the Environment class with nested scopes. About 18 hours were logged for each of milestones 2 and 3. He also wrote an RAII scope helper that fixed variables leaking out of nested blocks. The log does not name a team lead.",
+    "contentHash": "1205cb6b074e36"
+  },
+  {
+    "id": "note:catscript-how-the-pipeline-is-structured",
+    "sourceId": "catscript",
+    "kind": "fact",
+    "title": "CatScript: how the pipeline is structured",
+    "text": "CatScript runs in three phases: Flex tokenises, Bison parses into an AST with a symbol table and type checker, and a visitor-based interpreter executes it. The language has int, float, bool, string and array types, if-else used as an expression, blocks that return values, ternary, while, C-style and for-in loops, and short-circuit logic. Functions, enums, match expressions and array indexing are specified in the grammar but not implemented; the README lists them as known limitations.",
+    "contentHash": "09a9942c938c6f"
+  },
+  {
+    "id": "note:serverless-face-recognition-pipeline-design-and-tuning",
+    "sourceId": "face-recognition",
+    "kind": "fact",
+    "title": "Serverless face recognition: pipeline design and tuning",
+    "text": "A detection Lambda behind a function URL receives base64 frames, runs MTCNN, and sends detected faces to an SQS request queue; a recognition Lambda triggered by that queue runs FaceNet's InceptionResnetV1 and writes results to a response queue. Tuning notes record: response-queue visibility timeout reduced to zero (the key fix for 100 concurrent polling clients), batch size 1, long polling, memory at the 3,000 MB account limit, and pre-warmed instances. A Dockerfile bug where an ARG defined before FROM sent model weights to the wrong path was also found and fixed.",
+    "contentHash": "00d533568ccd28"
+  },
+  {
+    "id": "note:edge-inference-architecture",
+    "sourceId": "edge-inference",
+    "kind": "fact",
+    "title": "Edge inference: architecture",
+    "text": "The edge project places a Greengrass core device (one EC2 instance simulating edge hardware) that subscribes over MQTT to frames published by a client device, runs MTCNN face detection locally, and sends only detected faces to an SQS request queue. A cloud Lambda runs FaceNet recognition and writes to a response queue. A bonus path answers frames with no face entirely at the edge. Setup, deployment and verification are scripted for the core and client devices.",
+    "contentHash": "0ddc6851c0195f"
+  },
+  {
+    "id": "note:streaming-pipeline-how-the-connector-works",
+    "sourceId": "streaming-pipeline",
+    "kind": "fact",
+    "title": "Streaming pipeline: how the connector works",
+    "text": "A Python producer reads the March 2022 NYC yellow-taxi parquet file and publishes records to a Kafka topic; a custom consumer (not Kafka Connect) writes each trip into Neo4j using Bolt, merging pickup and dropoff Location nodes and creating a Trip node linked by PICKUP_AT and DROPOFF_AT relationships. Zookeeper, Kafka and Neo4j run on Kubernetes (Minikube for local work), with Neo4j installed from a Helm chart. A guide in the folder explains each manifest.",
+    "contentHash": "1092b1fcbf178c"
+  },
+  {
+    "id": "note:rocksdb-key-value-store-small-project",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "RocksDB key-value store (small project)",
+    "text": "The CSE 511 NoSQL assignment loads about 50,000 Reddit subreddit rows (a 255 MB CSV with 15 columns) into RocksDB 7.10.2 as roughly 750,000 key-value pairs keyed by row id and column name. It implements bulk load with WriteBatch, MultiGet, a range scan filtered to display-name keys, and delete. The notes report 100 of 100 on the automated tester, with a load time of about 30 seconds. Getting RocksDB 7.10.2 to build under GCC 13 needed two header edits.",
+    "contentHash": "0d3e2ea150f9f4"
+  },
+  {
+    "id": "note:general-how-the-owner-frames-his-profile",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "General: how the owner frames his profile",
+    "text": "The owner's portfolio brief positions Yash as a software engineer and former technical team lead with experience in production backend services, AI applications, enterprise platforms, cloud delivery and Linux infrastructure. It says to lead with AI application engineering and support it with backend reliability and delivery work, and warns that project metrics and award claims are owner-provided and unaudited. It also says not to promote the CV project's future plans to completed experience.",
+    "contentHash": "1cd90ca1769641"
   }
 ]

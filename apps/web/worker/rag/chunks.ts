@@ -2,6 +2,7 @@ import { education, projects, roles, smallProjects } from '../../src/content';
 import type { Entry, Project } from '../../src/content';
 import { testpilotCase } from '../../src/content/testpilot-case';
 import { facts } from './facts';
+import { notes } from './notes';
 import type { Chunk } from './types';
 
 /** A small stable hash (cyrb53) for change detection. It is not a security hash. */
@@ -95,6 +96,6 @@ export function buildChunks(): Chunk[] {
         `${s.name}. ${s.line}`,
       ),
     ),
-    ...facts.map((f) => make(f.id, f.sourceId, 'fact', f.title, f.text)),
+    ...[...facts, ...notes].map((f) => make(f.id, f.sourceId, 'fact', f.title, f.text)),
   ];
 }

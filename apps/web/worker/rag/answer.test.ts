@@ -17,11 +17,11 @@ const reply = (text: string): ChatResult => ({
   costMicroUsd: 7,
 });
 
-async function setup(provider: LlmProvider, minScore = 0.12) {
+async function setup(provider: LlmProvider, minScore = 0.12, contactMinScore?: number) {
   const chunks = buildChunks();
   const index = await memoryIndexFor(mockEmbedder, chunks);
   const models = { provider, embedder: mockEmbedder };
-  return createRagAnswerer({} as Env, { models, index, chunks, minScore });
+  return createRagAnswerer({} as Env, { models, index, chunks, minScore, contactMinScore });
 }
 
 const Q = 'What has Yash built with RAG and pgvector for TestPilot?';
@@ -48,7 +48,8 @@ describe('createRagAnswerer', () => {
 
   it('refuses a question the notes do not cover without calling the model', async () => {
     const chat = vi.fn();
-    const answerer = await setup({ chat });
+    // the mock embedder only counts shared words, so "is" and "the" give any question a small score
+    const answerer = await setup({ chat }, 0.12, 0.9);
     const out = await answerer.answer('What is the capital of France?', []);
     expect(out.text).toMatch(/not in my notes/i);
     expect(out.cites).toEqual([]);
