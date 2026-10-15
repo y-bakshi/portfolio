@@ -6,6 +6,8 @@ import { afterEach, beforeEach, vi } from 'vitest';
 export const motion = { reduce: true };
 
 beforeEach(() => {
+  // the Worker's tests run in plain Node, where there is no window to prepare
+  if (typeof window === 'undefined') return;
   motion.reduce = true;
   window.matchMedia = ((query: string) => ({
     matches: query.includes('prefers-reduced-motion') ? motion.reduce : false,
@@ -24,7 +26,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  cleanup();
   vi.useRealTimers();
+  if (typeof document === 'undefined') return;
+  cleanup();
   document.documentElement.className = '';
 });

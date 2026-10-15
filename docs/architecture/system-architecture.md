@@ -2,30 +2,29 @@
 
 ## Implemented and Planned
 
-Implemented: React + TypeScript frontend built with Vite and styled with hand-written CSS. Planned: reviewed project content, AI guide, FastAPI service, Firestore, provider adapters, App Check, and cloud deployment.
+Implemented: a React and TypeScript frontend built with Vite and styled with hand-written CSS, served as static files by a Cloudflare Worker on `yashbakshi.com`, and a Hono API in the same Worker (health check and the shared request guards). Built phase by phase on the `feature/guide-chat` branch: anonymous stored chat, retrieval-augmented answers, abuse and budget protection, usage analytics. The earlier Firebase and Cloud Run design is replaced by this one (ADR-006).
 
-![Planned architecture: browser reads static publication from Firebase Hosting; assistant calls Cloud Run, which validates access, retrieves verified content, reserves quota in Firestore, and calls model and optional speech providers.](architecture-diagram.png)
-
-The diagram is reproducible with `python3 docs/architecture/render-diagram.py` using Matplotlib. Dashed or explicitly planned components are not evidence of deployed services.
+There is no current diagram. The old one (`architecture-diagram.png`, produced by `render-diagram.py`) shows Firebase Hosting and Cloud Run and is out of date.
 
 ## Components
 
-- **Frontend:** Vite bundles the React application, CSS, and optimized assets for Firebase Hosting's CDN.
-- **Assistant:** React owns transcript, avatar, speech controls, and a validated navigation dispatcher. Keep the guide as a focused component and defer loading its heavier features until needed.
-- **API:** FastAPI on Cloud Run handles validation, App Check, anonymous sessions, quotas, retrieval, provider calls, and feedback.
-- **Knowledge artifact:** one versioned content source feeds both rendered pages and backend evidence. Begin with a small deterministic index; introduce embeddings only if evaluations justify them.
-- **Firestore:** distributed counters, budget reservations, bounded cache, redacted questions, and optional feedback. It is not the authoring database.
-- **Providers:** model and optional speech services behind interfaces. Concrete providers remain undecided.
+- **Frontend:** Vite bundles the React application, CSS and optimized assets into `dist/`, which the Worker serves with Cloudflare's static assets.
+- **Worker and API:** Hono under `/api` in the same Worker: sessions, chat, feedback, a small owner-only admin view. Same origin, so no CORS.
+- **Database:** Cloudflare D1 for chats, messages, feedback, events and chunk text. See the database design.
+- **Retrieval:** a build script turns the content modules into chunks, embeds them with Workers AI and stores the vectors in Vectorize. A question is embedded, the nearest chunks are retrieved, and the model answers from them and cites their ids.
+- **Models:** a thin `LlmProvider` interface with adapters (Gemini for answers, Workers AI for embeddings and as a fallback), reached through Cloudflare AI Gateway for logging, caching and provider fallback.
+- **Rate limits and budget:** a Durable Object holds the counters; Turnstile guards the first message.
+- **Knowledge artifact:** one versioned content source feeds both the rendered pages and the retrieval index, so they cannot drift.
 
 ## Request Boundaries
 
-Browser requests public pages without authentication. Paid API endpoints validate App Check and a server-issued anonymous session, then reserve quota before calling a provider. Use Firestore transactions across instances; never rely only on in-memory counters. Clients receive citations and an allowlisted action proposal, not executable code.
+Browsers request public pages with no authentication. The paid chat endpoint requires the anonymous chat cookie, a verified bot check on the first message, the origin check, and the rate and budget admission before any provider is called. Clients receive text, citations that name cards on the page, and nothing executable.
 
-Prefer a same-origin `/api/v1/*` Firebase Hosting rewrite to Cloud Run. Keep requests within the hosting proxy deadline; avoid long live-audio sessions in the initial version. Browser text-to-speech may bypass the backend when selected. [Hosting serverless integration](https://firebase.google.com/docs/hosting/serverless-overview)
+Because the API is under the site's own domain, there is no cross-origin traffic and no extra hostname. Keep requests short and stream answers so the first words arrive quickly.
 
 ## State and Navigation
 
-Use stable project IDs and canonical routes. Keep assistant state in focused React components. Each case study is its own static HTML page, so it has its own title and social preview tags and needs no client-side router or rewrite rule; section links use plain `#` anchors. Restore only safe short-lived UI state; never persist transcripts without an explicit decision.
+Use stable project IDs and canonical routes. Keep assistant state in focused React components. Each case study is its own static HTML page, so it has its own title and social preview tags and needs no client-side router or rewrite rule; section links use plain `#` anchors. The chat transcript is stored on the server under an anonymous id and mirrored in the browser, so a refresh restores it; the visitor is told this and can delete it.
 
 ## Failure Behavior
 

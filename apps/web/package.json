@@ -8,29 +8,34 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run check && vite build",
     "check": "tsc --noEmit",
     "preview": "vite preview",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" playwright.config.ts index.html projects/**/*.html vite.config.ts postcss.config.js tsconfig.json package.json .prettierrc.json",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" playwright.config.ts index.html projects/**/*.html vite.config.ts postcss.config.js tsconfig.json package.json .prettierrc.json",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"worker/**/*.ts\" \"e2e/**/*.ts\" playwright.config.ts index.html projects/**/*.html vite.config.ts postcss.config.js tsconfig.json package.json .prettierrc.json",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"worker/**/*.ts\" \"e2e/**/*.ts\" playwright.config.ts index.html projects/**/*.html vite.config.ts postcss.config.js tsconfig.json package.json .prettierrc.json",
     "test": "vitest run",
     "test:watch": "vitest",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "worker:dev": "wrangler dev --port 8788",
     "e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "@fontsource-variable/instrument-sans": "^5.3.0",
+    "hono": "^4.13.13",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@cloudflare/workers-types": "^5.20261014.1",
     "@playwright/test": "^1.64.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
@@ -40,6 +45,7 @@
     "prettier": "^3.9.9",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
-    "vitest": "^5.0.4"
+    "vitest": "^5.0.4",
+    "wrangler": "^4.151.0"
   }
 }
