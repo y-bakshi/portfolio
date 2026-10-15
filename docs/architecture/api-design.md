@@ -6,15 +6,21 @@ The API is a Hono app inside the same Cloudflare Worker that serves the site (`a
 
 ## Endpoints
 
-| Method / path        | Purpose                                                                                 | Protection                                             |
-| -------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `GET /api/health`    | Readiness. `?db=1` also checks the database. No provider calls, no configuration shown. | Public; cheap.                                         |
-| `POST /api/session`  | Verify the bot check and set the anonymous chat cookie.                                 | Turnstile token, network burst limit, origin check.    |
-| `GET /api/chat`      | Return this visitor's saved transcript, so a refresh restores the chat.                 | Chat cookie.                                           |
-| `POST /api/chat`     | Ask a question; the answer streams back over server-sent events.                        | Chat cookie, all rate and budget checks, origin check. |
-| `DELETE /api/chat`   | Delete this visitor's chat and its messages.                                            | Chat cookie, origin check.                             |
-| `POST /api/feedback` | A thumbs up or down on one answer.                                                      | Chat cookie, ownership check, feedback limit.          |
-| `GET /api/admin/*`   | Owner-only usage summary.                                                               | Cloudflare Access token, checked in the Worker.        |
+| Method / path                                     | Purpose                                                                                 | Protection                                             |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `GET /api/health`                                 | Readiness. `?db=1` also checks the database. No provider calls, no configuration shown. | Public; cheap.                                         |
+| `POST /api/session`                               | Verify the bot check and set the anonymous chat cookie.                                 | Turnstile token, network burst limit, origin check.    |
+| `GET /api/chat`                                   | Return this visitor's saved transcript, so a refresh restores the chat.                 | Chat cookie.                                           |
+| `POST /api/chat`                                  | Ask a question; the answer streams back over server-sent events.                        | Chat cookie, all rate and budget checks, origin check. |
+| `DELETE /api/chat`                                | Delete this visitor's chat and its messages.                                            | Chat cookie, origin check.                             |
+| `POST /api/feedback`                              | A thumbs up or down on one answer.                                                      | Chat cookie, ownership check, feedback limit.          |
+| `POST /api/events`                                | A browser-only usage event. Only `cite_clicked` with a known `sourceId`; returns 204.   | Origin check; source id checked against the content.   |
+| `GET /api/admin/summary?days=30`                  | Owner-only usage summary as JSON (1 to 90 days).                                        | Cloudflare Access token, checked in the Worker.        |
+| `GET /admin`, `/admin/app.js`, `/admin/style.css` | The owner page. Strict CSP, `no-store`, `noindex`.                                      | Cloudflare Access token, checked in the Worker.        |
+
+## Owner routes
+
+The admin routes check the `Cf-Access-Jwt-Assertion` header: RS256 only, keys from the team's certs endpoint (cached for an hour), and `iss` and `aud` must match `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD`. If either variable is missing they refuse every request. `ADMIN_DEV_BYPASS=true` skips the check for requests to `localhost` only. `/admin` is not under `/api`, so `assets.run_worker_first` lists `/admin` and `/admin/*` too. Setup: [analytics](../deployment/analytics.md).
 
 ## Rules for every route
 

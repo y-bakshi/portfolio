@@ -22,7 +22,7 @@ Unless explicitly labeled implemented, contracts and operational settings in the
 | Assets and visual references | [Asset brief](design/asset-brief.md), [reference gallery](design/references/README.md) |
 | Local development | [Setup](development/setup.md) |
 | Verification | [Testing strategy](testing/testing-strategy.md) |
-| Operations | [Deployment](deployment/deployment.md), [infrastructure](deployment/infrastructure.md) |
+| Operations | [Deployment](deployment/deployment.md), [infrastructure](deployment/infrastructure.md), [analytics](deployment/analytics.md) |
 | Technical decisions | [Previous frontend decision](decisions/ADR-001-frontend-framework.md), [current frontend decision](decisions/ADR-004-react-vite-frontend.md), [database](decisions/ADR-002-database-choice.md), [authentication](decisions/ADR-003-authentication.md) |
 | Delivery order | [Roadmap](roadmap.md) |
 
