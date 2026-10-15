@@ -38,7 +38,8 @@ describe('the corpus', () => {
   });
 
   it('matches the committed corpus.generated.json', () => {
-    const committed = readFileSync(CORPUS_PATH, 'utf8');
+    // Windows checkouts may turn line endings into CRLF
+    const committed = readFileSync(CORPUS_PATH, 'utf8').replace(/\r\n/g, '\n');
     expect(
       corpusJson(),
       'The site content changed but the corpus was not rebuilt. Run `npm run corpus:build` in apps/web and commit worker/rag/corpus.generated.json.',
