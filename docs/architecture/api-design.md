@@ -36,6 +36,6 @@ The response is `text/event-stream` with these events: `meta` (message ids), `to
 
 ## Errors
 
-`{ "error": { "code": "rate_limited", "message": "…", "retryAt": "…" }, "requestId": "…" }` with 400 for malformed input, 401 for a missing or invalid session, 403 for a failed origin or bot check, 404 for an unknown address, 413 for an oversized body, 429 for limits, and 503 for an unavailable dependency. `retryAt` is omitted when unknown; `Retry-After` is sent where meaningful. An unexpected failure returns 500 with no detail about the cause, which stays in the logs under the same request id.
+`{ "error": { "code": "rate_limited", "message": "…", "retryAt": "…" }, "requestId": "…" }` with 400 for malformed input, 401 for a missing or invalid session, 403 for a failed origin or bot check, 404 for an unknown address, 413 for an oversized body, 429 for limits, and 503 for an unavailable dependency. `retryAt` (an ISO time) is omitted when unknown; for 429 and 503 refusals from the protection layer it is always present, and routes send `Retry-After` using `retryAfterSeconds(error)` from `worker/lib/protect.ts`. The bot check (`verifyHuman` in `worker/lib/turnstile.ts`) reads the token from the `cf-turnstile-response` header or the JSON body field `turnstileToken`. An unexpected failure returns 500 with no detail about the cause, which stays in the logs under the same request id.
 
 When the API cannot answer (down, rate-limited, budget spent) the client falls back to the built-in keyword guide, so the chat never shows an error wall.
