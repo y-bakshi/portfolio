@@ -84,10 +84,10 @@ describe('the wired app', () => {
     expect(stored).not.toContain(IP);
   });
 
-  it('refuses a seventh question inside a minute, says when to come back, and records it', async () => {
+  it('refuses a 21st question inside a minute, says when to come back, and records it', async () => {
     const { post, events, tick } = setup();
     const cookie = cookieOf(await post('/api/session', {}))!;
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 20; i++) {
       expect((await post('/api/chat', { message: `question ${i}` }, cookie)).status).toBe(200);
     }
     const refused = await post('/api/chat', { message: 'one too many' }, cookie);

@@ -13,7 +13,7 @@ export type RuleSet = { by: 'visitor' | 'network'; rule: Rule }[];
 /** All the limits, in one place. Change a number here and every part follows. */
 export const RULES: Record<AdmissionKind, RuleSet> = {
   chat: [
-    { by: 'visitor', rule: { name: 'chat-burst', limit: 6, windowMs: MINUTE } },
+    { by: 'visitor', rule: { name: 'chat-burst', limit: 20, windowMs: MINUTE } },
     { by: 'visitor', rule: { name: 'chat-day', limit: 60, windowMs: DAY } },
     { by: 'network', rule: { name: 'chat-net-day', limit: 150, windowMs: DAY } },
   ],

@@ -23,9 +23,9 @@ function setup(caps = { month: 5_000_000, day: 500_000 }, extra: Partial<Env> = 
 }
 
 describe('createAdmission', () => {
-  it('allows six questions a minute, then asks the visitor to wait', async () => {
+  it('allows twenty questions a minute, then asks the visitor to wait', async () => {
     const { admit, advance } = setup();
-    for (let i = 0; i < 6; i++) expect((await admit('chat')).ok).toBe(true);
+    for (let i = 0; i < 20; i++) expect((await admit('chat')).ok).toBe(true);
     const refused = (await admit('chat')) as Refused;
     expect(refused.ok).toBe(false);
     expect(refused.error.status).toBe(429);
