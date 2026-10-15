@@ -10,9 +10,6 @@ import { admit, chatIdOf, ensureChat, readJsonObject, track } from './visitor';
 /** The chat routes: session, restore, ask, clear and feedback. */
 export function registerChatRoutes(app: Hono<AppEnv>, deps: Deps) {
   app.post('/api/session', async (c) => {
-    if (!(await deps.verifyHuman(c.req.raw, c.env))) {
-      throw new ApiError(403, 'forbidden', 'The check that you are a person did not pass.');
-    }
     const admitted = await admit(c, deps, 'session', 0);
     try {
       await ensureChat(c, deps);

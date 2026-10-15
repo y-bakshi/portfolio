@@ -36,6 +36,11 @@ export async function ensureChat(c: Ctx, deps: Deps): Promise<string> {
     else await createChat(c.env.DB, known, now);
     return known;
   }
+  // a new visitor has to pass the bot check, whichever route they arrive by: a one-use token cannot
+  // be checked twice, so it is checked here and nowhere else, and a valid cookie shows it was passed
+  if (!(await deps.verifyHuman(c.req.raw, c.env))) {
+    throw new ApiError(403, 'forbidden', 'The check that you are a person did not pass.');
+  }
   const { id, value } = await createSession(secretOf(c));
   await createChat(c.env.DB, id, now);
   c.header('set-cookie', serializeSessionCookie(value, isSecureRequest(c.req.url)), {

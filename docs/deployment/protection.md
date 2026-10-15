@@ -9,7 +9,7 @@ The chat endpoint is public and each answer costs money, so it is guarded by a b
    - `npx wrangler secret put TURNSTILE_SECRET` (the Turnstile secret key).
    - `npx wrangler secret put HMAC_SECRET` (any long random string, for example from `openssl rand -hex 32`). Without it the guarded routes refuse every request.
 3. **Require the check.** Add `"REQUIRE_TURNSTILE": "true"` to `vars` in `wrangler.jsonc`. If this is not set and the secret is missing, the check is skipped (fine for local work only).
-4. **Site key.** The widget in the page needs the site key. It is public, so it goes in the front end configuration, not in a secret.
+4. **Site key.** The page loads the check only when it is built with the site key. It is public, not a secret. Set `VITE_TURNSTILE_SITE_KEY` in the environment where the site is built: for the Cloudflare build, add it under the Worker's Settings, Build, Variables (the same place as `NODE_VERSION`); locally, put it in a `.env.local` file in `apps/web`. The page then asks Cloudflare for a one-use token (the check shows itself only if it needs the visitor to do something) and sends it with the first request that starts a chat. A new visitor must pass the check whichever route they arrive by, and the cookie that follows proves they did.
 5. **Deploy.** `npm run build`, then `npx wrangler deploy`. The first deploy creates the `Guard` Durable Object (migration `v1-guard`) and the daily cron.
 
 For local work, put `HMAC_SECRET=anything` in `apps/web/.dev.vars`. Leave `TURNSTILE_SECRET` out and the check is skipped.

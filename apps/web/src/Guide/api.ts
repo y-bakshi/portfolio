@@ -4,6 +4,7 @@
  * built-in answers without caring what went wrong.
  */
 import type { Rating, SavedMessage } from './storage';
+import { getTurnstileToken } from './turnstile';
 
 /** The API could not do what was asked: it was unreachable, slow, refused, or answered badly. */
 export class ApiFailure extends Error {
@@ -44,7 +45,10 @@ async function send(path: string, init: RequestInit, controller: AbortController
       ...init,
       credentials: 'same-origin',
       signal: controller.signal,
-      headers: init.body ? { 'content-type': 'application/json' } : undefined,
+      headers: {
+        ...(init.body ? { 'content-type': 'application/json' } : {}),
+        ...(init.headers as Record<string, string> | undefined),
+      },
     });
     if (!res.ok) throw new ApiFailure(`The API answered ${res.status}.`, res.status);
     return res;
@@ -69,9 +73,15 @@ async function json<T>(path: string, init: RequestInit): Promise<T> {
   }
 }
 
-/** Gets the visitor a chat and its cookie. */
-export const startSession = () =>
-  json<{ ok: boolean }>('/api/session', { method: 'POST', body: '{}' });
+/** Gets the visitor a chat and its cookie, with the bot check's token when the site uses one. */
+export async function startSession() {
+  const token = await getTurnstileToken();
+  return json<{ ok: boolean }>('/api/session', {
+    method: 'POST',
+    body: '{}',
+    headers: token ? { 'cf-turnstile-response': token } : undefined,
+  });
+}
 
 type ApiMessage = SavedMessage & { id: string };
 

@@ -42,6 +42,22 @@ describe('POST /api/session', () => {
     expect((await limited.post('/api/session', {})).status).toBe(429);
   });
 
+  it('makes a new visitor pass the bot check on the question route too, not only on /api/session', async () => {
+    const strict = setup({ answerer: stub('a'), verifyHuman: async () => false });
+    const res = await strict.ask('hello');
+    expect(res.status).toBe(403);
+    expect((await strict.rows('chats')).results).toHaveLength(0);
+    expect((await strict.rows('messages')).results).toHaveLength(0);
+  });
+
+  it('lets a visitor who already passed the check keep asking with just the cookie', async () => {
+    let human = true;
+    const { post, ask } = setup({ answerer: stub('a'), verifyHuman: async () => human });
+    const cookie = cookieOf(await post('/api/session', {}));
+    human = false; // a bot check token is used once; the cookie is what proves it from now on
+    expect((await ask('hello', cookie)).status).toBe(200);
+  });
+
   it('answers 503 when no secret is configured', async () => {
     const { app, env } = setup();
     const bare = { ...env, SESSION_SECRET: '' } as Env;
