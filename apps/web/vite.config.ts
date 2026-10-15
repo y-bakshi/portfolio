@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { prerenderPlugin } from './vite.prerender';
 import { sitePlugin } from './vite.site';
 
 export default defineConfig({
-  plugins: [react(), sitePlugin()],
+  plugins: [react(), sitePlugin(), prerenderPlugin()],
   // every page is its own HTML file, so there is no single-page fallback
   appType: 'mpa',
   build: {
