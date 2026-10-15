@@ -16,7 +16,7 @@ import {
 } from './eval-metrics';
 import { claimSentences } from './eval-text';
 import type { EvalQuestion } from './eval-types';
-import { CONTACT_POINTER, NOT_IN_NOTES, RELATED_NOTE } from './gap';
+import { CONTACT_POINTER, NOT_IN_NOTES } from './gap';
 
 const chunks = buildChunks();
 const note = (id: string) => chunks.find((c) => c.id === id)!;
@@ -83,7 +83,7 @@ describe('faithfulness', () => {
   });
 
   it('does not count the sentences the site writes as claims', () => {
-    const text = `Yash was an intern at Thryv. His pay is not in my notes. ${CONTACT_POINTER} ${RELATED_NOTE}`;
+    const text = `Yash was an intern at Thryv. His pay is not in my notes. ${CONTACT_POINTER}`;
     expect(claimSentences(text)).toEqual(['Yash was an intern at Thryv.']);
     expect(claimSentences(NOT_IN_NOTES)).toEqual([]);
     expect(faithful(sample(NOT_IN_NOTES, [], notes))).toEqual({ pass: 0, of: 0 });

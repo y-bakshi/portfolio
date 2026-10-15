@@ -6,7 +6,7 @@ import { mockEmbedder } from '../llm/mock';
 import type { ChatResult, LlmProvider } from '../llm/types';
 import { createRagAnswerer } from './answer';
 import { buildChunks } from './chunks';
-import { CONTACT_POINTER, NOT_IN_NOTES, RELATED_NOTE } from './gap';
+import { CONTACT_POINTER, NOT_IN_NOTES } from './gap';
 import type { VectorIndex } from './types';
 
 const reply = (text: string): ChatResult => ({
@@ -51,15 +51,13 @@ describe('when the notes cannot answer', () => {
     expect(provider.chat).not.toHaveBeenCalled();
   });
 
-  it('points a near miss to Yash and shows the nearest cards, without calling the model', async () => {
+  it('points a near miss to Yash, with only the contact card, without calling the model', async () => {
     const { answerer, provider } = setup(0.4);
     const out = await answerer.answer(Q, []);
     expect(out.text).toMatch(/not in my notes yet/i);
     expect(out.text).toContain(CONTACT_POINTER);
-    expect(out.text).toContain(RELATED_NOTE);
-    // two related cards (the general notes are not a card), then the contact section
-    expect(out.cites).toEqual(['testpilot', 'thryv', 'contact']);
-    expect(out.meta?.retrievalIds).toEqual(['project:testpilot#detail', 'role:thryv']);
+    // the nearest notes by score are a guess, so only the contact section is offered
+    expect(out.cites).toEqual(['contact']);
     expect(out.text).not.toContain('—');
     expect(provider.chat).not.toHaveBeenCalled();
   });
@@ -76,13 +74,13 @@ describe('when the notes cannot answer', () => {
     }
   });
 
-  it('adds the pointer and the nearest cards when the model says it is not in the notes', async () => {
+  it('adds the pointer and the contact card when the model says it is not in the notes', async () => {
     const { answerer } = setup(0.8, async () =>
       reply('That is not in my notes. [project:testpilot#detail]'),
     );
     const out = await answerer.answer(Q, []);
-    expect(out.text).toBe(`That is not in my notes. ${CONTACT_POINTER} ${RELATED_NOTE}`);
-    expect(out.cites).toEqual(['testpilot', 'thryv', 'contact']);
+    expect(out.text).toBe(`That is not in my notes. ${CONTACT_POINTER}`);
+    expect(out.cites).toEqual(['contact']);
   });
 
   it('keeps the cards of the part it answered, and adds only the contact card, for a partial answer', async () => {

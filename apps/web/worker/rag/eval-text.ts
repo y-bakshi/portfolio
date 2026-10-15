@@ -1,4 +1,4 @@
-import { CONTACT_POINTER, NOT_IN_NOTES, NOT_IN_NOTES_RE, RELATED_NOTE } from './gap';
+import { CONTACT_POINTER, NOT_IN_NOTES, NOT_IN_NOTES_RE } from './gap';
 
 // words that carry no claim, so a sentence is judged on its content words only
 const STOP = new Set(
@@ -28,9 +28,7 @@ export const sentences = (text: string) =>
     .filter(Boolean);
 
 // every sentence the site writes itself: the pointer, the nearest-cards line and the plain refusal
-const SITE_SENTENCES = new Set(
-  [NOT_IN_NOTES, CONTACT_POINTER, RELATED_NOTE].flatMap((t) => sentences(t)),
-);
+const SITE_SENTENCES = new Set([NOT_IN_NOTES, CONTACT_POINTER].flatMap((t) => sentences(t)));
 
 /**
  * The sentences that make claims. The refusal sentence, the pointer to Yash and the line about the

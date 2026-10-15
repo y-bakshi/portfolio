@@ -22,12 +22,10 @@ export const NEAR_MISS = 'That is not in my notes yet.';
 export const CONTACT_POINTER =
   'Yash can answer this himself, and the contact section has his email and a booking link.';
 
-export const RELATED_NOTE = 'The nearest things on this site are shown below.';
-
 /**
  * Below this share of the answer threshold a question is treated as unrelated to Yash (the weather,
  * a poem), so it gets no pointer. At or above it, but under the threshold, related notes exist but
- * do not answer: the guide refuses, points to Yash and shows the nearest cards. A score is a blunt
+ * do not answer: the guide refuses and points to Yash. A score is a blunt
  * judge of "about Yash", so this is a starting value to tune with the live eval.
  */
 export const CONTACT_RATIO = 0.6;
@@ -45,31 +43,23 @@ const sentences = (text: string) => text.split(/(?<=[.!?])\s+/).filter(Boolean);
 /** An answer is partial when something besides the "not in my notes" sentence is left. */
 export const isPartial = (text: string) => sentences(text).some((s) => !NOT_IN_NOTES_RE.test(s));
 
-/** Up to two page cards behind the best notes, for the visitor to read instead. */
-export function relatedCards(chunks: Chunk[], registry: ReadonlySet<string>, max = 2): string[] {
-  const ids = chunks.map((c) => c.sourceId).filter((s) => s !== 'contact' && registry.has(s));
-  return [...new Set(ids)].slice(0, max);
-}
-
 /**
  * Adds the way forward to an answer that says something is not in the notes. A full refusal gets
- * the related cards; a partial one keeps the cards of the part it did answer. Both get `contact`.
+ * only the contact card, since the nearest notes by score are a guess; a partial one keeps the cards
+ * of the part it did answer, plus `contact`.
  */
 export function withPointer(
   text: string,
   question: string,
   claimCites: string[],
   given: Chunk[],
-  registry: ReadonlySet<string>,
 ): { text: string; cites: string[]; retrieved: string[] } {
   if (looksLikeInjection(question)) return { text, cites: [], retrieved: [] };
   const partial = isPartial(text);
-  const related = partial ? [] : relatedCards(given, registry);
-  const cites = [...new Set([...(partial ? claimCites : related), 'contact'])];
-  const note = related.length ? ` ${RELATED_NOTE}` : '';
+  const cites = [...new Set([...(partial ? claimCites : []), 'contact'])];
   const has = text.includes(CONTACT_POINTER);
   return {
-    text: has ? text : `${text} ${CONTACT_POINTER}${note}`,
+    text: has ? text : `${text} ${CONTACT_POINTER}`,
     cites,
     retrieved: given.filter((c) => cites.includes(c.sourceId)).map((c) => c.id),
   };

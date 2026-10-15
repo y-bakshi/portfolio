@@ -72,7 +72,7 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
     const near = retrieval.hits.slice(0, take).map((h) => h.chunk);
     // close to the notes but not enough to answer: refuse, point to Yash, show the nearest cards
     if (topScore < minScore) {
-      const g = withPointer(NEAR_MISS, question, [], near, registryIds);
+      const g = withPointer(NEAR_MISS, question, [], near);
       return {
         refuse: { text: g.text, cites: g.cites, meta: { ...meta, retrievalIds: g.retrieved } },
       };
@@ -89,7 +89,7 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
     let text = stripMarkers(raw) || 'That is not in my notes.';
     let cites = validateCites(raw, p.given, registryIds).sourceIds;
     if (NOT_IN_NOTES_RE.test(text)) {
-      const g = withPointer(text, p.question, cites, p.given, registryIds);
+      const g = withPointer(text, p.question, cites, p.given);
       ({ text, cites } = g);
     }
     return {
