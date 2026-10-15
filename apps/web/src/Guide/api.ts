@@ -11,6 +11,8 @@ export class ApiFailure extends Error {
   constructor(
     message: string,
     readonly status?: number,
+    /** The server's own words for a limit or a pause, which tell the visitor when to come back. */
+    readonly notice?: string,
   ) {
     super(message);
   }
@@ -39,6 +41,17 @@ function watchdog(controller: AbortController, ms: number) {
   };
 }
 
+/** The message in a limit or pause response, when it has one. */
+async function noticeFrom(res: Response): Promise<string | undefined> {
+  try {
+    const body = (await res.json()) as { error?: { message?: unknown } };
+    const message = body.error?.message;
+    return typeof message === 'string' && message.length < 300 ? message : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function send(path: string, init: RequestInit, controller: AbortController) {
   try {
     const res = await fetch(path, {
@@ -50,7 +63,10 @@ async function send(path: string, init: RequestInit, controller: AbortController
         ...(init.headers as Record<string, string> | undefined),
       },
     });
-    if (!res.ok) throw new ApiFailure(`The API answered ${res.status}.`, res.status);
+    if (!res.ok) {
+      const notice = res.status === 429 || res.status === 503 ? await noticeFrom(res) : undefined;
+      throw new ApiFailure(`The API answered ${res.status}.`, res.status, notice);
+    }
     return res;
   } catch (error) {
     if (error instanceof ApiFailure) throw error;

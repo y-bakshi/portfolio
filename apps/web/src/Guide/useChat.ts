@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { unavailableAnswer, type Answer } from '../content';
-import { askStream, clearChat, loadChat, sendFeedback, startSession } from './api';
+import { ApiFailure, askStream, clearChat, loadChat, sendFeedback, startSession } from './api';
 import { toExchanges, toMessages } from './exchanges';
 import { createReveal, wordsOf } from './reveal';
 import { prefersReducedMotion, type Status } from './shared';
@@ -130,14 +130,18 @@ export function useChat() {
         cites: result.cites,
         id: result.assistantMessageId || undefined,
       };
-    } catch {
+    } catch (error) {
       if (!live()) return;
       // the API is down, slow or refusing: say so plainly, and store nothing
       writer.cancel();
       writer = createReveal(setShown);
       reveal.current = writer;
       setShown('');
-      final = unavailableAnswer;
+      // a limit or a pause says when to come back; anything else gets the plain message
+      final =
+        error instanceof ApiFailure && error.notice
+          ? { text: error.notice, cites: ['contact'] }
+          : unavailableAnswer;
       await pause(reduce ? 0 : Math.max(0, THINK_MS - (Date.now() - started)));
       if (!live()) return;
       setStatus('answering');

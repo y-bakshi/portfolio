@@ -124,6 +124,25 @@ describe('the stored guide chat', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows the words the server sends when it says to come back later', async () => {
+    fakeApi({
+      'GET /api/chat': transcript([]),
+      'POST /api/session': ok,
+      'POST /api/chat': () =>
+        Response.json(
+          { error: { code: 'rate_limited', message: 'Please try again in 40 seconds.' } },
+          { status: 429 },
+        ),
+    });
+    const user = userEvent.setup();
+    render(<Home />);
+    await user.click(bar());
+    await user.type(input(), 'Tell me about his education{Enter}');
+    expect(
+      await screen.findByText('Please try again in 40 seconds.', { selector: '.msg-answer' }),
+    ).toBeInTheDocument();
+  });
+
   it('sends a thumb to the feedback route and shows it pressed', async () => {
     const api = fakeApi({
       'GET /api/chat': transcript(stored),

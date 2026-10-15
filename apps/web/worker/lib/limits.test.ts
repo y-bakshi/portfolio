@@ -57,7 +57,7 @@ describe('limits', () => {
     const names = Object.fromEntries(
       Object.entries(RULES).map(([k, v]) => [k, v.map((r) => `${r.rule.name}:${r.rule.limit}`)]),
     );
-    expect(names.chat).toEqual(['chat-burst:3', 'chat-day:20', 'chat-net-day:40']);
+    expect(names.chat).toEqual(['chat-burst:6', 'chat-day:60', 'chat-net-day:150']);
     expect(names.session).toEqual(['session-burst:10']);
     expect(names.feedback).toEqual(['feedback-day:30']);
   });

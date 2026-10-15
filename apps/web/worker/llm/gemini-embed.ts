@@ -11,8 +11,8 @@ export function createGeminiEmbedder(options: { apiKey: string; fetch?: FetchLik
   const doFetch = retryOnce(options.fetch ?? ((url, init) => fetch(url, init)));
   return {
     dimensions: GEMINI_EMBED_DIMENSIONS,
-    // live scores so far: answerable questions 0.70+, unanswerable 0.50 to 0.55; a starting point, tune it
-    suggestedMinScore: 0.62,
+    // live scores: specific questions 0.68+, general ones about 0.55, off-topic about 0.50; borderline goes to the model
+    suggestedMinScore: 0.5,
     async embed(texts) {
       const vectors: number[][] = [];
       for (let i = 0; i < texts.length; i += BATCH) {
