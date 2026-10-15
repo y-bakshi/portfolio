@@ -49,17 +49,20 @@ describe('createRagAnswerer', () => {
   it('refuses a question the notes do not cover without calling the model', async () => {
     const chat = vi.fn();
     const answerer = await setup({ chat });
-    const out = await answerer.answer('Write me a poem about the sea', []);
+    const out = await answerer.answer('What is the capital of France?', []);
     expect(out.text).toMatch(/not in my notes/i);
     expect(out.cites).toEqual([]);
     expect(chat).not.toHaveBeenCalled();
   });
 
-  it('gives no cards when the model itself says it is not in the notes', async () => {
+  it('drops the cards it cited when the model itself says it is not in the notes', async () => {
     const answerer = await setup({
-      chat: async () => reply('That is not in my notes. [project:testpilot#detail]'),
+      chat: async () => reply('That is not in my notes. [project:made-up#detail]'),
     });
-    expect((await answerer.answer(Q, [])).cites).toEqual([]);
+    const out = await answerer.answer(Q, []);
+    // the way forward, not the invented card (see answer-gap.test.ts for the rest)
+    expect(out.cites).toContain('contact');
+    expect(out.cites).not.toContain('made-up');
   });
 
   it('falls back to the keyword answer when the model fails', async () => {

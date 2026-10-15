@@ -26,6 +26,8 @@ export interface Env {
   LLM_PROVIDER?: string;
   /** Lowest retrieval score (0 to 1) that is still answered from the notes. */
   RAG_MIN_SCORE?: string;
+  /** Lowest retrieval score that still gets the pointer to Yash when the notes cannot answer. Default: 60% of RAG_MIN_SCORE. */
+  RAG_CONTACT_MIN_SCORE?: string;
   /** Rate-limit counters and the spend total (class Guard). */
   GUARD: DurableObjectNamespace;
   /** Secret for the keyed hashes that stand in for IP addresses. */
