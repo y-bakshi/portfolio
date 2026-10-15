@@ -8,4 +8,10 @@ export interface Env {
   DB: D1Database;
   /** The address the site is served from; the only origin allowed to change anything. */
   SITE_ORIGIN?: string;
+  /** Cloudflare Access team, for example `myteam.cloudflareaccess.com`. Unset: /admin refuses all. */
+  ACCESS_TEAM_DOMAIN?: string;
+  /** The audience tag of the Access application that protects /admin. Unset: /admin refuses all. */
+  ACCESS_AUD?: string;
+  /** Exactly 'true' lets /admin skip Access, on localhost only. For local development. */
+  ADMIN_DEV_BYPASS?: string;
 }
