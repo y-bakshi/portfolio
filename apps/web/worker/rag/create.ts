@@ -15,5 +15,10 @@ export const unavailableAnswerer: Answerer = {
 export function createAnswerer(env: Env, options: RagOptions = {}): Answerer {
   const models = options.models ?? fromEnv(env);
   if (!models) return unavailableAnswerer;
-  return createRagAnswerer(env, { ...options, models });
+  // say why a visitor got "cannot answer", without logging the question, the notes or any key
+  const onError =
+    options.onError ??
+    ((error: unknown) =>
+      console.error('guide could not answer:', error instanceof Error ? error.message : 'unknown'));
+  return createRagAnswerer(env, { ...options, models, onError });
 }

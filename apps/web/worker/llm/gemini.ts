@@ -5,6 +5,7 @@ import {
   PRICES,
   PROVIDER_TIMEOUT_MS,
 } from './constants';
+import { retryOnce } from './retry';
 import { sseData } from './sse';
 import type { ChatRequest, ChatResult, FetchLike, LlmProvider } from './types';
 
@@ -44,7 +45,7 @@ const textOf = (part: Part) =>
 /** The Gemini REST API over fetch. The key goes in a header; nothing here logs a prompt or a key. */
 export function createGemini(options: GeminiOptions): LlmProvider {
   const model = options.model || DEFAULT_GEMINI_MODEL;
-  const doFetch: FetchLike = options.fetch ?? ((url, init) => fetch(url, init));
+  const doFetch = retryOnce(options.fetch ?? ((url, init) => fetch(url, init)));
   const price = PRICES[model] ?? FALLBACK_PRICE;
 
   async function call(method: string, request: ChatRequest) {

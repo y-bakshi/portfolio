@@ -1,3 +1,4 @@
+import { retryOnce } from './retry';
 import type { Embedder, FetchLike } from './types';
 
 const URL_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
@@ -7,7 +8,7 @@ const BATCH = 50;
 
 /** Gemini embeddings, cut to 768 numbers so they match the Workers AI size and the Vectorize index. */
 export function createGeminiEmbedder(options: { apiKey: string; fetch?: FetchLike }): Embedder {
-  const doFetch = options.fetch ?? fetch;
+  const doFetch = retryOnce(options.fetch ?? ((url, init) => fetch(url, init)));
   return {
     dimensions: GEMINI_EMBED_DIMENSIONS,
     // live scores so far: answerable questions 0.70+, unanswerable 0.50 to 0.55; a starting point, tune it
@@ -26,7 +27,10 @@ export function createGeminiEmbedder(options: { apiKey: string; fetch?: FetchLik
             })),
           }),
         });
-        if (!res.ok) throw new Error(`gemini embeddings ${res.status}`);
+        if (!res.ok)
+          throw new Error(
+            `gemini embeddings ${res.status}: ${(await res.text()).replace(/\s+/g, ' ').slice(0, 240)}`,
+          );
         const out = (await res.json()) as { embeddings?: { values?: number[] }[] };
         const batch = out.embeddings?.map((e) => e.values);
         if (!batch || batch.length !== Math.min(BATCH, texts.length - i) || batch.some((v) => !v))
