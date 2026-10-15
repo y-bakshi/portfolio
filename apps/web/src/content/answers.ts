@@ -37,7 +37,7 @@ export function answerFor(question: string): Answer {
     };
   if (has('agent', 'react', 'tool use', 'tool-use'))
     return {
-      text: 'GuardianAI has a ReAct path for open-ended questions, next to a cheaper database-summary path for known incidents. It was a four-person team project.',
+      text: 'GuardianAI has a ReAct path for open-ended questions, next to a cheaper database-summary path for known incidents. Yash designed this split. It was a four-person team project.',
       cites: find(['guardianai']),
     };
   if (has('backend', 'service', 'api', 'java', 'micronaut', 'ci', 'production'))
@@ -57,12 +57,12 @@ export function answerFor(question: string): Answer {
     };
   if (has('rust', 'process', 'monitor', 'dashboard'))
     return {
-      text: 'ProcWatch is a Rust process monitor. It reads metrics with sysinfo and streams CPU and memory updates to a live web dashboard over WebSockets.',
+      text: 'ProcWatch is a Rust terminal process monitor for Linux and WSL. It reads /proc for per-process CPU and memory, flags spawn, exit, CPU-spike and memory-growth events, and writes session logs. A web dashboard is planned, not built.',
       cites: find(['procwatch']),
     };
   if (has('gemini', 'story', 'stories', 'children', 'multimodal'))
     return {
-      text: 'The Gemini story generator takes a child\u2019s age, theme and characters from a React interface, and a FastAPI service prompts Gemini for a story and matching images.',
+      text: 'The Gemini story generator was a hackathon team project. A React interface sends one story prompt to a FastAPI service, which asks Gemini for an eight-part story and its pictures.',
       cites: find(['story-generator']),
     };
   if (has('education', 'degree', 'school', 'universit', 'study', 'certif', 'asu'))

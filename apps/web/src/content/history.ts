@@ -8,7 +8,7 @@ export const roles: Entry[] = [
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
-    note: 'Independent deployment for five Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.',
+    note: 'Independent deployment for the team’s Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.',
   },
   {
     id: 'insight',

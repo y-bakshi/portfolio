@@ -6,7 +6,7 @@ export const testpilotCase = {
   built: [
     'I led the AI pipeline, the model integration and the backend. Coding standards are split into chunks, embedded with all-MiniLM-L6-v2 and stored in pgvector. For each request the five closest chunks go into a structured prompt, and a local Qwen Coder 7B model, served by Ollama on a Cloud Run GPU, streams the tests back as they are written.',
     'A second pass scores each result for correctness, assertion quality, edge-case coverage and readability. Anything below 0.6 is regenerated with the critique as feedback.',
-    'The defect heatmap scans a public GitHub repository with PyDriller and Radon and ranks files with a Random Forest. A teammate trained that model, and the team fine-tuned the generator with QLoRA on 10,000 Methods2Test pairs, keeping the training, validation and test splits separate.',
+    'The defect heatmap scans a public GitHub repository with PyDriller and Radon and ranks files with a Random Forest. I trained that model and fine-tuned the generator with QLoRA on 10,000 Methods2Test pairs, keeping the training, validation and test splits separate.',
   ],
   results: [
     {

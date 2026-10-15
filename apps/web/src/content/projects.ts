@@ -8,7 +8,7 @@ export const projects: Project[] = [
     line: 'Writes tests, then argues with them.',
     detail:
       'Generates pytest, Jest and JUnit tests and ranks defect-prone files in public GitHub repositories. It retrieves the five most relevant coding-standard chunks first, drafts the tests against them, and an LLM critique loop regenerates anything scoring below 0.6.',
-    role: 'Led the AI pipeline, model integration and backend of a four-person team project.',
+    role: 'Owned everything except the frontend on a four-person team: the AI pipeline, model fine-tuning, defect prediction, CI/CD and the backend.',
     stack: [
       'FastAPI',
       'Qwen via Ollama',
@@ -73,7 +73,7 @@ export const projects: Project[] = [
     line: 'Two ways to answer a safety question.',
     detail:
       'A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed. The team later renamed it CityWatch, which is the name its live demo shows. It is a different project from the AWS Ideathon entry below.',
-    role: 'Contributed within a four-person team.',
+    role: 'Designed the two-lane chat architecture and built the safety data pipeline, on a four-person team.',
     stack: ['Next.js', 'TypeScript', 'FastAPI', 'Claude', 'PostgreSQL', 'Mapbox', 'WebSockets'],
     links: [{ label: 'Live demo', href: 'https://city-watch-frontend.vercel.app/' }],
     trace: [
@@ -89,7 +89,7 @@ export const projects: Project[] = [
     name: 'CatScript',
     line: 'A small programming language, lexer to interpreter.',
     detail:
-      'A C++17 language with a lexer, a 400-line grammar, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.',
+      'A C++17 language with a lexer, a grammar of over 450 lines, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.',
     role: 'Led a four-person team.',
     stack: ['C++17', 'Flex', 'Bison', 'Make'],
     links: [{ label: 'GitHub', href: 'https://github.com/y-bakshi/SER502-CatScript-Team8' }],
@@ -104,17 +104,17 @@ export const projects: Project[] = [
   {
     id: 'procwatch',
     name: 'ProcWatch',
-    line: 'A process monitor that streams to a browser.',
+    line: 'A terminal process monitor for Linux and WSL.',
     detail:
-      'A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.',
+      'A Rust terminal monitor built with Ratatui. It reads /proc for per-process CPU and memory, shows spawn, exit, CPU-spike and memory-growth events, writes rotating JSONL session logs and exports an incident bundle. A web dashboard is planned.',
     role: 'Built on my own.',
-    stack: ['Rust', 'sysinfo', 'clap', 'WebSockets'],
+    stack: ['Rust', 'Ratatui', 'tokio', '/proc'],
     links: [{ label: 'GitHub', href: 'https://github.com/y-bakshi/procwatch' }],
     trace: [
-      { label: 'Collect metrics', depth: 0 },
-      { label: 'Filter', depth: 1 },
-      { label: 'WebSocket stream', depth: 2 },
-      { label: 'Live dashboard', depth: 3 },
+      { label: 'Read /proc', depth: 0 },
+      { label: 'Detect events', depth: 1 },
+      { label: 'Terminal UI', depth: 2 },
+      { label: 'Session logs', depth: 3 },
     ],
   },
   {
@@ -166,10 +166,10 @@ export const projects: Project[] = [
     line: 'Stories and pictures for children.',
     detail:
       'A React and Vite interface and a FastAPI service collect a child\u2019s age, theme and characters, then prompt Gemini for a story and matching images, for ages 4 to 12.',
-    role: 'Built the React interface and the FastAPI service.',
+    role: 'Hackathon team project.',
     stack: ['React', 'Vite', 'FastAPI', 'Python', 'Gemini API'],
     trace: [
-      { label: 'Story preferences', depth: 0 },
+      { label: 'Story prompt', depth: 0 },
       { label: 'Build the prompt', depth: 1 },
       { label: 'Gemini', depth: 2 },
       { label: 'Story and images', depth: 3 },

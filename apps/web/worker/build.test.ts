@@ -162,8 +162,8 @@ describe('the wired app', () => {
       models: { provider: createMockProvider(), embedder: mockEmbedder },
       index: await memoryIndexFor(mockEmbedder, chunks),
       chunks,
-      // the question below scores about 0.1: related notes, but not enough to answer
-      minScore: 0.12,
+      // the question below finds related notes, but none close enough to answer from
+      minScore: 0.9,
       contactMinScore: 0.05,
     });
     const { env, post, events } = setup({}, { answerer });

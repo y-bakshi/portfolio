@@ -12,8 +12,8 @@
     "sourceId": "testpilot",
     "kind": "project",
     "title": "TestPilot: role and stack",
-    "text": "Yash's part in TestPilot: Led the AI pipeline, model integration and backend of a four-person team project. Built with FastAPI, Qwen via Ollama, RAG, pgvector, Random Forest, Docker, Cloud Run. The pipeline runs: Read repository, then Retrieve coding standards, then Draft tests, then Critique gate, then Keep or redraft.",
-    "contentHash": "155591a0848c0f"
+    "text": "Yash's part in TestPilot: Owned everything except the frontend on a four-person team: the AI pipeline, model fine-tuning, defect prediction, CI/CD and the backend. Built with FastAPI, Qwen via Ollama, RAG, pgvector, Random Forest, Docker, Cloud Run. The pipeline runs: Read repository, then Retrieve coding standards, then Draft tests, then Critique gate, then Keep or redraft.",
+    "contentHash": "1cf9f8c9e77392"
   },
   {
     "id": "project:citywatch#detail",
@@ -60,16 +60,16 @@
     "sourceId": "guardianai",
     "kind": "project",
     "title": "GuardianAI: role and stack",
-    "text": "Yash's part in GuardianAI: Contributed within a four-person team. Built with Next.js, TypeScript, FastAPI, Claude, PostgreSQL, Mapbox, WebSockets. The pipeline runs: Incident map and feeds, then Route the question, then Summary path, then ReAct path, then Safety response. Links: Live demo: https://city-watch-frontend.vercel.app/.",
-    "contentHash": "1f4c365d492649"
+    "text": "Yash's part in GuardianAI: Designed the two-lane chat architecture and built the safety data pipeline, on a four-person team. Built with Next.js, TypeScript, FastAPI, Claude, PostgreSQL, Mapbox, WebSockets. The pipeline runs: Incident map and feeds, then Route the question, then Summary path, then ReAct path, then Safety response. Links: Live demo: https://city-watch-frontend.vercel.app/.",
+    "contentHash": "02359cf1853ffc"
   },
   {
     "id": "project:catscript#detail",
     "sourceId": "catscript",
     "kind": "project",
     "title": "CatScript",
-    "text": "CatScript. A small programming language, lexer to interpreter. A C++17 language with a lexer, a 400-line grammar, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.",
-    "contentHash": "0d16b9969284bc"
+    "text": "CatScript. A small programming language, lexer to interpreter. A C++17 language with a lexer, a grammar of over 450 lines, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.",
+    "contentHash": "0af027a8c4a44a"
   },
   {
     "id": "project:catscript#build",
@@ -84,16 +84,16 @@
     "sourceId": "procwatch",
     "kind": "project",
     "title": "ProcWatch",
-    "text": "ProcWatch. A process monitor that streams to a browser. A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.",
-    "contentHash": "14dc3a3279be78"
+    "text": "ProcWatch. A terminal process monitor for Linux and WSL. A Rust terminal monitor built with Ratatui. It reads /proc for per-process CPU and memory, shows spawn, exit, CPU-spike and memory-growth events, writes rotating JSONL session logs and exports an incident bundle. A web dashboard is planned.",
+    "contentHash": "0b70ffd66f235a"
   },
   {
     "id": "project:procwatch#build",
     "sourceId": "procwatch",
     "kind": "project",
     "title": "ProcWatch: role and stack",
-    "text": "Yash's part in ProcWatch: Built on my own. Built with Rust, sysinfo, clap, WebSockets. The pipeline runs: Collect metrics, then Filter, then WebSocket stream, then Live dashboard. Links: GitHub: https://github.com/y-bakshi/procwatch.",
-    "contentHash": "16fd3df9b65af0"
+    "text": "Yash's part in ProcWatch: Built on my own. Built with Rust, Ratatui, tokio, /proc. The pipeline runs: Read /proc, then Detect events, then Terminal UI, then Session logs. Links: GitHub: https://github.com/y-bakshi/procwatch.",
+    "contentHash": "1b01fed0f27e41"
   },
   {
     "id": "project:streaming-pipeline#detail",
@@ -156,8 +156,8 @@
     "sourceId": "story-generator",
     "kind": "project",
     "title": "Gemini story generator: role and stack",
-    "text": "Yash's part in Gemini story generator: Built the React interface and the FastAPI service. Built with React, Vite, FastAPI, Python, Gemini API. The pipeline runs: Story preferences, then Build the prompt, then Gemini, then Story and images.",
-    "contentHash": "150ec47fa4397a"
+    "text": "Yash's part in Gemini story generator: Hackathon team project. Built with React, Vite, FastAPI, Python, Gemini API. The pipeline runs: Story prompt, then Build the prompt, then Gemini, then Story and images.",
+    "contentHash": "049299204fc809"
   },
   {
     "id": "case:testpilot#problem",
@@ -172,8 +172,8 @@
     "sourceId": "testpilot",
     "kind": "case-study",
     "title": "TestPilot case study: what Yash built",
-    "text": "I led the AI pipeline, the model integration and the backend. Coding standards are split into chunks, embedded with all-MiniLM-L6-v2 and stored in pgvector. For each request the five closest chunks go into a structured prompt, and a local Qwen Coder 7B model, served by Ollama on a Cloud Run GPU, streams the tests back as they are written. A second pass scores each result for correctness, assertion quality, edge-case coverage and readability. Anything below 0.6 is regenerated with the critique as feedback. The defect heatmap scans a public GitHub repository with PyDriller and Radon and ranks files with a Random Forest. A teammate trained that model, and the team fine-tuned the generator with QLoRA on 10,000 Methods2Test pairs, keeping the training, validation and test splits separate.",
-    "contentHash": "13fb068f2bdf87"
+    "text": "I led the AI pipeline, the model integration and the backend. Coding standards are split into chunks, embedded with all-MiniLM-L6-v2 and stored in pgvector. For each request the five closest chunks go into a structured prompt, and a local Qwen Coder 7B model, served by Ollama on a Cloud Run GPU, streams the tests back as they are written. A second pass scores each result for correctness, assertion quality, edge-case coverage and readability. Anything below 0.6 is regenerated with the critique as feedback. The defect heatmap scans a public GitHub repository with PyDriller and Radon and ranks files with a Random Forest. I trained that model and fine-tuned the generator with QLoRA on 10,000 Methods2Test pairs, keeping the training, validation and test splits separate.",
+    "contentHash": "117e627d187c8b"
   },
   {
     "id": "case:testpilot#results",
@@ -196,8 +196,8 @@
     "sourceId": "thryv",
     "kind": "role",
     "title": "Software engineering intern, Thryv",
-    "text": "Software engineering intern at Thryv, May to Aug 2026. Independent deployment for five Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.",
-    "contentHash": "1701a2eee5a3e3"
+    "text": "Software engineering intern at Thryv, May to Aug 2026. Independent deployment for the team’s Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.",
+    "contentHash": "1ff6fc34f837b9"
   },
   {
     "id": "role:insight",
