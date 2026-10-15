@@ -12,7 +12,13 @@ describe('the database schema', () => {
         "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
       )
       .all<{ name: string }>();
-    expect(results.map((r) => r.name)).toEqual(['chats', 'events', 'feedback', 'messages']);
+    expect(results.map((r) => r.name)).toEqual([
+      'chats',
+      'chunks',
+      'events',
+      'feedback',
+      'messages',
+    ]);
   });
 
   it('keeps messages in order within a chat and refuses a repeated position', async () => {

@@ -17,6 +17,8 @@
     "test:watch": "vitest",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "worker:dev": "wrangler dev --port 8788",
+    "corpus:build": "node scripts/run.mjs scripts/build-corpus.ts",
+    "corpus:index": "node scripts/run.mjs scripts/index-corpus.ts",
     "e2e": "playwright test"
   },
   "dependencies": {

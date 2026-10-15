@@ -1,0 +1,298 @@
+[
+  {
+    "id": "project:testpilot#detail",
+    "sourceId": "testpilot",
+    "kind": "project",
+    "title": "TestPilot",
+    "text": "TestPilot. Writes tests, then argues with them. Generates pytest, Jest and JUnit tests and ranks defect-prone files in public GitHub repositories. It retrieves the five most relevant coding-standard chunks first, drafts the tests against them, and an LLM critique loop regenerates anything scoring below 0.6.",
+    "contentHash": "0adf862411db77"
+  },
+  {
+    "id": "project:testpilot#build",
+    "sourceId": "testpilot",
+    "kind": "project",
+    "title": "TestPilot: role and stack",
+    "text": "Yash's part in TestPilot: Led the AI pipeline, model integration and backend of a four-person team project. Built with FastAPI, Qwen via Ollama, RAG, pgvector, Random Forest, Docker, Cloud Run. The pipeline runs: Read repository, then Retrieve coding standards, then Draft tests, then Critique gate, then Keep or redraft.",
+    "contentHash": "155591a0848c0f"
+  },
+  {
+    "id": "project:citywatch#detail",
+    "sourceId": "citywatch",
+    "kind": "project",
+    "title": "CityWatch",
+    "text": "CityWatch. Turns noisy public signals into alerts for the right department. A serverless pipeline on AWS that turns social-media signals into department alerts within 15 seconds. Kinesis ingests, Lambda and Rekognition analyse, Bedrock classifies, and EventBridge routes each alert. Won the AWS Ideathon 2026.",
+    "contentHash": "0626421fd7f92b"
+  },
+  {
+    "id": "project:citywatch#build",
+    "sourceId": "citywatch",
+    "kind": "project",
+    "title": "CityWatch: role and stack",
+    "text": "Yash's part in CityWatch: Designed the pipeline and its scaling model. Won the AWS Ideathon 2026. Built with Kinesis, Lambda, Rekognition, Bedrock, EventBridge. The pipeline runs: Social signals, then Kinesis and Lambda, then Vision and LLM classification, then Department alerts. Links: Pitch deck: https://gamma.app/docs/CityWatch-we9ido0egg80ra9?mode=present.",
+    "contentHash": "0159d9170f41af"
+  },
+  {
+    "id": "project:cv-studio#detail",
+    "sourceId": "cv-studio",
+    "kind": "project",
+    "title": "CV Studio",
+    "text": "CV Studio. A résumé editor that compiles real LaTeX. A multi-user workspace where a résumé is edited visually, inspected as LaTeX source, and compiled to PDF on the server with pdflatex (shell escape off, with timeouts). It keeps revision history with restore, rejects silent concurrent overwrites with version checks, and stores job descriptions and text-selection annotations beside each CV.",
+    "contentHash": "1e1ca1147853c8"
+  },
+  {
+    "id": "project:cv-studio#build",
+    "sourceId": "cv-studio",
+    "kind": "project",
+    "title": "CV Studio: role and stack",
+    "text": "Yash's part in CV Studio: Sole author: the React editor, the FastAPI service, and the CI pipeline. Built with React, TypeScript, Tiptap, FastAPI, SQLAlchemy, PostgreSQL, pdflatex. The pipeline runs: Visual edit, then Generate LaTeX, then Compile with pdflatex, then Protected PDF preview, then Save revision. Links: GitHub: https://github.com/y-bakshi/cv-studio.",
+    "contentHash": "04dc2d44381f72"
+  },
+  {
+    "id": "project:guardianai#detail",
+    "sourceId": "guardianai",
+    "kind": "project",
+    "title": "GuardianAI",
+    "text": "GuardianAI. Two ways to answer a safety question. A neighborhood safety assistant. Location questions take a 1 to 2 second path through database summaries. Open-ended ones go to a 3 to 4 second ReAct path, so the expensive agent runs only when it is needed. The team later renamed it CityWatch, which is the name its live demo shows. It is a different project from the AWS Ideathon entry below.",
+    "contentHash": "04c88a192413c8"
+  },
+  {
+    "id": "project:guardianai#build",
+    "sourceId": "guardianai",
+    "kind": "project",
+    "title": "GuardianAI: role and stack",
+    "text": "Yash's part in GuardianAI: Contributed within a four-person team. Built with Next.js, TypeScript, FastAPI, Claude, PostgreSQL, Mapbox, WebSockets. The pipeline runs: Incident map and feeds, then Route the question, then Summary path, then ReAct path, then Safety response. Links: Live demo: https://city-watch-frontend.vercel.app/.",
+    "contentHash": "1f4c365d492649"
+  },
+  {
+    "id": "project:catscript#detail",
+    "sourceId": "catscript",
+    "kind": "project",
+    "title": "CatScript",
+    "text": "CatScript. A small programming language, lexer to interpreter. A C++17 language with a lexer, a 400-line grammar, 20+ AST node types, a type checker and a tree-walking interpreter. It passes all 12 end-to-end test programs.",
+    "contentHash": "0d16b9969284bc"
+  },
+  {
+    "id": "project:catscript#build",
+    "sourceId": "catscript",
+    "kind": "project",
+    "title": "CatScript: role and stack",
+    "text": "Yash's part in CatScript: Led a four-person team. Built with C++17, Flex, Bison, Make. The pipeline runs: Source text, then Lexer and parser, then AST, then Type check, then Interpret. Links: GitHub: https://github.com/y-bakshi/SER502-CatScript-Team8.",
+    "contentHash": "0e979d41c2cf5a"
+  },
+  {
+    "id": "project:procwatch#detail",
+    "sourceId": "procwatch",
+    "kind": "project",
+    "title": "ProcWatch",
+    "text": "ProcWatch. A process monitor that streams to a browser. A modular Rust tool that reads process and system metrics with sysinfo, takes commands through clap, and streams CPU and memory updates to a live web dashboard over WebSockets.",
+    "contentHash": "14dc3a3279be78"
+  },
+  {
+    "id": "project:procwatch#build",
+    "sourceId": "procwatch",
+    "kind": "project",
+    "title": "ProcWatch: role and stack",
+    "text": "Yash's part in ProcWatch: Built on my own. Built with Rust, sysinfo, clap, WebSockets. The pipeline runs: Collect metrics, then Filter, then WebSocket stream, then Live dashboard. Links: GitHub: https://github.com/y-bakshi/procwatch.",
+    "contentHash": "16fd3df9b65af0"
+  },
+  {
+    "id": "project:streaming-pipeline#detail",
+    "sourceId": "streaming-pipeline",
+    "kind": "project",
+    "title": "Streaming data pipeline",
+    "text": "Streaming data pipeline. NYC taxi events flowing into a graph database. A producer and a custom consumer move NYC taxi records through Kafka into Neo4j as nodes and relationships, with Zookeeper and Kubernetes coordinating the pieces.",
+    "contentHash": "1128a01db8b7a4"
+  },
+  {
+    "id": "project:streaming-pipeline#build",
+    "sourceId": "streaming-pipeline",
+    "kind": "project",
+    "title": "Streaming data pipeline: role and stack",
+    "text": "Yash's part in Streaming data pipeline: Course project. Built with Kafka, Zookeeper, Neo4j, Kubernetes, Docker. The pipeline runs: Taxi events, then Kafka consumer, then Neo4j graph.",
+    "contentHash": "0aa82604d3ce69"
+  },
+  {
+    "id": "project:face-recognition#detail",
+    "sourceId": "face-recognition",
+    "kind": "project",
+    "title": "Serverless face recognition",
+    "text": "Serverless face recognition. Detection and recognition as separate stages with a queue between them. MTCNN detection and FaceNet recognition run as separate Lambda functions joined by SQS. Under 100 concurrent requests it reached 99% accuracy at 3.75 seconds average latency, after shrinking a 10 GB container to fit Lambda.",
+    "contentHash": "198c665e4a0b15"
+  },
+  {
+    "id": "project:face-recognition#build",
+    "sourceId": "face-recognition",
+    "kind": "project",
+    "title": "Serverless face recognition: role and stack",
+    "text": "Yash's part in Serverless face recognition: Course project. Built with PyTorch, MTCNN, FaceNet, Lambda, SQS, ECR, Docker. The pipeline runs: Detect faces, then SQS queue, then Recognize.",
+    "contentHash": "09588ac648095a"
+  },
+  {
+    "id": "project:edge-inference#detail",
+    "sourceId": "edge-inference",
+    "kind": "project",
+    "title": "Edge inference",
+    "text": "Edge inference. Only faces cross the network. Face detection runs on an AWS IoT Greengrass edge device. Only the detected faces travel to cloud recognition over MQTT and SQS, so empty frames never leave the device. An EC2 instance stood in for the edge hardware.",
+    "contentHash": "0aa9f0cce723cc"
+  },
+  {
+    "id": "project:edge-inference#build",
+    "sourceId": "edge-inference",
+    "kind": "project",
+    "title": "Edge inference: role and stack",
+    "text": "Yash's part in Edge inference: Course project. Built with Python, IoT Greengrass, MQTT, SQS, Lambda, EC2. The pipeline runs: Camera frame, then Detect on the edge device, then MQTT and SQS, then Cloud recognition.",
+    "contentHash": "01c88d6cc7d862"
+  },
+  {
+    "id": "project:story-generator#detail",
+    "sourceId": "story-generator",
+    "kind": "project",
+    "title": "Gemini story generator",
+    "text": "Gemini story generator. Stories and pictures for children. A React and Vite interface and a FastAPI service collect a child’s age, theme and characters, then prompt Gemini for a story and matching images, for ages 4 to 12.",
+    "contentHash": "1ac6ee2666cbf5"
+  },
+  {
+    "id": "project:story-generator#build",
+    "sourceId": "story-generator",
+    "kind": "project",
+    "title": "Gemini story generator: role and stack",
+    "text": "Yash's part in Gemini story generator: Built the React interface and the FastAPI service. Built with React, Vite, FastAPI, Python, Gemini API. The pipeline runs: Story preferences, then Build the prompt, then Gemini, then Story and images.",
+    "contentHash": "150ec47fa4397a"
+  },
+  {
+    "id": "case:testpilot#problem",
+    "sourceId": "testpilot",
+    "kind": "case-study",
+    "title": "TestPilot case study: the problem",
+    "text": "Writing unit tests is slow, and teams rarely know which files deserve tests first. General code assistants write tests that ignore a team’s own conventions, and nothing tells you where defects are most likely. TestPilot was our SER 594 course project at Arizona State University: generate tests that follow a team’s coding standards, and point at the files most worth testing.",
+    "contentHash": "0caa9d2805c59e"
+  },
+  {
+    "id": "case:testpilot#build",
+    "sourceId": "testpilot",
+    "kind": "case-study",
+    "title": "TestPilot case study: what Yash built",
+    "text": "I led the AI pipeline, the model integration and the backend. Coding standards are split into chunks, embedded with all-MiniLM-L6-v2 and stored in pgvector. For each request the five closest chunks go into a structured prompt, and a local Qwen Coder 7B model, served by Ollama on a Cloud Run GPU, streams the tests back as they are written. A second pass scores each result for correctness, assertion quality, edge-case coverage and readability. Anything below 0.6 is regenerated with the critique as feedback. The defect heatmap scans a public GitHub repository with PyDriller and Radon and ranks files with a Random Forest. A teammate trained that model, and the team fine-tuned the generator with QLoRA on 10,000 Methods2Test pairs, keeping the training, validation and test splits separate.",
+    "contentHash": "13fb068f2bdf87"
+  },
+  {
+    "id": "case:testpilot#results",
+    "sourceId": "testpilot",
+    "kind": "case-study",
+    "title": "TestPilot case study: results",
+    "text": "Defect prediction. A Random Forest trained on 6,052 Java files with 21 code metrics, split 70/30, reached precision 0.39, recall 0.29, F1 0.34 and ROC-AUC 0.66. That beats chance but is not good enough to trust alone, so the heatmap is for ranking where to look first, not for deciding. Retrieval. Over 8 labelled queries against 10 standards documents, precision at 5 was 0.375 and recall at 5 was 0.94: nearly every relevant standard reaches the top five, alongside some that are not. This was measured with TF-IDF as a stand-in for pgvector.",
+    "contentHash": "02e768510ec1dd"
+  },
+  {
+    "id": "case:testpilot#facts",
+    "sourceId": "testpilot",
+    "kind": "case-study",
+    "title": "TestPilot case study: team, source and demo",
+    "text": "Team: Four people, SER 594 at Arizona State University. Source: Private course repository. Code walkthrough on request. The live demo is at https://ser-594-team14-test-pilot.vercel.app/. Sign up with an email and a one-time code; the AI engine takes about 30 seconds to wake on a first visit.",
+    "contentHash": "15e8025514b928"
+  },
+  {
+    "id": "role:thryv",
+    "sourceId": "thryv",
+    "kind": "role",
+    "title": "Software engineering intern, Thryv",
+    "text": "Software engineering intern at Thryv, May to Aug 2026. Independent deployment for five Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.",
+    "contentHash": "1701a2eee5a3e3"
+  },
+  {
+    "id": "role:insight",
+    "sourceId": "insight",
+    "kind": "role",
+    "title": "Technical team lead, InfoCenter, an Insight Company",
+    "text": "Technical team lead at InfoCenter, an Insight Company, Jun to Dec 2024. Led eight people across five ServiceNow projects and mentored 12 developers. Zero critical post-deployment defects. Best Team Award among 30+ teams.",
+    "contentHash": "0e49ed38ba6386"
+  },
+  {
+    "id": "role:tcs-dev",
+    "sourceId": "tcs-dev",
+    "kind": "role",
+    "title": "ServiceNow developer, Tata Consultancy Services",
+    "text": "ServiceNow developer at Tata Consultancy Services, Sep 2022 to May 2024. Python and LLDP discovery that kept a CMDB of 10,000+ devices current, 100+ portals and forms, monitoring integrations, runbooks that cut onboarding from two weeks to five days.",
+    "contentHash": "0b27e4f980f87c"
+  },
+  {
+    "id": "role:tcs-ase",
+    "sourceId": "tcs-ase",
+    "kind": "role",
+    "title": "Assistant systems engineer, Tata Consultancy Services",
+    "text": "Assistant systems engineer at Tata Consultancy Services, Nov 2021 to Sep 2022. RHEL, Docker and HPC operations with IBM Spectrum LSF, monitoring, and 99.9% documented uptime.",
+    "contentHash": "1713d4033c7cf3"
+  },
+  {
+    "id": "education:asu",
+    "sourceId": "asu",
+    "kind": "education",
+    "title": "MS, Computer Software Engineering, Arizona State University",
+    "text": "MS, Computer Software Engineering at Arizona State University, Jan 2025 to Dec 2026. Statistical machine learning, AI for software engineers, data processing at scale, cloud computing, software project management.",
+    "contentHash": "0e5471f55d9c1b"
+  },
+  {
+    "id": "education:manipal",
+    "sourceId": "manipal",
+    "kind": "education",
+    "title": "Bachelor of Information Technology, Manipal University Jaipur",
+    "text": "Bachelor of Information Technology at Manipal University Jaipur, Aug 2017 to Aug 2021. Data structures and algorithms, databases, computer networks, object-oriented programming. ServiceNow Certified System Administrator and ServiceNow Discovery certifications.",
+    "contentHash": "11f7096c44dde8"
+  },
+  {
+    "id": "small:rocksdb-key-value-store",
+    "sourceId": "small-projects",
+    "kind": "small-project",
+    "title": "RocksDB key-value store",
+    "text": "RocksDB key-value store. C++17 operations over a 255 MB Reddit dataset of 750,000+ pairs: bulk load with WriteBatch, point lookups, range scans and deletes.",
+    "contentHash": "1b92e2d28dc6fb"
+  },
+  {
+    "id": "small:distributed-graph-engine",
+    "sourceId": "small-projects",
+    "kind": "small-project",
+    "title": "Distributed graph engine",
+    "text": "Distributed graph engine. PageRank and shortest-path analysis on NYC taxi data in a containerised Neo4j with the Graph Data Science plugin.",
+    "contentHash": "1ebf94df16411d"
+  },
+  {
+    "id": "small:prolog-semantic-evaluator",
+    "sourceId": "small-projects",
+    "kind": "small-project",
+    "title": "Prolog semantic evaluator",
+    "text": "Prolog semantic evaluator. A definite clause grammar parser and evaluator in SWI-Prolog, checked against eight test programs.",
+    "contentHash": "06636c11641263"
+  },
+  {
+    "id": "small:supply-chain-traceability-study",
+    "sourceId": "small-projects",
+    "kind": "small-project",
+    "title": "Supply chain traceability study",
+    "text": "Supply chain traceability study. Regression analysis of how record completeness relates to inspection and logistics outcomes, using real data from a cashew processor.",
+    "contentHash": "081acddccf1971"
+  },
+  {
+    "id": "fact:contact",
+    "sourceId": "contact",
+    "kind": "fact",
+    "title": "How to contact Yash",
+    "text": "Yash can be reached by email at ybakshi@asu.edu or bakshi.yash@outlook.com. His LinkedIn is https://www.linkedin.com/in/yash-bakshi-56615a62/ and his GitHub is https://github.com/y-bakshi. A 30 minute call can be booked at https://calendar.app.google/GNW9xhXdiq7Mv9bU9. These links are in the contact section at the bottom of the page.",
+    "contentHash": "06fde8a1848935"
+  },
+  {
+    "id": "fact:skills",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "Day to day tools",
+    "text": "Day to day, Yash works in Python and Java, with FastAPI and Micronaut, on AWS and GCP, using Docker and Kubernetes. Rust, C++ and TypeScript appear in his project work.",
+    "contentHash": "10f8fa192eff8f"
+  },
+  {
+    "id": "fact:career",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "Career in order",
+    "text": "Yash has held four roles, newest first: software engineering intern at Thryv, technical team lead at InfoCenter, an Insight Company, ServiceNow developer at Tata Consultancy Services, and assistant systems engineer at Tata Consultancy Services. He is finishing an MS in Computer Software Engineering at Arizona State University.",
+    "contentHash": "04aee19e35b0c6"
+  }
+]
