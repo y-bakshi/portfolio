@@ -58,7 +58,18 @@ export function useGuide(portraitFormed = true) {
     if (open && !restoredOpen.current) inputRef.current?.focus({ preventScroll: true });
     restoredOpen.current = false;
   }, [open]);
-  useFollowNewest({ feedRef, logRef, isMobile, asked, shown, status, count: history.length });
+  // a saved conversation shows up late (after the portrait), so follow it again when it does
+  const appeared = `${portraitFormed}-${open}`;
+  useFollowNewest({
+    feedRef,
+    logRef,
+    isMobile,
+    asked,
+    shown,
+    status,
+    count: history.length,
+    appeared,
+  });
 
   const [closing, setClosing] = useState(false);
   // The bar is hidden while the chat is open, so focus can only go back to it once it is showing again.

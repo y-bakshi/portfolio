@@ -101,6 +101,25 @@ test.describe('the stored chat', () => {
     await expect(page.locator('.dock')).toHaveClass(/is-open/);
   });
 
+  test('after a refresh the newest exchange is in view, not the oldest', async ({ page }) => {
+    await mockApi(page);
+    await openHome(page);
+    await bar(page).click();
+    for (const chip of [
+      'What has Yash built with RAG?',
+      'Show me his backend experience',
+      'Has he worked with agents?',
+      'What cloud work has he done?',
+    ]) {
+      await askChip(page, chip);
+    }
+    await page.reload();
+    await expect(answers(page).last()).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('.msg-user').last()).toContainText('What cloud work has he done?');
+    await expect(page.locator('.msg-user').last()).toBeInViewport();
+    await expect(answers(page).last()).toBeInViewport();
+  });
+
   test('the server copy restores the chat even when the browser copy is gone', async ({ page }) => {
     await mockApi(page);
     await askOnce(page);
