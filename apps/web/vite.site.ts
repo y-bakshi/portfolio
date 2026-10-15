@@ -46,6 +46,16 @@ export const sitemapXml = (
     .join('')}</urlset>\n`;
 
 /**
+ * The two fonts every page draws above the fold (Geist and Instrument Sans, Latin subset) start
+ * downloading with the page instead of after the stylesheet is read. Their file names carry a hash,
+ * so they are found in the build's own file list.
+ */
+export const fontPreloads = (files: string[]) =>
+  files
+    .filter((f) => /^assets\/(geist|instrument-sans)-latin-w\w+-normal-[\w-]+\.woff2$/.test(f))
+    .map((f) => `<link rel="preload" as="font" type="font/woff2" href="/${f}" crossorigin />`);
+
+/**
  * Fills `%SITE%` in every page with the site address, adds each page's structured data, and writes
  * robots.txt, sitemap.xml, llms.txt and llms-full.txt next to the pages, so the domain is written
  * down in one place.
@@ -55,8 +65,12 @@ export function sitePlugin(site = SITE, pages = PAGES): Plugin {
     name: 'site',
     transformIndexHtml: (html, ctx) => {
       const filled = html.split('%SITE%').join(site);
-      const ld = ctx?.path ? jsonLdScript(ctx.path, site) : '';
-      return ld ? filled.replace('</head>', `    ${ld}\n  </head>`) : filled;
+      const extra = [
+        ctx?.path ? jsonLdScript(ctx.path, site) : '',
+        ...fontPreloads(Object.keys(ctx?.bundle ?? {})),
+      ].filter(Boolean);
+      const lines = extra.map((e) => `    ${e}\n`).join('');
+      return extra.length ? filled.replace('</head>', () => `${lines}  </head>`) : filled;
     },
     generateBundle() {
       const emit = (fileName: string, source: string) =>

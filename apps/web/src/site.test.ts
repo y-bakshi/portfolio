@@ -1,5 +1,13 @@
 import wrangler from '../wrangler.jsonc?raw';
-import { AI_CRAWLERS, PAGES, SITE, robotsTxt, sitePlugin, sitemapXml } from '../vite.site';
+import {
+  AI_CRAWLERS,
+  PAGES,
+  SITE,
+  fontPreloads,
+  robotsTxt,
+  sitePlugin,
+  sitemapXml,
+} from '../vite.site';
 import indexHtml from '../index.html?raw';
 import projectsHtml from '../projects/index.html?raw';
 import caseHtml from '../projects/testpilot/index.html?raw';
@@ -45,6 +53,40 @@ describe('site files', () => {
     expect(transform('<a href="%SITE%/x"></a><b>%SITE%</b>')).toBe(
       '<a href="https://example.test/x"></a><b>https://example.test</b>',
     );
+  });
+});
+
+describe('build additions to a page', () => {
+  const transform = sitePlugin('https://example.test').transformIndexHtml as (
+    html: string,
+    ctx?: unknown,
+  ) => string;
+  const page = '<html><head></head><body></body></html>';
+
+  it('adds the structured data of the page it is given', () => {
+    const out = transform(page, { path: '/projects/testpilot/index.html' });
+    expect(out).toContain('"@type":"TechArticle"');
+    expect(out).toContain('"url":"https://example.test/projects/testpilot/"');
+    expect(out.indexOf('ld+json')).toBeLessThan(out.indexOf('</head>'));
+    expect(transform(page, { path: '/404.html' })).toBe(page);
+  });
+
+  it('preloads only the two Latin fonts the first screen uses', () => {
+    const files = [
+      'assets/geist-latin-wght-normal-AAA.woff2',
+      'assets/geist-latin-ext-wght-normal-BBB.woff2',
+      'assets/geist-mono-latin-wght-normal-CCC.woff2',
+      'assets/instrument-sans-latin-wdth-normal-DDD.woff2',
+      'assets/instrument-sans-latin-ext-wdth-normal-EEE.woff2',
+      'assets/entry-FFF.css',
+    ];
+    const tags = fontPreloads(files);
+    expect(tags).toHaveLength(2);
+    expect(tags.join('')).toContain('/assets/geist-latin-wght-normal-AAA.woff2');
+    expect(tags.join('')).toContain('/assets/instrument-sans-latin-wdth-normal-DDD.woff2');
+    for (const t of tags) expect(t).toContain('crossorigin');
+    const out = transform(page, { bundle: Object.fromEntries(files.map((f) => [f, {}])) });
+    expect(out.match(/rel="preload"/g)).toHaveLength(2);
   });
 });
 
