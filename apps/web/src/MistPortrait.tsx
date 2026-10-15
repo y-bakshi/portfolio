@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { FORM_MS, TILE, token, type P } from './portrait/config';
 import { makePacer } from './portrait/pace';
 import { drawBuckets, makeBuckets, stepParticles } from './portrait/particles';
-import { sampleParticles } from './portrait/sample';
+import { sampleParticles, smallCanvas } from './portrait/sample';
 import {
   drawSpecks,
   springTiles,
@@ -13,10 +13,9 @@ import {
 } from './portrait/tiles';
 
 /**
- * The portrait condenses out of a rotating sphere of suspended particles when it scrolls into view.
- * The pointer pushes particles and the picture itself aside and they spring back. Once the portrait
- * is formed and nothing is moving the animation loop stops, so it costs nothing while idle. With
- * reduced motion the finished image is shown as a plain picture instead.
+ * The portrait condenses out of a rotating sphere of particles when it scrolls into view. The pointer
+ * pushes particles and the picture aside and they spring back. Once formed and at rest the loop stops.
+ * With reduced motion the finished image is shown as a plain picture.
  */
 export function MistPortrait({
   src,
@@ -89,7 +88,8 @@ export function MistPortrait({
       activeTiles = [];
       tileDark = new Float32Array(tilesX * tilesY);
       // a hidden canvas has no size, and reading pixels from nothing throws
-      if (portrait && tilesX > 0 && tilesY > 0) tileDark = tileTones(portrait, tilesX, tilesY);
+      if (portrait && tilesX > 0 && tilesY > 0)
+        tileDark = tileTones(smallCanvas(portrait), tilesX, tilesY);
     };
 
     const paint = (now: number) => {

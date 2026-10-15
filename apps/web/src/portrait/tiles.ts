@@ -21,15 +21,15 @@ export type Specks = { x: number[]; y: number[] }[];
 export const makeSpecks = (): Specks =>
   Array.from({ length: SPECK_BUCKETS }, () => ({ x: [], y: [] }));
 
-/** The tone of every tile, read from the portrait scaled down to one pixel per tile. */
-export function tileTones(portrait: HTMLImageElement, tilesX: number, tilesY: number) {
+/** The tone of every tile, read from a small copy of the portrait scaled down to one pixel per tile. */
+export function tileTones(source: CanvasImageSource, tilesX: number, tilesY: number) {
   const dark = new Float32Array(tilesX * tilesY);
   const off = document.createElement('canvas');
   off.width = tilesX;
   off.height = tilesY;
   const octx = off.getContext('2d', { willReadFrequently: true })!;
   octx.imageSmoothingQuality = 'high';
-  octx.drawImage(portrait, 0, 0, tilesX, tilesY);
+  octx.drawImage(source, 0, 0, tilesX, tilesY);
   const data = octx.getImageData(0, 0, tilesX, tilesY).data;
   for (let k = 0; k < dark.length; k++) {
     const lum = 0.299 * data[k * 4] + 0.587 * data[k * 4 + 1] + 0.114 * data[k * 4 + 2];
