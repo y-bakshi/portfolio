@@ -294,5 +294,29 @@
     "title": "Career in order",
     "text": "Yash has held four roles, newest first: software engineering intern at Thryv, technical team lead at InfoCenter, an Insight Company, ServiceNow developer at Tata Consultancy Services, and assistant systems engineer at Tata Consultancy Services. He is finishing an MS in Computer Software Engineering at Arizona State University.",
     "contentHash": "04aee19e35b0c6"
+  },
+  {
+    "id": "fact:graduation",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "Graduation",
+    "text": "Yash is expected to graduate with his MS in Computer Software Engineering from Arizona State University in December 2026.",
+    "contentHash": "0839c0d68aa87c"
+  },
+  {
+    "id": "fact:work-authorization",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "Work authorization",
+    "text": "Yash is an international student and will need visa sponsorship to work in the United States.",
+    "contentHash": "169fa05aa92754"
+  },
+  {
+    "id": "fact:availability",
+    "sourceId": "general",
+    "kind": "fact",
+    "title": "Availability",
+    "text": "Yash is looking for full-time software engineering roles and is available to start from January 2027.",
+    "contentHash": "00bb1a9d69ee4c"
   }
 ]

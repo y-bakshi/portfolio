@@ -1,7 +1,8 @@
 /**
  * Facts that the site states but that are not in a content module: how to get in touch, and the
- * skills summary the page's own guide gives. Every line here is already public on the site.
- * Do not add anything that is not. `facts.test.ts` checks the contact links against the page.
+ * skills summary the page's own guide gives, plus a few details Yash approved for the guide:
+ * graduation, work authorization and availability. Do not add anything he has not approved.
+ * `facts.test.ts` checks the contact links against the page.
  */
 export type Fact = { id: string; sourceId: string; title: string; text: string };
 
@@ -31,5 +32,23 @@ export const facts: Fact[] = [
     sourceId: 'general',
     title: 'Career in order',
     text: 'Yash has held four roles, newest first: software engineering intern at Thryv, technical team lead at InfoCenter, an Insight Company, ServiceNow developer at Tata Consultancy Services, and assistant systems engineer at Tata Consultancy Services. He is finishing an MS in Computer Software Engineering at Arizona State University.',
+  },
+  {
+    id: 'fact:graduation',
+    sourceId: 'general',
+    title: 'Graduation',
+    text: 'Yash is expected to graduate with his MS in Computer Software Engineering from Arizona State University in December 2026.',
+  },
+  {
+    id: 'fact:work-authorization',
+    sourceId: 'general',
+    title: 'Work authorization',
+    text: 'Yash is an international student and will need visa sponsorship to work in the United States.',
+  },
+  {
+    id: 'fact:availability',
+    sourceId: 'general',
+    title: 'Availability',
+    text: 'Yash is looking for full-time software engineering roles and is available to start from January 2027.',
   },
 ];
