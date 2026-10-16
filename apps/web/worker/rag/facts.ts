@@ -19,7 +19,7 @@ export const facts: Fact[] = [
     id: 'fact:contact',
     sourceId: 'contact',
     title: 'How to contact Yash',
-    text: `Yash can be reached by email at ${CONTACT_LINKS.emailSchool} or ${CONTACT_LINKS.emailPersonal}. His LinkedIn is ${CONTACT_LINKS.linkedin} and his GitHub is ${CONTACT_LINKS.github}. A 30 minute call can be booked at ${CONTACT_LINKS.booking}. These links are in the contact section at the bottom of the page.`,
+    text: `Yash can be reached by email at ${CONTACT_LINKS.emailSchool} or ${CONTACT_LINKS.emailPersonal}. His LinkedIn is ${CONTACT_LINKS.linkedin} and his GitHub is ${CONTACT_LINKS.github}. A 30 minute call can be booked at ${CONTACT_LINKS.booking}. These links are on the contact page.`,
   },
   {
     id: 'fact:skills',
@@ -55,7 +55,7 @@ export const facts: Fact[] = [
     id: 'fact:this-guide',
     sourceId: 'general',
     title: 'How this guide (the portfolio chat) works',
-    text: 'The guide on this page is a chat Yash built for his portfolio. It is separate from GuardianAI, which is a different project. The guide searches Yash’s own project notes by meaning, hands the closest notes to a Gemini model, and answers only from them, with buttons that jump to the project, role or degree it used. When the notes do not cover a question it says so and points to the contact section instead of guessing.',
+    text: 'The guide on this site is a chat Yash built for his portfolio. It is separate from GuardianAI, which is a different project. The guide searches Yash’s own project notes by meaning, hands the closest notes to a Gemini model, and answers only from them, with buttons that jump to the project, role or degree it used. When the notes do not cover a question it says so and points to the contact page instead of guessing.',
   },
   {
     id: 'fact:this-guide-stack',

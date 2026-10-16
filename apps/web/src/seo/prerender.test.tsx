@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { placeMarkup } from '../../vite.prerender';
+import { CONTACT_LINKS } from '../../worker/rag/facts';
 import { education, projects, roles, smallProjects } from '../content';
 import { technologies } from './jsonld';
 import { pageComponents, renderPage, type PageFile } from './render';
@@ -18,19 +19,25 @@ describe('prerendered pages', () => {
 
   it('put the whole home page in the HTML', () => {
     const html = renderPage('index.html');
-    for (const text of [
-      'Thryv',
-      'TestPilot',
-      'Arizona State University',
-      'Manipal University Jaipur',
-    ])
+    for (const text of ['Thryv', 'TestPilot', 'Selected engineering work'])
       expect(html).toContain(text);
     for (const p of projects.filter((p) => p.featured)) expect(html, p.id).toContain(p.name);
-    for (const e of [...roles, ...education]) expect(html, e.id).toContain(e.title);
-    // the typed introduction is empty until the portrait forms, so readers get the whole sentence
-    expect(html).toContain('a software engineer working across AI applications, backend services');
+    expect(html).toContain('I build AI applications, backend services and cloud delivery');
     expect(html).toContain('https://github.com/y-bakshi');
     expect(html.match(/<h1/g)).toHaveLength(1);
+  });
+
+  it('put every role and degree in the experience page', () => {
+    const html = renderPage('experience/index.html');
+    for (const e of [...roles, ...education]) {
+      expect(html, e.id).toContain(e.title);
+      for (const point of e.points) expect(html, point).toContain(point.replace(/'/g, '&#x27;'));
+    }
+  });
+
+  it('put every way to reach Yash in the contact page', () => {
+    const html = renderPage('contact/index.html');
+    for (const value of Object.values(CONTACT_LINKS)) expect(html, value).toContain(value);
   });
 
   it('shows everything the structured data says about the person', () => {
@@ -46,7 +53,13 @@ describe('prerendered pages', () => {
 
   it('put the case study in the TestPilot page', () => {
     const html = renderPage('projects/testpilot/index.html');
-    for (const text of ['The problem', 'How it works', 'Results', 'precision 0.39', 'Cloud Run'])
+    for (const text of [
+      'The problem',
+      'How it works',
+      'Measured results',
+      'Precision 0.39',
+      'Cloud Run',
+    ])
       expect(html).toContain(text);
   });
 

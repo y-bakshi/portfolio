@@ -18,6 +18,20 @@ export const testpilotCase = {
       text: 'Over 8 labelled queries against 10 standards documents, precision at 5 was 0.375 and recall at 5 was 0.94: nearly every relevant standard reaches the top five, alongside some that are not. This was measured with TF-IDF as a stand-in for pgvector.',
     },
   ],
+  /** The results as a table: what was measured, the numbers, and the honest limit of each. */
+  measured: [
+    {
+      evaluation: 'Defect prediction',
+      result: 'Precision 0.39, recall 0.29, F1 0.34 and ROC-AUC 0.66 on 6,052 Java files',
+      limitation: 'Beats chance, but is for ranking where to look first, not for deciding',
+    },
+    {
+      evaluation: 'Standards retrieval',
+      result: 'Precision at 5 of 0.375 and recall at 5 of 0.94 over 8 labelled queries',
+      limitation:
+        'Measured with TF-IDF as a stand-in for pgvector; some irrelevant standards reach the top five',
+    },
+  ],
   team: 'Four people, SER 594 at Arizona State University.',
   source: 'Private course repository. Code walkthrough on request.',
   demo: {

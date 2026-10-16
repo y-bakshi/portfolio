@@ -1,17 +1,17 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { projects } from '../content';
+import { destinationFor } from './destinations';
 import { prefersReducedMotion } from './shared';
 import { loadUi, saveUi } from './storage';
 import { Chips, Thread } from './Thread';
 import { trackCiteClick } from './track';
 import { useChat } from './useChat';
 import { useFollowNewest } from './useFollowNewest';
-import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } from './useViewport';
+import { useIsMobile, usePinToVisualViewport } from './useViewport';
 
 /**
- * The guide's state and behaviour. On wide screens the conversation shows in the hero; on phones it
- * shows inside the chat itself. A chat that was open before a refresh opens again once the portrait
- * has formed (`portraitFormed`), so the page loads in order: portrait first, then the conversation.
+ * The guide's state and behaviour. The conversation lives in the chat panel on every screen. A chat
+ * that was open before a refresh opens again once the home page's portrait has formed
+ * (`portraitFormed`), so the page loads in order: portrait first, then the conversation.
  */
 export function useGuide(portraitFormed = true) {
   const saved = useRef(loadUi());
@@ -22,11 +22,8 @@ export function useGuide(portraitFormed = true) {
   const timers = useRef<number[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const feedRef = useRef<HTMLDivElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  /** Phones show the conversation inside the chat; wide screens show it in the hero. */
-  const showLog = isMobile;
   const [open, setOpen] = useState(false);
   const pendingOpen = useRef(saved.current.open);
   useEffect(() => {
@@ -36,7 +33,6 @@ export function useGuide(portraitFormed = true) {
       setOpen(true);
     }
   }, [portraitFormed]);
-  const scrolled = useScrolled();
 
   // this tab remembers whether the chat was open and what was typed but not sent
   // (nothing is saved while a saved open chat waits for the portrait, or a second refresh would forget it)
@@ -51,7 +47,6 @@ export function useGuide(portraitFormed = true) {
   useEffect(() => clearTimers, []);
 
   usePinToVisualViewport(open, isMobile);
-  useFollowPageEnd(open, isMobile);
   // a chat restored open after a refresh does not steal focus; one the visitor opens does
   const restoredOpen = useRef(saved.current.open);
   useEffect(() => {
@@ -61,9 +56,7 @@ export function useGuide(portraitFormed = true) {
   // a saved conversation shows up late (after the portrait), so follow it again when it does
   const appeared = `${portraitFormed}-${open}`;
   useFollowNewest({
-    feedRef,
     logRef,
-    isMobile,
     asked,
     shown,
     status,
@@ -71,8 +64,7 @@ export function useGuide(portraitFormed = true) {
     appeared,
   });
 
-  const [closing, setClosing] = useState(false);
-  // The bar is hidden while the chat is open, so focus can only go back to it once it is showing again.
+  // the launcher is hidden while the panel is open, so focus can only go back to it once it shows again
   const returnFocus = useRef(false);
   useEffect(() => {
     if (!open && returnFocus.current) {
@@ -82,18 +74,7 @@ export function useGuide(portraitFormed = true) {
   }, [open]);
   const closeDock = () => {
     returnFocus.current = true;
-    if (showLog || prefersReducedMotion()) {
-      setOpen(false);
-      return;
-    }
-    // let the open bar fade out (120 ms) before it collapses to the pill
-    setClosing(true);
-    timers.current.push(
-      window.setTimeout(() => {
-        setOpen(false);
-        setClosing(false);
-      }, 130),
-    );
+    setOpen(false);
   };
   const onDockKey = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Escape' && open) closeDock();
@@ -103,7 +84,6 @@ export function useGuide(portraitFormed = true) {
     const q = text.trim();
     if (!q || status !== 'ready') return;
     setOpen(true);
-    if (!showLog && window.scrollY > 0) window.scrollTo({ top: 0 });
     setQuestion('');
     setMarked(null);
     void chat.send(q);
@@ -122,8 +102,10 @@ export function useGuide(portraitFormed = true) {
     trackCiteClick(id);
     const el = document.getElementById(id);
     if (!el) {
-      // only the four featured projects are on this page; the rest are on the all-projects page
-      if (projects.some((p) => p.id === id)) window.location.assign(`/projects/#${id}`);
+      // an item that lives on another page: go there. On a wide screen the panel is beside the page, so
+      // the chat reopens as it was; on a phone it covers the page, so it is left closed to show the card.
+      if (isMobile) saveUi({ open: false, draft: question });
+      window.location.assign(destinationFor(id));
       return;
     }
     if (isMobile) setOpen(false);
@@ -164,18 +146,15 @@ export function useGuide(portraitFormed = true) {
     marked,
     open,
     setOpen,
-    closing,
     closeDock,
     onDockKey,
-    scrolled,
     isMobile,
-    showLog,
     ask,
     onSubmit,
     show,
     thread,
     chipList,
-    refs: { inputRef, toggleRef, feedRef, logRef },
+    refs: { inputRef, toggleRef, logRef },
   };
 }
 

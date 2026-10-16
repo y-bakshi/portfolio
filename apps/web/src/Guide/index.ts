@@ -1,3 +1,3 @@
 export { GuideDock } from './GuideDock';
-export { useGuide } from './useGuide';
+export { GuideProvider, useGuideContext } from './GuideContext';
 export type { Guide } from './useGuide';

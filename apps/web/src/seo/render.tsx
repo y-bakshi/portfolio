@@ -2,6 +2,8 @@ import { renderToString } from 'react-dom/server';
 import AllProjects from '../AllProjects';
 import Home from '../App';
 import CaseStudy from '../CaseStudy';
+import ContactPage from '../ContactPage';
+import ExperiencePage from '../ExperiencePage';
 import NotFound from '../NotFound';
 
 /** The page components by their built file, so the build can put each one's markup in its HTML. */
@@ -9,6 +11,8 @@ export const pageComponents = {
   'index.html': Home,
   'projects/index.html': AllProjects,
   'projects/testpilot/index.html': CaseStudy,
+  'experience/index.html': ExperiencePage,
+  'contact/index.html': ContactPage,
   '404.html': NotFound,
 } as const;
 

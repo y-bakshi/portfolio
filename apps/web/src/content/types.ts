@@ -1,5 +1,9 @@
+/** The filter tabs on the projects page. */
+export type Category = 'backend' | 'cloud' | 'ai' | 'systems';
+
 export type Project = {
   id: string;
+  categories: Category[];
   /** One of the four strongest projects, shown first and in full on the projects screen. */
   featured?: boolean;
   name: string;
@@ -20,6 +24,10 @@ export type Entry = {
   org: string;
   when: string;
   note: string;
+  /** The note broken into the separate things done, for the experience timeline. */
+  points: string[];
+  /** Short topics, for the home page's recent experience strip. */
+  tags?: string[];
   /** Initials shown in the logo slot until there is a logo image. */
   mark: string;
   /** Path of a logo image under public/, for example '/logos/thryv.svg'. */

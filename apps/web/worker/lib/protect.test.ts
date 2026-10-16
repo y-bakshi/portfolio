@@ -31,7 +31,7 @@ describe('createAdmission', () => {
     expect(refused.error.status).toBe(429);
     expect(refused.error.code).toBe('rate_limited');
     expect(refused.error.retryAt).toBe(new Date(T0 + 60_000).toISOString());
-    expect(refused.error.message).toContain('contact section are still open');
+    expect(refused.error.message).toContain('contact pages are still open');
     expect(retryAfterSeconds(refused.error, T0)).toBe(60);
     advance(60_000);
     expect((await admit('chat')).ok).toBe(true);

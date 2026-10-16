@@ -3,6 +3,13 @@ import type { Entry } from './types';
 export const roles: Entry[] = [
   {
     id: 'thryv',
+    points: [
+      'Independent deployment for the team’s Java and Micronaut services',
+      'Gated CircleCI promotion, with hermetic JMH and K6 tests',
+      'OpenAPI compatibility checks across 100+ operations',
+      '40 pull requests',
+    ],
+    tags: ['CI/CD', 'API compatibility', 'Performance testing'],
     mark: 'Th',
     logo: '/logos/thryv.png',
     title: 'Software engineering intern',
@@ -12,6 +19,12 @@ export const roles: Entry[] = [
   },
   {
     id: 'insight',
+    points: [
+      'Led eight people across five ServiceNow projects',
+      'Mentored 12 developers',
+      'Zero critical post-deployment defects',
+      'Best Team Award among 30+ teams',
+    ],
     mark: 'In',
     logo: '/logos/insight.webp',
     title: 'Technical team lead',
@@ -21,6 +34,11 @@ export const roles: Entry[] = [
   },
   {
     id: 'tcs-dev',
+    points: [
+      'Python and LLDP discovery that kept a CMDB of 10,000+ devices current',
+      '100+ portals and forms, and monitoring integrations',
+      'Runbooks that cut onboarding from two weeks to five days',
+    ],
     mark: 'TCS',
     logo: '/logos/tcs.svg',
     title: 'ServiceNow developer',
@@ -30,6 +48,10 @@ export const roles: Entry[] = [
   },
   {
     id: 'tcs-ase',
+    points: [
+      'RHEL, Docker and HPC operations with IBM Spectrum LSF',
+      'Monitoring, and 99.9% documented uptime',
+    ],
     mark: 'TCS',
     logo: '/logos/tcs.svg',
     title: 'Assistant systems engineer',
@@ -42,6 +64,11 @@ export const roles: Entry[] = [
 export const education: Entry[] = [
   {
     id: 'asu',
+    points: [
+      'Statistical machine learning and AI for software engineers',
+      'Data processing at scale and cloud computing',
+      'Software project management',
+    ],
     mark: 'ASU',
     logo: '/logos/asu.png',
     title: 'MS, Computer Software Engineering',
@@ -51,6 +78,10 @@ export const education: Entry[] = [
   },
   {
     id: 'manipal',
+    points: [
+      'Data structures and algorithms, databases, computer networks, object-oriented programming',
+      'ServiceNow Certified System Administrator and ServiceNow Discovery certifications',
+    ],
     mark: 'MUJ',
     logo: '/logos/manipal.png',
     title: 'Bachelor of Information Technology',

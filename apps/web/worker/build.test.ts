@@ -113,7 +113,7 @@ describe('the wired app', () => {
     expect(res.status).toBe(503);
     const body = (await res.json()) as { error: { code: string; message: string } };
     expect(body.error.code).toBe('unavailable');
-    expect(body.error.message).toMatch(/contact section are still open/i);
+    expect(body.error.message).toMatch(/contact pages are still open/i);
     expect(JSON.parse((await events()).find((e) => e.type === 'rate_limited')!.data_json!)).toEqual(
       {
         scope: 'budget',

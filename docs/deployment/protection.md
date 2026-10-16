@@ -29,8 +29,8 @@ The monthly cap is a kill switch that flips itself: when the month's settled and
 
 ## What visitors see
 
-- Too many questions: the API answers 429 with a plain message and the time to retry, for example "That is a lot of questions in a short time. Please try again in about a minute. The projects on this page and the contact section are still open."
-- Cap reached or kill switch on: 503 with "The guide is resting ... The projects on this page and the contact section are still open." The page keeps working; the guide says it cannot answer just now.
+- Too many questions: the API answers 429 with a plain message and the time to retry, for example "That is a lot of questions in a short time. Please try again in about a minute. The project, experience and contact pages are still open."
+- Cap reached or kill switch on: 503 with "The guide is resting ... The project, experience and contact pages are still open." The page keeps working; the guide says it cannot answer just now.
 - The Turnstile check fails: 403 from the chat routes.
 
 ## Privacy
