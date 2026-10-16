@@ -1,6 +1,5 @@
 /* The site's one stylesheet: Tailwind v4 (with its reset), the palette, and a few base rules. */
 @import 'tailwindcss';
-@import 'tw-animate-css';
 @import './diagrams/iso/vendor/iso-base.css';
 @import './diagrams/iso/iso-theme.css';
 

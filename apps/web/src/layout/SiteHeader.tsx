@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Cancel01Icon, GithubIcon, Menu01Icon } from '@hugeicons/core-free-icons';
+import { MorphGlyph } from '@/components/MorphGlyph';
 import { cn } from '@/lib/cn';
 import { Container } from './Container';
 import { GITHUB_URL, navItems, type PageId } from './nav';
@@ -52,7 +53,7 @@ export function SiteHeader({ current }: { current: PageId }) {
             onClick={() => setOpen((o) => !o)}
             className="rounded-md p-2 text-ink transition-colors hover:text-action"
           >
-            <HugeiconsIcon icon={open ? Cancel01Icon : Menu01Icon} size={24} />
+            <MorphGlyph icon={open ? Cancel01Icon : Menu01Icon} />
           </button>
         </div>
       </Container>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { PauseIcon, PlayIcon } from '@hugeicons/core-free-icons';
+import { MorphGlyph } from '@/components/MorphGlyph';
 import { TechLogo } from '@/components/TechLogo';
 import { heroStack } from '../../content';
 import { Container } from '../../layout/Container';
@@ -32,7 +32,7 @@ export function StackMarquee() {
           onClick={() => setPaused((p) => !p)}
           className="rounded-full border border-ink/40 p-2 text-ink transition hover:border-ink hover:bg-ink/5"
         >
-          <HugeiconsIcon icon={paused ? PlayIcon : PauseIcon} size={16} />
+          <MorphGlyph icon={paused ? PlayIcon : PauseIcon} size={16} />
         </button>
       </Container>
     </div>

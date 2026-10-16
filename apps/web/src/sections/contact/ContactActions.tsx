@@ -9,6 +9,7 @@ import {
   Mail01Icon,
   Tick02Icon,
 } from '@hugeicons/core-free-icons';
+import { MorphGlyph } from '@/components/MorphGlyph';
 import { Button } from '@/components/ui/button';
 import { BOOKING_URL, EMAILS, GITHUB_URL, LINKEDIN_URL } from '../../layout/nav';
 import { useGuideContext } from '../../Guide';
@@ -41,7 +42,7 @@ export function ContactLinks() {
           onClick={() => void copy()}
           aria-label={copied ? 'Email address copied' : 'Copy email address'}
         >
-          <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} size={18} />
+          <MorphGlyph icon={copied ? Tick02Icon : Copy01Icon} size={18} />
         </Button>
       </div>
       <p className="text-muted">
