@@ -26,7 +26,7 @@ export function EducationCards() {
             <OrgLogo entry={e} />
             <h3 className="text-xl font-semibold">{e.title}</h3>
             <p>{e.org}</p>
-            <p className="text-[0.95rem] text-muted">{e.when}</p>
+            <p className="font-mono text-sm text-muted">{e.when}</p>
             <ul className="list-disc space-y-1 pl-5 text-[0.95rem] marker:text-action">
               {e.points.map((pt) => (
                 <li key={pt}>{pt}</li>
