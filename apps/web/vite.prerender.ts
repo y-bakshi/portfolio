@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createServer, type Plugin } from 'vite';
 
 const EMPTY_ROOT = '<div id="root"></div>';
@@ -34,6 +35,8 @@ export function prerenderPlugin(): Plugin {
       // the same loader the corpus scripts use: Vite itself runs the TypeScript, with no window
       const server = await createServer({
         configFile: false,
+        // the same `@/` alias the app's own config sets
+        resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
         appType: 'custom',
         logLevel: 'error',
         server: { middlewareMode: true, ws: false },

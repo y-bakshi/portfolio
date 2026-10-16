@@ -21,7 +21,7 @@ const calls = (fn: ReturnType<typeof fakeApi>, key: string) =>
   fn.mock.calls.filter(([url, init]) => `${init?.method ?? 'GET'} ${url}` === key);
 
 const bar = () => screen.getByRole('button', { name: /^ask the guide/i });
-const panel = () => document.getElementById('dock-open') as HTMLElement;
+const panel = () => document.getElementById('guide-panel') as HTMLElement;
 const input = () => screen.getByLabelText(/ask the guide about yash/i) as HTMLInputElement;
 const ok = () => Response.json({ ok: true });
 const transcript = (messages: unknown[]) => () => Response.json({ messages });
@@ -43,7 +43,7 @@ describe('the stored guide chat', () => {
     await user.click(bar());
     await user.type(input(), 'How does TestPilot use RAG?{Enter}');
     expect(
-      await screen.findByText('TestPilot uses RAG for tests.', { selector: '.msg-answer' }),
+      await screen.findByText('TestPilot uses RAG for tests.', { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Good answer' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Show TestPilot on the page' })).toBeInTheDocument();
@@ -74,13 +74,13 @@ describe('the stored guide chat', () => {
       },
     });
     render(<Home />);
-    expect(screen.getByText('Old answer', { selector: '.msg-answer' })).toBeInTheDocument();
+    expect(screen.getByText('Old answer', { selector: '[data-answer]' })).toBeInTheDocument();
     release();
     expect(
-      await screen.findByText('Saved answer', { selector: '.msg-answer' }),
+      await screen.findByText('Saved answer', { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     expect(screen.queryByText('Old answer')).toBeNull();
-    expect(screen.getByText('Saved question', { selector: '.msg-user' })).toBeInTheDocument();
+    expect(screen.getByText('Saved question', { selector: '[data-question]' })).toBeInTheDocument();
   });
 
   it('keeps the browser copy when the server has nothing or cannot be reached', async () => {
@@ -97,7 +97,7 @@ describe('the stored guide chat', () => {
     fakeApi({});
     render(<Home />);
     await act(async () => {});
-    expect(screen.getByText('Kept answer', { selector: '.msg-answer' })).toBeInTheDocument();
+    expect(screen.getByText('Kept answer', { selector: '[data-answer]' })).toBeInTheDocument();
   });
 
   it('says it cannot answer on a server error, and offers no thumbs for it', async () => {
@@ -113,7 +113,7 @@ describe('the stored guide chat', () => {
       within(panel()).getByRole('button', { name: 'What has Yash built with RAG?' }),
     );
     expect(
-      await screen.findByText(/cannot answer just now/, { selector: '.msg-answer' }),
+      await screen.findByText(/cannot answer just now/, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Good answer' })).toBeNull();
   });
@@ -129,7 +129,7 @@ describe('the stored guide chat', () => {
     await user.click(bar());
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
-      await screen.findByText(/cannot answer just now/, { selector: '.msg-answer' }),
+      await screen.findByText(/cannot answer just now/, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
   });
 
@@ -148,7 +148,7 @@ describe('the stored guide chat', () => {
     await user.click(bar());
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
-      await screen.findByText('Please try again in 40 seconds.', { selector: '.msg-answer' }),
+      await screen.findByText('Please try again in 40 seconds.', { selector: '[data-answer]' }),
     ).toBeInTheDocument();
   });
 
@@ -186,11 +186,11 @@ describe('the stored guide chat', () => {
     const api = fakeApi({ 'GET /api/chat': transcript(stored), 'DELETE /api/chat': ok });
     const user = userEvent.setup();
     render(<Home />);
-    await screen.findByText('Saved answer', { selector: '.msg-answer' });
+    await screen.findByText('Saved answer', { selector: '[data-answer]' });
     await user.click(bar());
     expect(within(panel()).getByText(SAVED_NOTICE)).toBeInTheDocument();
     await user.click(within(panel()).getByRole('button', { name: 'Clear this chat' }));
-    expect(document.querySelector('.msg-user')).toBeNull();
+    expect(document.querySelector('[data-question]')).toBeNull();
     expect(screen.queryByText('Saved answer')).toBeNull();
     expect(calls(api, 'DELETE /api/chat')).toHaveLength(1);
     expect(localStorage.getItem(CHAT_KEY)).toBeNull();
@@ -227,7 +227,7 @@ describe('the stored guide chat', () => {
       window.dispatchEvent(new StorageEvent('storage', { key: CHAT_KEY, newValue: next }));
     });
     expect(
-      await screen.findByText('Other tab answer', { selector: '.msg-answer' }),
+      await screen.findByText('Other tab answer', { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     localStorage.removeItem(CHAT_KEY);
     act(() => {

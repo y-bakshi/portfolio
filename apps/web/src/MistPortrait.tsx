@@ -210,7 +210,7 @@ export function MistPortrait({
   return (
     <canvas
       ref={canvasRef}
-      className="mist"
+      className="block h-auto w-full touch-pan-y"
       role="img"
       aria-label={alt}
       style={{ aspectRatio: `${width} / ${height}` }}

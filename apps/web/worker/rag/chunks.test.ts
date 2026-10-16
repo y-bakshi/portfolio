@@ -1,6 +1,5 @@
 // @vitest-environment node
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { corpusJson, CORPUS_PATH } from '../../scripts/build-corpus';
 import { projects } from '../../src/content';
@@ -48,8 +47,9 @@ describe('the corpus', () => {
 });
 
 describe('the contact facts', () => {
-  it('use only links that the contact section of the page shows', () => {
-    const page = readFileSync(join(import.meta.dirname, '../../src/sections/Contact.tsx'), 'utf8');
+  it('use only links that the contact page shows', async () => {
+    const { renderPage } = await import('../../src/seo/render');
+    const page = renderPage('contact/index.html');
     for (const value of Object.values(CONTACT_LINKS)) expect(page, value).toContain(value);
-  });
+  }, 30_000);
 });

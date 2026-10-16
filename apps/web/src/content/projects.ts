@@ -3,6 +3,7 @@ import type { Project } from './types';
 export const projects: Project[] = [
   {
     id: 'testpilot',
+    categories: ['ai', 'backend', 'cloud'],
     featured: true,
     name: 'TestPilot',
     line: 'Writes tests, then argues with them.',
@@ -28,6 +29,7 @@ export const projects: Project[] = [
   },
   {
     id: 'citywatch',
+    categories: ['cloud', 'ai'],
     featured: true,
     name: 'CityWatch',
     line: 'Turns noisy public signals into alerts for the right department.',
@@ -50,6 +52,7 @@ export const projects: Project[] = [
   },
   {
     id: 'cv-studio',
+    categories: ['backend'],
     featured: true,
     name: 'CV Studio',
     line: 'A résumé editor that compiles real LaTeX.',
@@ -68,6 +71,7 @@ export const projects: Project[] = [
   },
   {
     id: 'guardianai',
+    categories: ['ai', 'backend'],
     featured: true,
     name: 'GuardianAI',
     line: 'Two ways to answer a safety question.',
@@ -86,6 +90,7 @@ export const projects: Project[] = [
   },
   {
     id: 'catscript',
+    categories: ['systems'],
     name: 'CatScript',
     line: 'A small programming language, lexer to interpreter.',
     detail:
@@ -103,6 +108,7 @@ export const projects: Project[] = [
   },
   {
     id: 'procwatch',
+    categories: ['systems'],
     name: 'ProcWatch',
     line: 'A terminal process monitor for Linux and WSL.',
     detail:
@@ -119,6 +125,7 @@ export const projects: Project[] = [
   },
   {
     id: 'streaming-pipeline',
+    categories: ['backend', 'cloud'],
     name: 'Streaming data pipeline',
     line: 'NYC taxi events flowing into a graph database.',
     detail:
@@ -133,6 +140,7 @@ export const projects: Project[] = [
   },
   {
     id: 'face-recognition',
+    categories: ['cloud', 'ai'],
     name: 'Serverless face recognition',
     line: 'Detection and recognition as separate stages with a queue between them.',
     detail:
@@ -147,6 +155,7 @@ export const projects: Project[] = [
   },
   {
     id: 'edge-inference',
+    categories: ['cloud', 'ai'],
     name: 'Edge inference',
     line: 'Only faces cross the network.',
     detail:
@@ -162,6 +171,7 @@ export const projects: Project[] = [
   },
   {
     id: 'story-generator',
+    categories: ['ai'],
     name: 'Gemini story generator',
     line: 'Stories and pictures for children.',
     detail:

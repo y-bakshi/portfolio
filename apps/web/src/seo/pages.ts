@@ -37,6 +37,21 @@ export const pageMeta: PageMeta[] = [
       "How TestPilot generates unit tests that follow a team's coding standards and ranks defect-prone files, with its measured results.",
     name: 'TestPilot case study',
   },
+  {
+    path: '/experience/',
+    file: 'experience/index.html',
+    title: 'Experience | Yash Bakshi',
+    description:
+      'Work history and education of Yash Bakshi: a software engineering internship at Thryv, technical team lead at InfoCenter, ServiceNow development at Tata Consultancy Services, and an MS at Arizona State University.',
+    name: 'Experience',
+  },
+  {
+    path: '/contact/',
+    file: 'contact/index.html',
+    title: 'Contact | Yash Bakshi',
+    description: 'How to reach Yash Bakshi: email, LinkedIn, GitHub, or book a 30 minute call.',
+    name: 'Contact',
+  },
 ];
 
 /** Turns a built file or a request path into the page's path: `/projects/index.html` becomes `/projects/`. */

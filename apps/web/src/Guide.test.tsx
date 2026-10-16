@@ -44,7 +44,7 @@ const renderHome = () => {
 };
 
 const bar = () => screen.getByRole('button', { name: /^ask the guide/i });
-const panel = () => document.getElementById('dock-open') as HTMLElement;
+const panel = () => document.getElementById('guide-panel') as HTMLElement;
 // Answer text appears twice on purpose: in its bubble, and once in a status region for screen readers.
 const input = () => screen.getByLabelText(/ask the guide about yash/i) as HTMLInputElement;
 
@@ -83,10 +83,10 @@ describe('the guide chat', () => {
     renderHome();
     await openAndAsk(user, 'What has Yash built with RAG?');
     expect(
-      await screen.findByText(/TestPilot is the RAG project/, { selector: '.msg-answer' }),
+      await screen.findByText(/TestPilot is the RAG project/, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('What has Yash built with RAG?', { selector: '.msg-user' }),
+      screen.getByText('What has Yash built with RAG?', { selector: '[data-question]' }),
     ).toBeInTheDocument();
     expect(
       await screen.findByRole('button', { name: 'Show TestPilot on the page' }),
@@ -112,12 +112,12 @@ describe('the guide chat', () => {
     await openAndAsk(user, 'What has Yash built with RAG?');
     await screen.findByRole('button', { name: 'Show TestPilot on the page' });
     await user.click(within(panel()).getByRole('button', { name: 'Has he worked with agents?' }));
-    await screen.findByText(/GuardianAI has a ReAct path/, { selector: '.msg-answer' });
-    expect(document.querySelectorAll('.exchange')).toHaveLength(1);
+    await screen.findByText(/GuardianAI has a ReAct path/, { selector: '[data-answer]' });
+    expect(document.querySelectorAll('[data-exchange]')).toHaveLength(1);
     expect(
-      screen.getByText(/TestPilot is the RAG project/, { selector: '.msg-answer' }),
+      screen.getByText(/TestPilot is the RAG project/, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
-    expect(document.querySelectorAll('.msg-user')).toHaveLength(2);
+    expect(document.querySelectorAll('[data-question]')).toHaveLength(2);
   });
 
   it('ignores an empty question and keeps focus in the input', async () => {
@@ -125,7 +125,7 @@ describe('the guide chat', () => {
     renderHome();
     await user.click(bar());
     await user.click(screen.getByRole('button', { name: 'Ask' }));
-    expect(document.querySelector('.msg-user')).toBeNull();
+    expect(document.querySelector('[data-question]')).toBeNull();
     expect(input()).toHaveFocus();
   });
 
@@ -136,7 +136,7 @@ describe('the guide chat', () => {
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
       await screen.findByText(/Arizona State University, after/, {
-        selector: '.msg-answer',
+        selector: '[data-answer]',
       }),
     ).toBeInTheDocument();
     expect(input()).toHaveValue('');
@@ -150,7 +150,7 @@ describe('the guide chat', () => {
     const card = document.getElementById('testpilot') as HTMLElement;
     expect(card.scrollIntoView).toHaveBeenCalled();
     expect(card).toHaveFocus();
-    await waitFor(() => expect(card).toHaveClass('is-marked'));
+    await waitFor(() => expect(card).toHaveAttribute('data-marked'));
   });
 
   it('opens the all-projects page for a cited project that is not on this page', async () => {
@@ -204,7 +204,9 @@ describe('the guide chat', () => {
     }
     expect(chip).toBeEnabled();
     expect(
-      screen.getByText(/CityWatch and the face recognition pipeline/, { selector: '.msg-answer' }),
+      screen.getByText(/CityWatch and the face recognition pipeline/, {
+        selector: '[data-answer]',
+      }),
     ).toBeInTheDocument();
   });
 });

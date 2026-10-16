@@ -1,51 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
-import { DotGrid } from './DotGrid';
-import { GuideDock, useGuide } from './Guide';
-import { SiteHeader, WipBanner } from './parts';
-import { Contact } from './sections/Contact';
-import { Education } from './sections/Education';
-import { Footer } from './sections/Footer';
-import { Hero } from './sections/Hero';
-import { Projects } from './sections/Projects';
-import { WorkHistory } from './sections/WorkHistory';
+import { useCallback, useState } from 'react';
+import { PageFrame } from './layout/PageFrame';
+import { useIsMobile } from './Guide/useViewport';
+import { ExperienceStrip } from './sections/home/ExperienceStrip';
+import { Hero } from './sections/home/Hero';
+import { SelectedWork } from './sections/home/SelectedWork';
+import { StackMarquee } from './sections/home/StackMarquee';
 
+/** The home page. A restored chat waits for the portrait to form, so the page loads in order. */
 export function Home() {
-  // the portrait forms first; the introduction and any saved chat come after it
   const [formed, setFormed] = useState(false);
   const onFormed = useCallback(() => setFormed(true), []);
-  const g = useGuide(formed);
-  const { isMobile, thread, marked } = g;
-
-  useEffect(() => {
-    const id = window.location.hash.slice(1);
-    if (id) document.getElementById(id)?.scrollIntoView();
-  }, []);
-
+  const isMobile = useIsMobile();
   return (
-    <>
-      <DotGrid />
-      <WipBanner />
-      <SiteHeader />
-      <main id="main">
-        <Hero
-          isMobile={isMobile}
-          thread={thread}
-          feedRef={g.refs.feedRef}
-          formed={formed}
-          // a saved conversation waits for the portrait; a question asked now does not
-          showThread={formed || g.asked !== ''}
-          onFormed={onFormed}
-        />
-        <Projects marked={marked} />
-        <WorkHistory marked={marked} />
-        <div className="finale">
-          <Education marked={marked} />
-          <Contact marked={marked} />
-        </div>
-      </main>
-      <GuideDock g={g} />
-      <Footer />
-    </>
+    <PageFrame current="home" portraitFormed={formed}>
+      <Hero isMobile={isMobile} onFormed={onFormed} />
+      <StackMarquee />
+      <ExperienceStrip />
+      <SelectedWork />
+    </PageFrame>
   );
 }
 

@@ -1,5 +1,4 @@
 import '@fontsource-variable/instrument-sans/wdth.css';
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
-import './styles/index.css';
 import './tailwind.css';
