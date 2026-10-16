@@ -37,7 +37,7 @@ export function GuidePanel() {
         {g.announce}
       </p>
       <div className="flex items-start gap-3 border-b border-line/60 px-5 py-4">
-        <GuideAvatar status={status} />
+        <GuideAvatar status={status} listening={question.trim() !== ''} />
         <div className="min-w-0 flex-1">
           <h2 className="display text-2xl">Ask the guide</h2>
           <p className="text-sm text-muted">{statusLabel[status]}</p>

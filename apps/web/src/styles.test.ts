@@ -11,8 +11,6 @@ const sources = import.meta.glob(
   },
 ) as Record<string, string>;
 
-const lines = (text: string) => text.split('\n').length;
-
 describe('source files', () => {
   it('keep page copy in the content modules, not in arrays inside components', () => {
     for (const [file, text] of Object.entries(sources)) {
