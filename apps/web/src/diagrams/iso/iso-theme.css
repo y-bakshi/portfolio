@@ -1,0 +1,85 @@
+/* The figures' palette: cream paper and navy ink, from the site's own tokens. Lines and shades are tints of the ink. */
+.iso {
+  --anatomy-card: var(--panel);
+  --anatomy-paper: var(--panel);
+  --anatomy-face: #fbf8f1;
+  --anatomy-top: #fdfaf3;
+  --anatomy-shade-0: #c4b9a2;
+  --anatomy-shade-1: #d1c7b1;
+  --anatomy-shade-2: #ddd5c2;
+  --anatomy-shade-3: #e9e2d1;
+  --anatomy-lit-top: #fffdf8;
+  --anatomy-lit-shade: #ece6d8;
+  --anatomy-hi: #0e1d61;
+  --anatomy-mid: #5d6692;
+  --anatomy-lo: #a29c93;
+  --anatomy-faint: #cfc7b6;
+  --anatomy-lit: #0e1d61;
+  --anatomy-halo: #0e1d61;
+  --anatomy-halo-opacity: 0.2;
+  --anatomy-dot: #0e1d61;
+  --anatomy-weight: 0.7px;
+  --anatomy-text: var(--muted);
+  --anatomy-strong: var(--ink);
+  --anatomy-muted: var(--muted);
+  --anatomy-mono: var(--code);
+}
+
+/* the thing that travels: a navy packet with a gold lid, the one accent in every figure */
+.iso-packet .iso-shade[data-shade='0'] {
+  fill: #0a1547;
+}
+.iso-packet .iso-shade[data-shade='1'] {
+  fill: #0e1d61;
+}
+.iso-packet .iso-shade[data-shade='2'] {
+  fill: #1a2e8a;
+}
+.iso-packet .iso-shade[data-shade='3'] {
+  fill: #2a40a8;
+}
+.iso-packet .iso-top {
+  fill: #c9ab68;
+}
+.iso-packet .iso-fill {
+  fill: #0e1d61;
+}
+.iso-packet .iso-edge {
+  stroke: #0a1547;
+}
+
+/* the working part of a machine, in solid navy so the eye finds what does the work */
+.iso-ink .iso-fill {
+  fill: #0e1d61;
+}
+.iso-ink .iso-shade[data-shade='0'] {
+  fill: #0a1547;
+}
+.iso-ink .iso-shade[data-shade='1'] {
+  fill: #0e1d61;
+}
+.iso-ink .iso-shade[data-shade='2'] {
+  fill: #172a82;
+}
+.iso-ink .iso-shade[data-shade='3'] {
+  fill: #223694;
+}
+.iso-ink .iso-top {
+  fill: #33479f;
+}
+.iso-ink .iso-edge {
+  stroke: #0a1547;
+}
+
+/* a station lifts a little when its step is hovered or focused in the list below the figure */
+.iso-station {
+  transition: transform 260ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+.iso-station[data-active] {
+  transform: translateY(-4px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .iso-station {
+    transition: none;
+  }
+}

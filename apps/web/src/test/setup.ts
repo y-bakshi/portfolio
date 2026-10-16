@@ -26,6 +26,19 @@ beforeEach(() => {
     vi.fn(() => Promise.reject(new TypeError('no network in tests'))),
   );
 
+  // jsdom has no IntersectionObserver: the figures use one to run only while they are on screen
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return [];
+      }
+    },
+  );
+
   // jsdom does not lay anything out or scroll
   Element.prototype.scrollIntoView = vi.fn();
   window.scrollTo = vi.fn() as typeof window.scrollTo;
