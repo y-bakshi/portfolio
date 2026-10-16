@@ -15,7 +15,7 @@ The future FastAPI backend will live in `apps/api/`.
 
 See [docs/README.md](docs/README.md) for requirements, architecture, API and database contracts, interface flows, development, testing, deployment plans, and decisions. The [roadmap](docs/roadmap.md) distinguishes completed scaffolding from planned features.
 
-New contributors should start with the [handoff guide](docs/handoff.md). It includes the visual references, asset specifications, draft content sources, and outstanding owner inputs. The home page and the TestPilot case study are built; the guide answers from a keyword-matched stand-in until the backend exists, and nothing is deployed yet. See the [roadmap](docs/roadmap.md) for what remains.
+New contributors should start with the [handoff guide](docs/handoff.md). It includes the visual references, asset specifications, draft content sources, and outstanding owner inputs. The site's five pages and the TestPilot case study are built, and the guide answers through the Worker API (retrieval over the project notes and Gemini) on the owner's machine; nothing is deployed yet. See the [roadmap](docs/roadmap.md) for what remains.
 
 ## Development
 

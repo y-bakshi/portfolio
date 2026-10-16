@@ -2,14 +2,50 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { motion } from './test/setup';
 import Home from './App';
+import AllProjects from './AllProjects';
+import { answerStream, cannedGuide, fakeApi } from './test/fake-api';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
-vi.mock('./MistPortrait', () => ({ MistPortrait: () => <div data-testid="portrait" /> }));
+vi.mock('./MistPortrait', async () => {
+  const { useEffect } = await import('react');
+  // a stand-in portrait that is finished at once, as the real one is with reduced motion
+  return {
+    MistPortrait: ({ onFormed }: { onFormed?: () => void }) => {
+      useEffect(() => onFormed?.(), [onFormed]);
+      return <div data-testid="portrait" />;
+    },
+  };
+});
 
-const renderHome = () => render(<Home />);
+// the page's own guide is the API; these are the answers it gives in these tests
+const renderHome = (page: React.ReactElement = <Home />) => {
+  cannedGuide({
+    'What has Yash built with RAG?': [
+      'TestPilot is the RAG project. It retrieves coding standards first.',
+      ['testpilot'],
+    ],
+    'Has he worked with agents?': [
+      'GuardianAI has a ReAct path for open-ended questions.',
+      ['guardianai'],
+    ],
+    'Tell me about his education': [
+      'Arizona State University, after a degree in India.',
+      ['asu', 'manipal'],
+    ],
+    'Tell me about the rust process monitor': [
+      'ProcWatch is a Rust terminal monitor.',
+      ['procwatch'],
+    ],
+    'What cloud work has he done?': [
+      'CityWatch and the face recognition pipeline are both AWS.',
+      ['citywatch', 'face-recognition', 'testpilot'],
+    ],
+  });
+  return render(page);
+};
 
 const bar = () => screen.getByRole('button', { name: /^ask the guide/i });
-const panel = () => document.getElementById('dock-open') as HTMLElement;
+const panel = () => document.getElementById('guide-panel') as HTMLElement;
 // Answer text appears twice on purpose: in its bubble, and once in a status region for screen readers.
 const input = () => screen.getByLabelText(/ask the guide about yash/i) as HTMLInputElement;
 
@@ -48,10 +84,10 @@ describe('the guide chat', () => {
     renderHome();
     await openAndAsk(user, 'What has Yash built with RAG?');
     expect(
-      await screen.findByText(/TestPilot is the RAG project/, { selector: '.msg-answer' }),
+      await screen.findByText(/TestPilot is the RAG project/, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('What has Yash built with RAG?', { selector: '.msg-user' }),
+      screen.getByText('What has Yash built with RAG?', { selector: '[data-question]' }),
     ).toBeInTheDocument();
     expect(
       await screen.findByRole('button', { name: 'Show TestPilot on the page' }),
@@ -77,12 +113,12 @@ describe('the guide chat', () => {
     await openAndAsk(user, 'What has Yash built with RAG?');
     await screen.findByRole('button', { name: 'Show TestPilot on the page' });
     await user.click(within(panel()).getByRole('button', { name: 'Has he worked with agents?' }));
-    await screen.findByText(/GuardianAI has a ReAct path/, { selector: '.msg-answer' });
-    expect(document.querySelectorAll('.exchange')).toHaveLength(1);
+    await screen.findByText(/GuardianAI has a ReAct path/, { selector: '[data-answer]' });
+    expect(document.querySelectorAll('[data-exchange]')).toHaveLength(1);
     expect(
-      screen.getByText(/TestPilot is the RAG project/, { selector: '.msg-answer' }),
+      screen.getByText(/TestPilot is the RAG project/, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
-    expect(document.querySelectorAll('.msg-user')).toHaveLength(2);
+    expect(document.querySelectorAll('[data-question]')).toHaveLength(2);
   });
 
   it('ignores an empty question and keeps focus in the input', async () => {
@@ -90,7 +126,7 @@ describe('the guide chat', () => {
     renderHome();
     await user.click(bar());
     await user.click(screen.getByRole('button', { name: 'Ask' }));
-    expect(document.querySelector('.msg-user')).toBeNull();
+    expect(document.querySelector('[data-question]')).toBeNull();
     expect(input()).toHaveFocus();
   });
 
@@ -101,7 +137,7 @@ describe('the guide chat', () => {
     await user.type(input(), 'Tell me about his education{Enter}');
     expect(
       await screen.findByText(/Arizona State University, after/, {
-        selector: '.msg-answer',
+        selector: '[data-answer]',
       }),
     ).toBeInTheDocument();
     expect(input()).toHaveValue('');
@@ -109,13 +145,13 @@ describe('the guide chat', () => {
 
   it('jumps to a cited card, focuses it and highlights it', async () => {
     const user = userEvent.setup();
-    renderHome();
+    renderHome(<AllProjects />);
     await openAndAsk(user, 'What has Yash built with RAG?');
     await user.click(await screen.findByRole('button', { name: 'Show TestPilot on the page' }));
     const card = document.getElementById('testpilot') as HTMLElement;
     expect(card.scrollIntoView).toHaveBeenCalled();
     expect(card).toHaveFocus();
-    await waitFor(() => expect(card).toHaveClass('is-marked'));
+    await waitFor(() => expect(card).toHaveAttribute('data-marked'));
   });
 
   it('opens the all-projects page for a cited project that is not on this page', async () => {
@@ -134,7 +170,24 @@ describe('the guide chat', () => {
     motion.reduce = false;
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderHome();
+    // a model takes a moment to start answering
+    fakeApi({
+      'GET /api/chat': () => Response.json({ messages: [] }),
+      'POST /api/session': () => Response.json({ ok: true }),
+      'POST /api/chat': () =>
+        new Promise<Response>((resolve) =>
+          setTimeout(
+            () =>
+              resolve(
+                answerStream('CityWatch and the face recognition pipeline are both AWS.', [
+                  'citywatch',
+                ]),
+              ),
+            800,
+          ),
+        ),
+    });
+    render(<Home />);
     await user.click(bar());
     const chip = within(panel()).getByRole('button', { name: 'What cloud work has he done?' });
     await user.click(chip);
@@ -144,12 +197,17 @@ describe('the guide chat', () => {
       vi.advanceTimersByTime(500);
     });
     expect(chip).toBeDisabled();
-    await act(async () => {
-      vi.advanceTimersByTime(4000);
-    });
+    // the answer arrives, is revealed word by word, and the chip comes back
+    for (let i = 0; i < 40 && chip.hasAttribute('disabled'); i++) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(200);
+      });
+    }
     expect(chip).toBeEnabled();
     expect(
-      screen.getByText(/CityWatch and the face recognition pipeline/, { selector: '.msg-answer' }),
+      screen.getByText(/CityWatch and the face recognition pipeline/, {
+        selector: '[data-answer]',
+      }),
     ).toBeInTheDocument();
   });
 });

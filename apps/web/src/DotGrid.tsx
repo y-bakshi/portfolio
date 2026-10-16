@@ -25,7 +25,7 @@ type Dot = { hx: number; hy: number; ox: number; oy: number; vx: number; vy: num
  * from it and spring back when it leaves. The loop stops once everything is at rest. Under reduced
  * motion the grid is drawn once and does not react.
  */
-export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
+export function DotGrid() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -155,7 +155,7 @@ export function DotGrid({ scope = 'page' }: { scope?: 'page' | 'header' }) {
   return (
     <canvas
       ref={ref}
-      className={scope === 'header' ? 'dotgrid dotgrid-header' : 'dotgrid'}
+      className="pointer-events-none fixed inset-0 z-0 h-full w-full"
       aria-hidden="true"
     />
   );

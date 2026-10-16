@@ -11,17 +11,17 @@
 
 The repo includes a React/TypeScript/Vite scaffold, lockfile, check/build commands, product requirements, architecture/contracts, visual specifications, reference screenshots, content summary, operational plans, and ADRs. Agent files/private root briefs are ignored and are not needed to interpret the shared specification.
 
-The site has a built homepage and a TestPilot case-study page (see [ADR-005](decisions/ADR-005-ask-first-design-direction.md)); its guide answers from a small keyword-matched set in `apps/web/src/content.ts`. No published case studies beyond the TestPilot template, real assistant, API, database, cloud infrastructure, deployment automation, or automated test suite exists. Documentation diagrams show intended architecture rather than provisioned services.
+The site has a home page, a projects page, a TestPilot case-study page, an experience page and a contact page, rebuilt with Tailwind and shadcn in October 2026 (see [ADR-007](decisions/ADR-007-tailwind-shadcn-redesign.md), which supersedes the styling of [ADR-005](decisions/ADR-005-ask-first-design-direction.md)), with an animated isometric figure per project; its guide answers through the Worker API (`apps/web/worker/`), with retrieval over the project notes and Gemini. No published case studies beyond the TestPilot template, real assistant, API, database, cloud infrastructure, deployment automation, or automated test suite exists. Documentation diagrams show intended architecture rather than provisioned services.
 
 ## Agreed Direction
 
 - Recruiters/hiring managers and developer collaborators are the audiences.
 - AI application engineering leads; backend engineering supplies depth.
-- The site is a working surface built around the guide: ask first, answers cite project rows, the cited row is highlighted.
+- The guide is a side panel on every page: answers cite project and role cards, and the cited card is highlighted. The home page leads with who Yash is, not the chat.
 - Ivory, navy and gold visual system (supersedes the mid-century journal concept); desktop and mobile have equal functionality.
 - Full project catalog with stronger AI/SDE emphasis, pipeline traces per project, case studies.
 - Contact options: email, LinkedIn, GitHub, and scheduling (30 minute Google Calendar booking link is set); résumé secondary.
-- Text/optional voice guide is shown with a status light and text (no avatar for now), explains verified work, and offers controlled navigation.
+- Text guide (voice later) with an animated face and a status line, explaining verified work and offering controlled navigation.
 - Planned GCP deployment: Firebase Hosting, Cloud Run/FastAPI, Firestore operational state; combined $25 monthly target with measured quotas.
 - Phased development; public website launch waits for integrated quality checks. Source code is public already.
 
