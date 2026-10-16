@@ -1,6 +1,6 @@
 import { useEffect, useRef, type RefObject } from 'react';
 import { translateAlong } from '../iso/vendor/kit';
-import { useInView, useStillness } from '../iso/vendor/live';
+import { useStillness } from '../iso/vendor/live';
 import { curves } from './timeline';
 import type { Scene } from './buildScene';
 
@@ -32,24 +32,26 @@ function paint(svg: SVGSVGElement, scene: Scene, seconds: number) {
 }
 
 /**
- * Runs a figure: a loop that moves the packets along their belts, only while the figure is on screen,
- * and a single still frame for people who ask for less motion. Everything is written straight onto the
- * drawing, so nothing re-renders.
+ * Runs a figure: a loop that moves the packets along their belts while `running` (the figure is on
+ * screen), and a single still frame for people who ask for less motion. Everything is written straight
+ * onto the drawing, so nothing re-renders.
  */
-export function useSceneMotion(svgRef: RefObject<SVGSVGElement | null>, scene: Scene) {
+export function useSceneMotion(
+  svgRef: RefObject<SVGSVGElement | null>,
+  scene: Scene | null,
+  running: boolean,
+) {
   const still = useStillness();
-  const wrapper = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(wrapper);
   const clock = useRef(0);
 
   useEffect(() => {
     const svg = svgRef.current;
-    if (!svg) return;
+    if (!svg || !scene) return;
     if (still) {
       paint(svg, scene, scene.timeline.still);
       return;
     }
-    if (!inView) return;
+    if (!running) return;
     let frame = 0;
     let last = 0;
     const step = (now: number) => {
@@ -61,9 +63,7 @@ export function useSceneMotion(svgRef: RefObject<SVGSVGElement | null>, scene: S
     };
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [svgRef, scene, still, inView]);
-
-  return wrapper;
+  }, [svgRef, scene, still, running]);
 }
 
 export { curves };

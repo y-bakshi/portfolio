@@ -4,7 +4,12 @@ import { testpilotCase as study } from '../../content/testpilot-case';
 export function MeasuredResults() {
   return (
     <>
-      <div className="overflow-x-auto rounded-xl border border-line/70 bg-panel shadow-soft">
+      <div
+        role="region"
+        aria-label="Measured results"
+        tabIndex={0}
+        className="overflow-x-auto rounded-xl border border-line/70 bg-panel shadow-soft"
+      >
         <table className="w-full min-w-[34rem] border-collapse text-left text-[0.95rem]">
           <caption className="sr-only">Measured results and their limitations</caption>
           <thead className="bg-ink/6">

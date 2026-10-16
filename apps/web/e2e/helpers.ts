@@ -20,7 +20,7 @@ const ANSWERS: Record<string, [string, string[]]> = {
   ],
 };
 
-/** Stands in for the guide's API, which these page tests have no server for. Call it before openHome. */
+/** Stands in for the guide's API, which these page tests have no server for. Call it before opening a page. */
 export async function cannedGuide(page: Page) {
   await page.route('**/api/**', async (route) => {
     const request = route.request();
@@ -47,7 +47,7 @@ data: ${JSON.stringify(data)}
   });
 }
 
-/** Open the page with the portrait animation out of the way. */
+/** Open the home page and wait until the guide's button is there. */
 export async function openHome(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('button', { name: /^ask the guide/i })).toBeVisible();
@@ -55,20 +55,17 @@ export async function openHome(page: Page) {
 
 export const bar = (page: Page) => page.getByRole('button', { name: /^ask the guide/i });
 export const input = (page: Page) => page.getByLabel(/ask the guide about yash/i);
+export const panel = (page: Page) => page.locator('#guide-panel');
+export const answers = (page: Page) => page.locator('[data-answer]');
+export const questions = (page: Page) => page.locator('[data-question]');
 
 /** Wait until the guide has finished answering. */
 export async function ready(page: Page) {
-  await expect(input(page)).toHaveAttribute('placeholder', 'Ready for your question', {
-    timeout: 15_000,
-  });
+  await expect(panel(page).locator('[data-status="ready"]')).toBeVisible({ timeout: 15_000 });
 }
 
 /** Ask one of the suggested questions and wait for the answer. */
 export async function askChip(page: Page, name: string) {
-  await page
-    .locator('.dock-open, .dock-log')
-    .getByRole('button', { name, exact: true })
-    .first()
-    .click();
+  await panel(page).getByRole('button', { name, exact: true }).first().click();
   await ready(page);
 }

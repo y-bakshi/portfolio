@@ -2,11 +2,14 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { diagrams } from '../../content/diagrams';
 import { DiagramFigure } from '../DiagramFigure';
+import { SceneSvg } from '../SceneSvg';
 import { buildScene } from './buildScene';
 
 describe.each(Object.entries(diagrams))('the %s figure', (id, diagram) => {
   const scene = buildScene(diagram);
-  const html = renderToStaticMarkup(<DiagramFigure diagram={diagram} name={id} />);
+  // the drawing itself; the figure on a page builds it only when it nears the screen
+  const html = renderToStaticMarkup(<SceneSvg scene={scene} label={`${id}: ${diagram.summary}`} />);
+  const figure = renderToStaticMarkup(<DiagramFigure diagram={diagram} name={id} />);
 
   it('draws without a window, and with no broken numbers in any path', () => {
     expect(html).toContain('<svg');
@@ -16,7 +19,14 @@ describe.each(Object.entries(diagrams))('the %s figure', (id, diagram) => {
   it('describes itself for people who cannot see it, and lists every step', () => {
     expect(html).toContain('role="img"');
     expect(html).toContain(diagram.summary.slice(0, 40));
-    for (const s of diagram.stations) expect(html).toContain(s.label);
+    for (const s of diagram.stations) expect(figure).toContain(s.label);
+  });
+
+  it('leaves the drawing out of a page until it is wanted, but keeps its place and its description', () => {
+    expect(figure).not.toContain('<svg');
+    expect(figure).toContain('role="img"');
+    expect(figure).toContain('aspect-ratio');
+    expect(figure.length).toBeLessThan(20_000);
   });
 
   it('paints back to front', () => {

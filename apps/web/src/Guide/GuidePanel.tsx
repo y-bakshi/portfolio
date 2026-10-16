@@ -40,7 +40,9 @@ export function GuidePanel() {
         <GuideAvatar status={status} listening={question.trim() !== ''} />
         <div className="min-w-0 flex-1">
           <h2 className="display text-2xl">Ask the guide</h2>
-          <p className="text-sm text-muted">{statusLabel[status]}</p>
+          <p data-status={status} className="text-sm text-muted">
+            {statusLabel[status]}
+          </p>
         </div>
         <Button variant="ghost" size="icon" aria-label="Close the guide" onClick={g.closeDock}>
           <HugeiconsIcon icon={Cancel01Icon} size={20} />

@@ -1,22 +1,17 @@
 import type { ReactNode } from 'react';
 import type { Diagram } from '../../content/diagrams/types';
-import { boxCorners, depthOf, fitProjection, iso, type Projection } from '../iso/vendor/kit';
+import { depthOf, type Projection } from '../iso/vendor/kit';
 import { builders } from '../stations';
 import { Bench } from './bench';
 import { beltDepth, beltNode } from './belt';
 import { layoutOf } from './layout';
 import { Packet } from './Packet';
 import { timelineOf, type Timeline } from './timeline';
+import { viewOf, type View } from './view';
 import type { Curve, Exit, Layout, Piece } from './types';
 
-/** The drawing is always this wide; its height follows the shape of the line so no figure is mostly empty. */
-export const VIEW_WIDTH = 560;
-const AZIMUTH = 58;
-const ELEVATION = 30;
-const PAD = 14;
 /** How many packets are on the line at once; each slot holds one copy of every packet. */
 export const PACKET_COPIES = 2;
-const TALLEST = 64;
 
 /** One thing to paint, and where it sits in the painting order. */
 type Item = { key: string; depth: number; node: ReactNode };
@@ -31,7 +26,7 @@ export type Mover = {
 
 export type Scene = {
   P: Projection;
-  view: { width: number; height: number };
+  view: View;
   layout: Layout;
   timeline: Timeline;
   items: Item[];
@@ -59,21 +54,7 @@ export function buildScene(diagram: Diagram): Scene {
   if (hit) return hit;
 
   const layout = layoutOf(diagram);
-  const points = boxCorners(layout.bench, -20, TALLEST);
-  // how tall the drawing needs to be for this shape, at the width it always has
-  const flat = points.map((p) =>
-    iso(p, { origin: [0, 0], scale: 1, azimuth: AZIMUTH, elevation: ELEVATION }),
-  );
-  const xs = flat.map((p) => p[0]);
-  const ys = flat.map((p) => p[1]);
-  const shape = (Math.max(...ys) - Math.min(...ys)) / (Math.max(...xs) - Math.min(...xs));
-  const height = Math.round(Math.min(460, Math.max(240, (VIEW_WIDTH - PAD * 2) * shape + PAD * 2)));
-  const view = { width: VIEW_WIDTH, height };
-  const P = fitProjection(points, view.width, view.height, {
-    pad: PAD,
-    azimuth: AZIMUTH,
-    elevation: ELEVATION,
-  });
+  const { view, P } = viewOf(diagram, layout);
   const items: Item[] = [
     { key: 'bench', depth: -1e9, node: <Bench key="bench" plan={layout.bench} P={P} /> },
   ];

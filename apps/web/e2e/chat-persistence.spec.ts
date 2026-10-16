@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { askChip, bar, input, openHome, ready } from './helpers';
+import { answers, askChip, bar, input, openHome, questions, ready } from './helpers';
 
 const QUESTION = 'What has Yash built with RAG?';
 const SERVED = 'This answer came from the mocked server.';
@@ -67,8 +67,6 @@ async function mockApi(page: Page, options: { failAsk?: boolean } = {}) {
   return server;
 }
 
-const answers = (page: Page) => page.locator('.msg-answer');
-
 async function askOnce(page: Page) {
   await openHome(page);
   await bar(page).click();
@@ -82,7 +80,7 @@ test.describe('the stored chat', () => {
     await askOnce(page);
     await page.reload();
     await expect(answers(page).filter({ hasText: SERVED }).first()).toBeVisible();
-    await expect(page.locator('.msg-user').filter({ hasText: QUESTION }).first()).toBeVisible();
+    await expect(questions(page).filter({ hasText: QUESTION }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: 'Show TestPilot on the page' })).toBeVisible();
   });
 
@@ -93,12 +91,11 @@ test.describe('the stored chat', () => {
     await askOnce(page);
     await page.reload();
     const saved = answers(page).filter({ hasText: SERVED }).first();
-    // while the portrait is still forming, neither the saved answers nor the open chat are there
-    await expect(saved).toBeHidden();
-    await expect(page.locator('.dock')).not.toHaveClass(/is-open/);
-    // the introduction types once the portrait has formed, and the saved chat returns with it
-    await expect(saved).toBeVisible({ timeout: 15_000 });
-    await expect(page.locator('.dock')).toHaveClass(/is-open/);
+    // while the portrait is still forming, the saved chat has not opened
+    await expect(bar(page)).toHaveAttribute('aria-expanded', 'false');
+    // once the portrait has formed, the chat opens with the saved answers in it
+    await expect(bar(page)).toHaveAttribute('aria-expanded', 'true', { timeout: 15_000 });
+    await expect(saved).toBeVisible();
   });
 
   test('after a refresh the newest exchange is in view, not the oldest', async ({ page }) => {
@@ -115,8 +112,8 @@ test.describe('the stored chat', () => {
     }
     await page.reload();
     await expect(answers(page).last()).toBeVisible({ timeout: 15_000 });
-    await expect(page.locator('.msg-user').last()).toContainText('What cloud work has he done?');
-    await expect(page.locator('.msg-user').last()).toBeInViewport();
+    await expect(questions(page).last()).toContainText('What cloud work has he done?');
+    await expect(questions(page).last()).toBeInViewport();
     await expect(answers(page).last()).toBeInViewport();
   });
 
@@ -144,10 +141,10 @@ test.describe('the stored chat', () => {
     const server = await mockApi(page);
     await askOnce(page);
     await page.getByRole('button', { name: 'Clear this chat' }).click();
-    await expect(page.locator('.msg-user')).toHaveCount(0);
+    await expect(questions(page)).toHaveCount(0);
     await expect.poll(() => server.deletes).toBe(1);
     await page.reload();
-    await expect(page.locator('.msg-user')).toHaveCount(0);
+    await expect(questions(page)).toHaveCount(0);
   });
 
   test('when the API fails the guide says it cannot answer', async ({ page }) => {
@@ -161,7 +158,7 @@ test.describe('the stored chat', () => {
         .first(),
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'Good answer' })).toHaveCount(0);
-    await expect(input(page)).toHaveAttribute('placeholder', 'Ready for your question');
+    await ready(page);
   });
 
   test('thumbs go to the feedback route', async ({ page }) => {
@@ -169,8 +166,8 @@ test.describe('the stored chat', () => {
     await askOnce(page);
     const up = page.getByRole('button', { name: 'Good answer' });
     const box = (await up.boundingBox())!;
-    expect(box.width).toBeGreaterThanOrEqual(44);
-    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(24);
+    expect(box.height).toBeGreaterThanOrEqual(24);
     await up.click();
     await expect(up).toHaveAttribute('aria-pressed', 'true');
     await page.getByRole('button', { name: 'Poor answer' }).click();

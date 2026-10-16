@@ -1,12 +1,17 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Diagram } from '../content/diagrams';
+import { useInView } from '@/lib/useInView';
+import { SceneSvg } from './SceneSvg';
 import { buildScene } from './scene/buildScene';
 import { useSceneMotion } from './scene/useSceneMotion';
+import { viewOf } from './scene/view';
 import { useStationHighlight } from './useStationHighlight';
 
 /**
  * A project's figure: the machine drawn in isometric, and under it the steps it stands for. Pointing
- * at a machine or at a step lifts the machine and lights the step.
+ * at a machine or at a step lifts the machine and lights the step. The drawing has thousands of
+ * paths, so it is only built once the figure is near the screen; until then (and in the page's
+ * static HTML) a box of the same size holds its place and says what the figure shows.
  */
 export function DiagramFigure({
   diagram,
@@ -18,34 +23,40 @@ export function DiagramFigure({
   /** Leave out the list of steps, for a figure shown small on a card. */
   compact?: boolean;
 }) {
-  const scene = buildScene(diagram);
   const root = useRef<HTMLElement>(null);
+  const frame = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
-  const wrapper = useSceneMotion(svg, scene);
+  const inView = useInView(frame);
+  const [built, setBuilt] = useState(false);
+  useEffect(() => {
+    if (inView) setBuilt(true);
+  }, [inView]);
+  const scene = built ? buildScene(diagram) : null;
+  useSceneMotion(svg, scene, inView);
   const highlight = useStationHighlight(root);
+  const label = `${name}: ${diagram.summary}`;
+  const { view } = viewOf(diagram);
 
   return (
     <figure ref={root} className="iso space-y-4" onPointerLeave={() => highlight(null)}>
       <div
-        ref={wrapper}
+        ref={frame}
         className="relative overflow-hidden rounded-xl border border-line/60 bg-panel p-2"
         onPointerOver={(e) => {
           const station = (e.target as Element).closest<SVGElement>('[data-station]');
           highlight(station?.dataset.station ?? null);
         }}
       >
-        <svg
-          ref={svg}
-          className="iso-svg"
-          viewBox={`0 0 ${scene.view.width} ${scene.view.height}`}
-          role="img"
-          aria-label={`${name}: ${diagram.summary}`}
-          focusable="false"
-        >
-          {scene.items.map((item) => (
-            <g key={item.key}>{item.node}</g>
-          ))}
-        </svg>
+        {scene ? (
+          <SceneSvg scene={scene} label={label} svgRef={svg} />
+        ) : (
+          <div
+            role="img"
+            aria-label={label}
+            style={{ aspectRatio: `${view.width} / ${view.height}` }}
+            className="w-full"
+          />
+        )}
       </div>
       {!compact && (
         <ol
