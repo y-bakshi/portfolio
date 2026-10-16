@@ -1,10 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'node:url';
 import { prerenderPlugin } from './vite.prerender';
 import { sitePlugin } from './vite.site';
 
 export default defineConfig({
-  plugins: [react(), sitePlugin(), prerenderPlugin()],
+  plugins: [react(), tailwindcss(), sitePlugin(), prerenderPlugin()],
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // every page is its own HTML file, so there is no single-page fallback
   appType: 'mpa',
   build: {

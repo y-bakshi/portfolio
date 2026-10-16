@@ -1,0 +1,43 @@
+/* Tailwind v4 without its preflight: the existing reset keeps styling the page until the old
+   stylesheets are gone. Colours come from tokens.css so there is one palette. */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import 'tw-animate-css';
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-action: var(--action);
+  --color-action-ink: var(--action-ink);
+  --color-mark: var(--mark);
+  --color-field: var(--field);
+  --color-background: var(--ground);
+  --color-foreground: var(--ink);
+  --color-border: var(--line);
+  --color-ring: var(--action);
+  --color-primary: var(--action);
+  --color-primary-foreground: var(--action-ink);
+  --color-card: var(--panel);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--panel);
+  --color-popover-foreground: var(--ink);
+  --color-secondary: var(--panel);
+  --color-secondary-foreground: var(--ink);
+  --color-accent: var(--panel);
+  --color-accent-foreground: var(--ink);
+  --color-input: var(--line);
+  --font-sans: var(--text);
+  --font-mono: var(--code);
+  --font-display: var(--display);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-soft: 0 1px 2px rgb(14 29 97 / 0.08), 0 6px 20px -6px rgb(14 29 97 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(14 29 97 / 0.1), 0 14px 32px -10px rgb(14 29 97 / 0.28);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}

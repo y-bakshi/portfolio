@@ -16,8 +16,11 @@ const allCss = Object.entries(css)
   .filter(([file]) => !file.endsWith('index.css'))
   .map(([, text]) => strip(text))
   .join('\n');
-const allSource = Object.entries(sources)
-  .filter(([file]) => !file.includes('.test.'))
+const nonTest = Object.entries(sources).filter(([file]) => !file.includes('.test.'));
+const allSource = nonTest.map(([, text]) => text).join('\n');
+// shadcn components style themselves with Tailwind utilities, not with rules in these files
+const ownSource = nonTest
+  .filter(([file]) => !file.startsWith('../components/'))
   .map(([, text]) => text)
   .join('\n');
 
@@ -42,6 +45,12 @@ describe('stylesheet files', () => {
     }
   });
 
+  it('keeps each source file small enough to do one job', () => {
+    for (const [file, text] of nonTest) {
+      expect(text.split('\n').length, file).toBeLessThan(600);
+    }
+  });
+
   it('has no rule for a class that no component uses', () => {
     const dynamic = new Set(['light-answering', 'light-thinking', 'light-ready']);
     const classes = new Set([...allCss.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]));
@@ -53,7 +62,7 @@ describe('stylesheet files', () => {
 
   it('defines every class a component names in a plain className string', () => {
     const wanted = new Set<string>();
-    for (const m of allSource.matchAll(/className="([^"{}$]+)"/g)) {
+    for (const m of ownSource.matchAll(/className="([^"{}$]+)"/g)) {
       for (const c of m[1].split(/\s+/)) if (c && !/^fi(-|$)/.test(c)) wanted.add(c);
     }
     const missing = [...wanted].filter((c) => !new RegExp(`\\.${c}(?![\\w-])`).test(allCss));
