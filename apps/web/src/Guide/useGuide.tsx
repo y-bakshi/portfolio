@@ -102,7 +102,9 @@ export function useGuide(portraitFormed = true) {
     trackCiteClick(id);
     const el = document.getElementById(id);
     if (!el) {
-      // an item that lives on another page: go there, and the chat reopens as it was
+      // an item that lives on another page: go there. On a wide screen the panel is beside the page, so
+      // the chat reopens as it was; on a phone it covers the page, so it is left closed to show the card.
+      if (isMobile) saveUi({ open: false, draft: question });
       window.location.assign(destinationFor(id));
       return;
     }

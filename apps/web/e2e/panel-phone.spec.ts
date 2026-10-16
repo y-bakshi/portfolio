@@ -1,5 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { answers, askChip, bar, cannedGuide, input, openHome, panel, questions } from './helpers';
+import {
+  answers,
+  askChip,
+  bar,
+  cannedGuide,
+  input,
+  openHome,
+  panel,
+  questions,
+  ready,
+} from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await cannedGuide(page);
@@ -65,4 +75,18 @@ test('a source button closes the chat and shows the card', async ({ page }) => {
   await page.getByRole('button', { name: 'Show TestPilot on the page' }).click();
   await expect(bar(page)).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#testpilot')).toBeInViewport();
+});
+
+test('a source on another page opens that page with the chat closed, so the card shows', async ({
+  page,
+}) => {
+  await openHome(page);
+  await bar(page).click();
+  await input(page).fill('Tell me about his education');
+  await input(page).press('Enter');
+  await ready(page);
+  await page.getByRole('button', { name: /Show Arizona State University on the page/i }).click();
+  await expect(page).toHaveURL(/\/experience\/#asu$/);
+  await expect(bar(page)).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#asu')).toBeInViewport();
 });

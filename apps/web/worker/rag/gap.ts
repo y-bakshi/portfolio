@@ -20,7 +20,7 @@ export const NOT_IN_NOTES =
 export const NEAR_MISS = 'That is not in my notes yet.';
 
 export const CONTACT_POINTER =
-  'Yash can answer this himself, and the contact section has his email and a booking link.';
+  'Yash can answer this himself, and the contact page has his email and a booking link.';
 
 /**
  * Below this share of the answer threshold a question is treated as unrelated to Yash (the weather,

@@ -4,7 +4,7 @@ This documentation describes Yash Bakshi's responsive portfolio for desktop and 
 
 ## Current State
 
-The implemented application is a React + TypeScript frontend built with Vite and styled with hand-written CSS in `apps/web/`. It has a starter homepage and working `check` and `build` scripts. The backend, AI guide, database, automated tests, infrastructure, and deployment workflows are not implemented yet.
+The implemented application is a React + TypeScript frontend built with Vite and styled with Tailwind v4 and shadcn/ui in `apps/web/`. It has a home page, projects, case study, experience and contact pages, each project explained by an animated figure, and working `check`, `build`, unit and browser test scripts. The backend, AI guide, database, automated tests, infrastructure, and deployment workflows are not implemented yet.
 
 Unless explicitly labeled implemented, contracts and operational settings in these documents are planned. Proposed values are starting points for verification, not measured results. Public source availability does not mean the website has launched.
 

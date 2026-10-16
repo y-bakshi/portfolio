@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** Streaming data pipeline: taxi events go through Kafka and a custom consumer into a Neo4j graph. */
 export const streamingPipeline: Diagram = {
   summary:
-    'A production line. Taxi events enter a hopper and wait in a Kafka stream. A press stands for the custom consumer, and a cabinet is the Neo4j graph they are stored in.',
+    'A production line. Taxi events enter a hopper and go through a Kafka stream. A press stands for the custom consumer, and a cabinet is the Neo4j graph they are written into.',
   stations: [
     {
       id: 'events',
@@ -13,12 +13,19 @@ export const streamingPipeline: Diagram = {
       col: 0,
       row: 0,
     },
-    { id: 'kafka', kind: 'queue', label: 'Kafka', sub: 'Records wait in a topic.', col: 1, row: 0 },
+    {
+      id: 'kafka',
+      kind: 'queue',
+      label: 'Kafka',
+      sub: 'The records go through Kafka.',
+      col: 1,
+      row: 0,
+    },
     {
       id: 'consumer',
       kind: 'press',
       label: 'Custom consumer',
-      sub: 'Each record becomes nodes and relationships.',
+      sub: 'A custom consumer reads them.',
       col: 2,
       row: 0,
     },
@@ -26,7 +33,7 @@ export const streamingPipeline: Diagram = {
       id: 'graph',
       kind: 'cabinet',
       label: 'Neo4j graph',
-      sub: 'The graph is stored and can be queried.',
+      sub: 'They are written into Neo4j as nodes and relationships.',
       col: 3,
       row: 0,
     },

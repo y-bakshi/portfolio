@@ -6,11 +6,30 @@ import { SiteHeader } from './SiteHeader';
 import type { PageId } from './nav';
 import { WipNotice } from './WipNotice';
 
-/** Scrolls to the element a link's #hash names, for pages that are drawn after load. */
+/**
+ * Scrolls to the element a link's #hash names. It waits for the fonts, because a heading that changes
+ * typeface moves everything below it, and for parts that appear a frame after the page (the filter
+ * tabs' list). The jump is instant: nobody wants to watch the page scroll past to where they asked to be.
+ */
 function useScrollToHash() {
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
-    if (id) document.getElementById(id)?.scrollIntoView();
+    if (!id) return;
+    let frame = 0;
+    let tries = 0;
+    let stopped = false;
+    const go = () => {
+      if (stopped) return;
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
+      else if (tries++ < 60) frame = requestAnimationFrame(go);
+    };
+    const fonts = document.fonts?.ready ?? Promise.resolve();
+    void Promise.race([fonts, new Promise((r) => setTimeout(r, 1500))]).then(go);
+    return () => {
+      stopped = true;
+      cancelAnimationFrame(frame);
+    };
   }, []);
 }
 

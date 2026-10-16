@@ -27,7 +27,7 @@ const answer = 'max-w-[94%] text-[0.95rem] leading-relaxed text-ink';
 function CiteList({ ids, onShow }: { ids: string[]; onShow: (id: string) => void }) {
   if (ids.length === 0) return null;
   return (
-    <ul aria-label="Sources on this page" className="mt-2 flex flex-wrap gap-1.5">
+    <ul aria-label="Sources for this answer" className="mt-2 flex flex-wrap gap-1.5">
       {ids.map((id) => (
         <li key={id}>
           <button

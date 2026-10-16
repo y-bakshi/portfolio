@@ -276,8 +276,8 @@
     "sourceId": "contact",
     "kind": "fact",
     "title": "How to contact Yash",
-    "text": "Yash can be reached by email at ybakshi@asu.edu or bakshi.yash@outlook.com. His LinkedIn is https://www.linkedin.com/in/yash-bakshi-56615a62/ and his GitHub is https://github.com/y-bakshi. A 30 minute call can be booked at https://calendar.app.google/GNW9xhXdiq7Mv9bU9. These links are in the contact section at the bottom of the page.",
-    "contentHash": "06fde8a1848935"
+    "text": "Yash can be reached by email at ybakshi@asu.edu or bakshi.yash@outlook.com. His LinkedIn is https://www.linkedin.com/in/yash-bakshi-56615a62/ and his GitHub is https://github.com/y-bakshi. A 30 minute call can be booked at https://calendar.app.google/GNW9xhXdiq7Mv9bU9. These links are on the contact page.",
+    "contentHash": "10589165f72d85"
   },
   {
     "id": "fact:skills",
@@ -324,8 +324,8 @@
     "sourceId": "general",
     "kind": "fact",
     "title": "How this guide (the portfolio chat) works",
-    "text": "The guide on this page is a chat Yash built for his portfolio. It is separate from GuardianAI, which is a different project. The guide searches Yash’s own project notes by meaning, hands the closest notes to a Gemini model, and answers only from them, with buttons that jump to the project, role or degree it used. When the notes do not cover a question it says so and points to the contact section instead of guessing.",
-    "contentHash": "069b1d533cf50d"
+    "text": "The guide on this site is a chat Yash built for his portfolio. It is separate from GuardianAI, which is a different project. The guide searches Yash’s own project notes by meaning, hands the closest notes to a Gemini model, and answers only from them, with buttons that jump to the project, role or degree it used. When the notes do not cover a question it says so and points to the contact page instead of guessing.",
+    "contentHash": "1d2da9ec9e87ba"
   },
   {
     "id": "fact:this-guide-stack",

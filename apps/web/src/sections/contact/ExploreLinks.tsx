@@ -5,7 +5,7 @@ const links = [
   {
     href: '/projects/',
     title: 'Engineering projects',
-    line: 'See the systems I built and the decisions behind them.',
+    line: 'See what I built and how each project works.',
   },
   {
     href: '/experience/',
