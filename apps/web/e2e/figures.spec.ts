@@ -1,11 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const figure = (page: Page) => page.locator('figure.iso').first();
+const figure = (page: Page) => page.locator('main figure').first();
 
 /** Where the first packet copy that is showing is, as the transform written on it. */
 const packetTransforms = (page: Page) =>
   page.evaluate(() =>
-    [...document.querySelectorAll('figure.iso [data-packet]')]
+    [...document.querySelectorAll('main figure [data-packet]')]
       .filter((el) => el.getAttribute('opacity') !== '0')
       .map((el) => el.getAttribute('transform') ?? ''),
   );
@@ -32,8 +32,8 @@ test('with reduced motion a figure holds one still frame', async ({ page }) => {
 
 test('a figure describes itself and lists its steps', async ({ page }) => {
   await page.goto('/projects/testpilot/');
-  const svg = figure(page).getByRole('img');
-  await expect(svg).toHaveAttribute('aria-label', /production line/i);
+  const chart = figure(page).getByRole('img');
+  await expect(chart).toHaveAttribute('aria-label', /flow chart/i);
   await expect(
     figure(page).getByRole('list', { name: /steps/i }).getByRole('listitem'),
   ).toHaveCount(5);
@@ -44,7 +44,7 @@ test('pointing at a step lifts its machine, and moving away puts it back', async
   const step = figure(page).locator('[data-step="draft"]');
   await step.scrollIntoViewIfNeeded();
   await step.hover();
-  await expect(figure(page).locator('[data-station="draft"][data-active]').first()).toBeAttached();
+  await expect(figure(page).locator('[data-station="draft"][data-active]')).toBeAttached();
   await expect(step).toHaveAttribute('data-active', '');
   await page.mouse.move(5, 5);
   await expect(figure(page).locator('[data-station][data-active]')).toHaveCount(0);
@@ -54,21 +54,32 @@ test('keyboard focus on a step lights it too', async ({ page }) => {
   await page.goto('/projects/testpilot/');
   const step = figure(page).locator('[data-step="critique"]');
   await figure(page).scrollIntoViewIfNeeded();
-  await expect(figure(page).locator('svg')).toBeAttached();
   await step.focus();
   await expect(
     figure(page).locator('[data-station="critique"][data-active]').first(),
   ).toBeAttached();
 });
 
-test('every project on the projects page has a figure with its own steps', async ({ page }) => {
+test('every project on the projects page has a flow chart with its own steps', async ({ page }) => {
   await page.goto('/projects/');
   const articles = page.locator('main article');
   const count = await articles.count();
   expect(count).toBe(10);
   for (let i = 0; i < count; i++) {
-    // the drawing is built as each one nears the screen
-    await articles.nth(i).scrollIntoViewIfNeeded();
-    await expect(articles.nth(i).locator('figure.iso svg[role="img"]')).toHaveCount(1);
+    await expect(articles.nth(i).locator('figure [role="img"]')).toHaveCount(1);
+    await expect(articles.nth(i).locator('figure [data-station]').first()).toBeAttached();
+  }
+});
+
+test('the TestPilot chart shows its loop back and what it says', async ({ page }) => {
+  await page.goto('/projects/testpilot/');
+  await expect(figure(page).getByText('Below 0.6: redraft')).toBeAttached();
+  for (const name of [
+    'Read repository',
+    'Retrieve coding standards',
+    'Draft tests',
+    'Critique gate',
+  ]) {
+    await expect(figure(page).locator('[data-station]', { hasText: name })).toBeVisible();
   }
 });

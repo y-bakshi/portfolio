@@ -21,7 +21,7 @@ Record provenance for each generated file: tool (Nano Banana via Gemini CLI), pr
 | Asset | Status |
 | --- | --- |
 | Real project screenshots | Capture from verified builds, secrets removed, consistent dimensions, meaningful alt text. |
-| Case-study diagrams | Done: an animated figure per project from `src/content/diagrams`, drawn with the Anatomy kit. Its steps repeat what the project card says; verify each against its repository before launch. The figures are explanations, not architecture diagrams. |
+| Case-study diagrams | Done: an animated flow chart per project from `src/content/diagrams`, drawn by `src/diagrams/flow`. Its steps repeat what the project row says; verify each against its repository before launch. The charts are explanations, not architecture diagrams. |
 | Icon set | Done: Hugeicons (free set) through `@hugeicons/react`, with Morphicons for icon toggles, and technology logos from theSVG copied to `public/logos/tech` by `npm run logos:copy`. The footer credits them (the Rust logo is CC BY-SA 4.0). Record this if the icon set changes. |
 | Fonts | Self-hosted variable WOFF2 through Fontsource (`@fontsource-variable/instrument-sans`, `geist`, `geist-mono`), all SIL OFL 1.1. Only the Latin subsets load for English text. |
 | Résumé | Secondary action. Owner to supply. |

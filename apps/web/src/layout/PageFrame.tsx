@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { DotGrid } from '../DotGrid';
 import { GuideDock, GuideProvider } from '../Guide';
+import { features } from './features';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 import type { PageId } from './nav';
@@ -34,7 +35,7 @@ function useScrollToHash() {
 }
 
 /**
- * What every page shares: the dot grid, the header, the footer and the guide. `portraitFormed` lets
+ * What every page shares: the dot grid (when it is switched on in features.ts), the header, the footer and the guide. `portraitFormed` lets
  * the home page hold a restored chat back until its portrait has finished forming.
  */
 export function PageFrame({
@@ -49,13 +50,16 @@ export function PageFrame({
   useScrollToHash();
   return (
     <GuideProvider portraitFormed={portraitFormed}>
-      <DotGrid />
-      <WipNotice />
-      <SiteHeader current={current} />
-      <main id="main" className="relative z-[1]">
-        {children}
-      </main>
-      <SiteFooter />
+      {features.dotGrid && <DotGrid />}
+      {/* a short page still puts the footer at the bottom of the window */}
+      <div className="flex min-h-dvh flex-col">
+        <WipNotice />
+        <SiteHeader current={current} />
+        <main id="main" className="relative z-[1] flex-1">
+          {children}
+        </main>
+        <SiteFooter />
+      </div>
       <GuideDock />
     </GuideProvider>
   );

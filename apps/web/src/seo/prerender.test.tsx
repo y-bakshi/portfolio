@@ -2,6 +2,7 @@
 import { placeMarkup } from '../../vite.prerender';
 import { CONTACT_LINKS } from '../../worker/rag/facts';
 import { education, projects, roles, smallProjects } from '../content';
+import { features } from '../layout/features';
 import { technologies } from './jsonld';
 import { pageComponents, renderPage, type PageFile } from './render';
 
@@ -19,9 +20,11 @@ describe('prerendered pages', () => {
 
   it('put the whole home page in the HTML', () => {
     const html = renderPage('index.html');
-    for (const text of ['Thryv', 'TestPilot', 'Selected engineering work'])
+    for (const text of ['hi yash here', 'Thryv', 'Engineering experience'])
       expect(html).toContain(text);
-    for (const p of projects.filter((p) => p.featured)) expect(html, p.id).toContain(p.name);
+    for (const e of roles) expect(html, e.id).toContain(e.title);
+    if (features.selectedWork)
+      for (const p of projects.filter((p) => p.featured)) expect(html, p.id).toContain(p.name);
     expect(html).toContain('I build AI applications, backend services and cloud delivery');
     expect(html).toContain('https://github.com/y-bakshi');
     expect(html.match(/<h1/g)).toHaveLength(1);
@@ -31,7 +34,9 @@ describe('prerendered pages', () => {
     const html = renderPage('experience/index.html');
     for (const e of [...roles, ...education]) {
       expect(html, e.id).toContain(e.title);
-      for (const point of e.points) expect(html, point).toContain(point.replace(/'/g, '&#x27;'));
+      for (const point of e.points ?? [])
+        expect(html, point).toContain(point.replace(/'/g, '&#x27;'));
+      if (e.summary) expect(html, e.id).toContain(e.summary.replace(/'/g, '&#x27;'));
     }
   });
 
@@ -40,10 +45,13 @@ describe('prerendered pages', () => {
     for (const value of Object.values(CONTACT_LINKS)) expect(html, value).toContain(value);
   });
 
-  it('shows everything the structured data says about the person', () => {
-    const html = renderPage('index.html');
-    for (const t of technologies(true)) expect(html, t).toContain(t);
-  });
+  it.skipIf(!features.techStrip)(
+    'shows everything the structured data says about the person',
+    () => {
+      const html = renderPage('index.html');
+      for (const t of technologies(true)) expect(html, t).toContain(t);
+    },
+  );
 
   it('put every project in the all projects page', () => {
     const html = renderPage('projects/index.html');

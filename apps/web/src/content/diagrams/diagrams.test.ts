@@ -33,6 +33,13 @@ describe('the figures', () => {
       }
     });
 
+    it('draws groups only round steps that exist', () => {
+      for (const g of d.groups ?? []) {
+        expect(g.members.length, g.label).toBeGreaterThan(0);
+        for (const m of g.members) expect(ids, `${g.label}: ${m}`).toContain(m);
+      }
+    });
+
     it('uses every station on some route', () => {
       const visited = new Set(d.routes.flat());
       for (const id of ids) expect(visited, id).toContain(id);

@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** CityWatch: public signals are ingested, analysed and classified, then routed to the right department. */
 export const citywatch: Diagram = {
   summary:
-    "A production line. Social signals enter a hopper and queue in a stream. A scanner analyses each one, a press classifies it, and a pusher routes the alert down one of two belts to its department's tray.",
+    'A flow chart. Social signals go into a Kinesis stream. Lambda and Rekognition analyse each one, Bedrock classifies it, and EventBridge routes the alert down one of two branches to the department that needs it.',
   stations: [
     {
       id: 'signals',
@@ -70,6 +70,7 @@ export const citywatch: Diagram = {
     { from: 'route', to: 'alert-a' },
     { from: 'route', to: 'alert-b' },
   ],
+  groups: [{ label: 'AWS', members: ['ingest', 'analyse', 'classify', 'route'] }],
   routes: [
     ['signals', 'ingest', 'analyse', 'classify', 'route', 'alert-a'],
     ['signals', 'ingest', 'analyse', 'classify', 'route', 'alert-b'],

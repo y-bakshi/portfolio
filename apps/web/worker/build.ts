@@ -4,7 +4,11 @@ import type { Env } from './env';
 import { createAdmission } from './lib/protect';
 import { sessionFromHeader } from './lib/session';
 import { verifyHuman } from './lib/turnstile';
+import { suggestions } from '../src/content';
+import { cachedAnswerer } from './lib/answer-cache';
+import { systemClock } from './lib/clock';
 import { createAnswerer } from './rag/create';
+import { answerVersion } from './rag/version';
 import { registerAdminRoutes } from './routes/admin';
 import { registerEventRoutes } from './routes/events';
 
@@ -16,7 +20,13 @@ import { registerEventRoutes } from './routes/events';
 export function buildApp(env: Env, overrides: Partial<Deps> = {}) {
   const app = createApp({
     admission: createAdmission(),
-    answerer: createAnswerer(env),
+    // the suggestion buttons ask the same few questions again and again, so their answers are kept
+    answerer: cachedAnswerer(createAnswerer(env), {
+      db: env.DB,
+      clock: systemClock,
+      version: answerVersion(env),
+      questions: suggestions,
+    }),
     verifyHuman,
     ...overrides,
   });

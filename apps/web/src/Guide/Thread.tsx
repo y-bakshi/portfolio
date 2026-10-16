@@ -34,7 +34,7 @@ function CiteList({ ids, onShow }: { ids: string[]; onShow: (id: string) => void
             type="button"
             aria-label={`Show ${nameFor(id)} on the page`}
             onClick={() => onShow(id)}
-            className="rounded-full border border-line bg-panel px-3 py-1 text-sm font-medium text-ink transition hover:border-action hover:text-action"
+            className="rounded-full border border-line bg-panel px-3 py-1 text-sm font-medium text-ink transition-colors duration-150 ease-out hover:border-action hover:text-action"
           >
             {nameFor(id)}
           </button>
@@ -81,7 +81,7 @@ export function Thread({
         </div>
       ))}
       {asked && (
-        <p data-question className={question}>
+        <p data-question className={`${question} rise`}>
           {asked}
         </p>
       )}
@@ -91,7 +91,7 @@ export function Thread({
         </p>
       )}
       {shown && (
-        <p data-answer className={answer} aria-hidden={status !== 'ready'}>
+        <p data-answer className={`${answer} rise`} aria-hidden={status !== 'ready'}>
           {shown}
         </p>
       )}
@@ -107,8 +107,8 @@ export function Thread({
 export function Chips({ status, onAsk }: { status: Status; onAsk: (q: string) => void }) {
   return (
     <ul aria-label="Suggested questions" className="flex flex-col gap-2">
-      {suggestions.map((sug) => (
-        <li key={sug}>
+      {suggestions.map((sug, i) => (
+        <li key={sug} className="rise" style={{ animationDelay: `${i * 45}ms` }}>
           <button
             type="button"
             onClick={() => onAsk(sug)}

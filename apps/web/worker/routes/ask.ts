@@ -5,8 +5,13 @@ import { streamAnswer, type AnswerResult } from '../lib/answerer';
 import { appendMessage, recentTurns } from '../lib/chats';
 import { validCites } from '../lib/cites';
 import { ApiError } from '../lib/http';
+import { CONTACT_LINKS } from '../rag/facts';
+import { pageContext } from '../rag/page';
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, redact } from '../lib/redact';
 import { admit, ensureChat, readJsonObject, track, type Ctx } from './visitor';
+
+/** The owner's own published addresses: an answer may give them, so they are not masked. */
+const OWNER_EMAILS = [CONTACT_LINKS.emailSchool, CONTACT_LINKS.emailPersonal];
 
 /** How many earlier messages an answerer is shown (6 turns is 6 messages). */
 export const HISTORY_TURNS = 6;
@@ -43,7 +48,10 @@ function keepAlive(c: Ctx, work: Promise<unknown>) {
 /** POST /api/chat: store the question, then stream the answer and store it too. */
 export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
   app.post('/api/chat', async (c) => {
-    const message = readMessage(await readJsonObject(c));
+    const body = await readJsonObject(c);
+    const message = readMessage(body);
+    // where the visitor is reading, said in words; the stored question stays exactly what they typed
+    const where = pageContext(body.page);
     const admitted = await admit(c, deps, 'chat', MAX_COST_MICRO_USD);
     const db = c.env.DB;
     const started = deps.clock();
@@ -80,7 +88,14 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
     const work = (async () => {
       try {
         await send('meta', { userMessageId: userId, assistantMessageId: assistantId });
-        const stream = streamAnswer(deps.answerer, question, history.turns);
+        const stream = streamAnswer(
+          deps.answerer,
+          where
+            ? `${where}
+${question}`
+            : question,
+          history.turns,
+        );
         let result: AnswerResult;
         for (;;) {
           const step = await stream.next();
@@ -90,7 +105,7 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
           }
           await send('token', { text: step.value });
         }
-        const text = redact(result.text, MAX_ANSWER_CHARS);
+        const text = redact(result.text, MAX_ANSWER_CHARS, OWNER_EMAILS);
         const cites = validCites(result.cites);
         const now = deps.clock();
         const latencyMs = Math.max(0, now - started);

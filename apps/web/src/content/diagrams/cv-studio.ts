@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** CV Studio: a résumé is edited visually, turned into LaTeX, compiled to PDF on the server, and saved as a revision. */
 export const cvStudio: Diagram = {
   summary:
-    'A production line. A screen takes the visual edit, a press generates LaTeX, a second press compiles it with pdflatex, a second screen shows the protected PDF preview, and a cabinet saves each revision.',
+    'A flow chart. A visual edit generates LaTeX, which is compiled with pdflatex. The result shows as a protected PDF preview, and each revision is saved.',
   stations: [
     {
       id: 'edit',

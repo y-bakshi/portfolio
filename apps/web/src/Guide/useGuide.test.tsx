@@ -50,6 +50,7 @@ describe('the stored guide chat', () => {
     expect(calls(api, 'POST /api/session')).toHaveLength(1);
     expect(JSON.parse(calls(api, 'POST /api/chat')[0][1]!.body as string)).toEqual({
       message: 'How does TestPilot use RAG?',
+      page: '/',
     });
     await waitFor(() => expect(localStorage.getItem(CHAT_KEY)).toContain('TestPilot uses RAG'));
   });

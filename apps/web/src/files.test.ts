@@ -1,8 +1,8 @@
-// the anatomy kit under diagrams/iso/vendor is copied in as it came (see its LICENSE), so it is left alone
-const sources = import.meta.glob(
-  ['./**/*.{ts,tsx}', '!./**/*.test.{ts,tsx}', '!./test/**', '!./diagrams/iso/vendor/**'],
-  { query: '?raw', import: 'default', eager: true },
-) as Record<string, string>;
+const sources = import.meta.glob(['./**/*.{ts,tsx}', '!./**/*.test.{ts,tsx}', '!./test/**'], {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
 
 /** Small files are easier to read and to change. Split a file before it passes this. */
 const MAX_LINES = 220;

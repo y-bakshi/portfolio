@@ -4,9 +4,9 @@ Status: implemented in `apps/web`, rebuilt in October 2026 (see [ADR-007](../dec
 
 ## Concept
 
-A calm, warm working surface: cream paper, navy ink, one gold highlight. The site is an engineering portfolio, so each project is explained by a small machine you can watch working, not by a list. The guide is a side panel you can open on any page. The portfolio stays fully useful without it: every project, the work history and the contact details are ordinary content that reads and links without JavaScript-driven features.
+A calm, warm working surface: cream paper, navy ink, one gold highlight. The site is an engineering portfolio, so each project is explained by a flow chart you can watch working, not by a list. The guide is a side panel you can open on any page, and a page of its own on a phone. The portfolio stays fully useful without it.
 
-The memorable moments are two: the isometric production line for each project, and the guide's face. Everything else stays quiet.
+The memorable moments are two: the flow chart for each project, and the guide's face (which falls asleep, and reacts when poked). Everything else stays quiet.
 
 ## Pages
 
@@ -55,36 +55,23 @@ Rounded corners (6 to 20 px), a soft two-layer shadow (`shadow-soft`, `shadow-li
 
 All from shadcn/ui (new-york style, owned in `src/components/ui`): Button and Badge (restyled to the palette) and Tabs. Icons are Hugeicons (free set); toggles between two icons (menu and close, play and pause, copy and tick) use Morphicons, which morphs one icon into the other with a spring. Technology logos are copied from theSVG into `public/logos/tech` by `npm run logos:copy`, so they are plain image files loaded only when on screen.
 
-- **Header:** the name, Projects, Experience, Contact and GitHub. The current page is underlined. Under 640 px the links fold into a menu.
-- **Project card and row:** name, one line, the role, technology chips with logos, and the links the project really has (the case study for TestPilot; a source, demo or deck for the others). A card shows the figure small; a row shows it large with its steps listed beneath.
+- **Header:** the name, Projects, Contact and GitHub. The current page is underlined. Under 640 px the links fold into a menu. Experience is not here: it is on the home page now (the `/experience/` page still exists for old links and the guide's buttons).
+- **Project row:** name, what it is and what Yash did, the technologies as one line of text, a folded "About this project" with the longer write-up, and the links the project really has (the case study for TestPilot; a source, demo or deck for the others). The flow chart sits on the right, without its steps list. The home page's project cards and technology strip are switched off in `layout/features.ts`.
 - **Figures:** see below.
-- **Guide:** a floating "Ask the guide" button on every page. It opens a panel that is a 26 rem column on the right on wide screens and a full-screen sheet on phones. The page behind a wide panel stays usable, so a source button can scroll to the card it cites. The panel is `inert` while closed. Escape closes it and returns focus to the button. A source on another page goes to that page, and the chat is open there. The suggested questions sit under the conversation; the notice that questions are saved for 90 days and the Clear action sit above the input.
-- **Guide face:** a navy blob with two eyes (`Guide/Avatar`). It breathes, blinks and drifts its gaze at rest, looks up and turns lumpy while it thinks, pulses while it answers and widens its eyes while someone types. It is a pure function of time (`engine.ts`), eased between moods, and still under reduced motion. The idea of a radius for each angle, eased between moods, follows the bloub project (MIT); the shapes and numbers are original.
+- **Guide:** a floating "Ask the guide" button on every page. On a wide screen it opens a 26 rem panel on the right; the page behind stays usable, so a source button can scroll to the card it cites, and the panel is `inert` while closed. On a phone it goes to the chat page (`/chat/`, not indexed) instead, with a back arrow, so the browser's own back button works. While the page scrolls the button shrinks to just the face (a clip and a slide, no layout change), and a press that starts while it is shrunk opens the chat. A source on another page goes to that page. The suggested questions sit under the conversation, and on a phone they all go once one is tapped. The answers to the four suggested questions are kept in the database (see `worker/lib/answer-cache.ts`) so the model is paid for them once.
+- **Guide face:** a navy blob with two eyes (`Guide/Avatar`). It breathes, blinks and drifts its gaze at rest, looks up and darts its eyes while it thinks, opens and shuts a mouth while it answers, and widens its eyes while someone types. Left alone for 40 seconds with the chat open it falls asleep (eyes shut, floating z's). Tapping it makes it wink, spin dizzily, or burst into sparks, in turn. It is a pure function of time (`engine.ts`), eased between moods, and still under reduced motion. The idea of a radius for each angle, eased between moods, follows the bloub project (MIT); the shapes and numbers are original.
 - **Work-in-progress note:** a thin yellow line above the header, until launch. Remove it, its token and `layout/WipNotice.tsx` then.
 - **Footer:** a navy band with the page links and the credits for the parts that are not Yash's.
 
 ## The figures
 
-Each project is drawn as a small production line in isometric view (`src/diagrams`). A navy packet with a gold lid rides belts between machines, and each machine stands for a kind of step:
+Each project is drawn as a flow chart (`src/diagrams/flow`): a flat box for each step, with a navy outline and a hard offset shadow, an icon, its name in bold and a small word for the kind of step (Input, Process, Data, Check and so on). Arrows join the boxes; a loop back is a dashed arc with a few words on it. A small gold packet travels the routes while the chart is on screen. The first step has no box, only its icon and name. The style follows the Cocoon AI architecture-diagram skill (MIT) for grouping, and the owner's reference for the look.
 
-| Machine | Stands for |
-| --- | --- |
-| Hopper | Where things enter: a repository, a feed, a prompt. |
-| Press | Something made or transformed; its piston comes down on the packet. |
-| Cabinet | Something looked up or stored; a drawer slides out. |
-| Gate | Something checked; the barrier lifts when the packet passes. |
-| Scanner | Something read or analysed; a frame sweeps over the packet. |
-| Pusher | A route chosen; a ram shoves the packet onto another belt. |
-| Queue | Things waiting their turn. |
-| Display | Something shown to a person; a cursor works down the screen. |
-| Tray | Where things end up. |
-
-The content decides what a figure says (`src/content/diagrams/*.ts`: stations on a grid, belts between them, the routes a packet takes), the machines are drawn once in `stations/`, and `scene/` lays them on a bench, sorts them back to front, and runs the timeline. The drawing uses the Anatomy kit (MIT), copied into `src/diagrams/iso/vendor`: solids with four-tone shading, painter's order, one accent. A return belt runs behind the line where a step sends work back (TestPilot's critique gate).
-
-- The steps are listed under each figure as a list in the page; pointing at a machine or a step, or focusing a step, lifts the machine and lights the step.
-- The drawing has thousands of paths, so it is built only when its frame nears the screen; until then, and in the page's static HTML, a box of the same size holds its place and carries the description.
-- The loop runs only while the figure is on screen. With reduced motion it draws one frame, mid-route, and holds still.
-- The figures only say what the project's content says. The step text is written from the same facts as the project card.
+- **Content decides.** What a chart says lives in `src/content/diagrams/*.ts`: steps on a grid (a column along the flow, a row across it), the links between them, the routes the packet takes, and optional groups (a dashed outline round steps the notes name, such as the cloud or a device).
+- **One size.** Charts are drawn at one natural size and never stretched. They shrink a little to fit (a six-step chart a little more); below about 540 px they all turn to run top to bottom. `layout.ts` works both ways out in one frame, then turns it.
+- **The steps list.** On the case-study page the steps are also listed under the chart, numbered to match the boxes. Pointing at a box or a step, or focusing a step, lights both. Charts on the projects page are bare.
+- **Motion.** The packet moves only while the chart is on screen. With reduced motion it holds one frame partway along the first arrow.
+- **Honesty.** The figures only say what the project's content says. Step text is written from the same facts as the project row.
 
 ## Motion
 

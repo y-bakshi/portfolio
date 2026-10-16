@@ -1,7 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react';
 
 /** True while the element is on screen, or just about to be. A page with no IntersectionObserver counts as always in view. */
-export function useInView(ref: RefObject<Element | null>) {
+export function useInView(ref: RefObject<Element | null>, margin = '120px 0px') {
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const node = ref.current;
@@ -12,10 +12,10 @@ export function useInView(ref: RefObject<Element | null>) {
     }
     const observer = new IntersectionObserver(
       (entries) => setInView(Boolean(entries.at(-1)?.isIntersecting)),
-      { rootMargin: '120px 0px' },
+      { rootMargin: margin },
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [ref]);
+  }, [ref, margin]);
   return inView;
 }

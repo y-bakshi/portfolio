@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** CatScript: source text becomes tokens, a tree, a checked tree, and then a running program. */
 export const catscript: Diagram = {
   summary:
-    'A production line. Source text enters a hopper, a press lexes and parses it, a cabinet holds the syntax tree, a gate type-checks it, and a screen shows the interpreter running it.',
+    'A flow chart. Source text goes to the lexer and parser, which build an abstract syntax tree. The type check reads the tree, and the interpreter then runs it.',
   stations: [
     {
       id: 'source',

@@ -13,7 +13,7 @@ import { useIsMobile, usePinToVisualViewport } from './useViewport';
  * that was open before a refresh opens again once the home page's portrait has formed
  * (`portraitFormed`), so the page loads in order: portrait first, then the conversation.
  */
-export function useGuide(portraitFormed = true) {
+export function useGuide(portraitFormed = true, page = false) {
   const saved = useRef(loadUi());
   const [question, setQuestion] = useState(saved.current.draft);
   const chat = useChat();
@@ -24,8 +24,11 @@ export function useGuide(portraitFormed = true) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const [open, setOpen] = useState(false);
-  const pendingOpen = useRef(saved.current.open);
+  const [open, setOpen] = useState(page);
+  // on a phone the suggested questions take a lot of the screen, so once one is tapped they all go
+  const [chipTapped, setChipTapped] = useState(false);
+  // a chat open before a refresh opens again on a wide screen; a phone has a page for it instead
+  const pendingOpen = useRef(saved.current.open && !page && !isMobile);
   useEffect(() => {
     if (portraitFormed && pendingOpen.current) {
       pendingOpen.current = false;
@@ -37,7 +40,7 @@ export function useGuide(portraitFormed = true) {
   // this tab remembers whether the chat was open and what was typed but not sent
   // (nothing is saved while a saved open chat waits for the portrait, or a second refresh would forget it)
   useEffect(() => {
-    if (!pendingOpen.current) saveUi({ open, draft: question });
+    if (!pendingOpen.current) saveUi({ open: page ? false : open, draft: question });
   }, [open, question]);
 
   const clearTimers = () => {
@@ -78,6 +81,12 @@ export function useGuide(portraitFormed = true) {
   };
   const onDockKey = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Escape' && open) closeDock();
+  };
+
+  /** Opens the chat: the panel on a wide screen, the chat page on a phone. */
+  const openChat = () => {
+    if (isMobile && !page) window.location.assign('/chat/');
+    else setOpen(true);
   };
 
   const ask = (text: string) => {
@@ -131,7 +140,15 @@ export function useGuide(portraitFormed = true) {
       onRate={chat.rate}
     />
   );
-  const chipList = <Chips status={status} onAsk={ask} />;
+  const askFromChip = (text: string) => {
+    if (status === 'ready') setChipTapped(true);
+    ask(text);
+  };
+  const chipList = isMobile && chipTapped ? null : <Chips status={status} onAsk={askFromChip} />;
+  const clear = async () => {
+    setChipTapped(false); // an emptied chat starts over, with its suggestions
+    await chat.clear();
+  };
 
   return {
     question,
@@ -142,10 +159,11 @@ export function useGuide(portraitFormed = true) {
     shown,
     announce,
     status,
-    clear: chat.clear,
+    clear,
     marked,
     open,
     setOpen,
+    openChat,
     closeDock,
     onDockKey,
     isMobile,

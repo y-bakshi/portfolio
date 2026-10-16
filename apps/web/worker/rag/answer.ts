@@ -15,6 +15,7 @@ import {
   withPointer,
 } from './gap';
 import { buildMessages } from './prompt';
+import { splitPage } from './page';
 import { retrieve, type Retrieval } from './retrieve';
 import type { Chunk, VectorIndex } from './types';
 
@@ -39,6 +40,12 @@ export function unavailableResult(): AnswerResult {
   return { ...unavailableAnswer, meta: { model: 'unavailable' } };
 }
 
+/**
+ * Notes that are guidance for the owner, not facts about his work. They match almost any question, so
+ * they would crowd out the real notes; a hit for one is skipped like a note that is no longer in the corpus.
+ */
+const NOT_FOR_VISITORS = new Set(['note:general-how-the-owner-frames-his-profile']);
+
 type Asked = { request: ChatRequest; given: Chunk[]; retrieval: Retrieval; question: string };
 type Plan = { refuse: AnswerResult } | Asked;
 
@@ -47,12 +54,16 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
   const models = options.models ?? fromEnv(env);
   if (!models) throw new Error('no model is configured');
   const index = options.index ?? indexFromEnv(env);
-  const chunks = new Map((options.chunks ?? buildChunks()).map((c) => [c.id, c]));
+  const chunks = new Map(
+    (options.chunks ?? buildChunks())
+      .filter((c) => !NOT_FOR_VISITORS.has(c.id))
+      .map((c) => [c.id, c]),
+  );
   const fromVar = env.RAG_MIN_SCORE === undefined ? NaN : Number(env.RAG_MIN_SCORE);
   const minScore =
     options.minScore ??
     (Number.isFinite(fromVar) ? fromVar : (models.embedder.suggestedMinScore ?? DEFAULT_MIN_SCORE));
-  const take = options.notesInPrompt ?? 4;
+  const take = options.notesInPrompt ?? 6;
   const contactVar =
     env.RAG_CONTACT_MIN_SCORE === undefined ? NaN : Number(env.RAG_CONTACT_MIN_SCORE);
   const floor = contactFloor(
@@ -60,8 +71,11 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
     options.contactMinScore ?? (Number.isFinite(contactVar) ? contactVar : undefined),
   );
 
-  async function plan(question: string, history: Turn[]): Promise<Plan> {
-    const retrieval = await retrieve(question, { embedder: models!.embedder, index, chunks });
+  async function plan(given: string, history: Turn[]): Promise<Plan> {
+    // the route may put a line about the open page before the question; the model reads it, but the
+    // notes are searched by the question alone (plus the project's name), or the line drags in notes about the site
+    const { question, search } = splitPage(given);
+    const retrieval = await retrieve(search, { embedder: models!.embedder, index, chunks });
     // no hits at all means the index was never filled: let the keyword guide answer
     if (!retrieval.hits.length) throw new Error('the notes index is empty');
     const { topScore } = retrieval;
@@ -78,7 +92,7 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
       };
     }
     const request = {
-      messages: buildMessages(question, near, history),
+      messages: buildMessages(given, near, history),
       maxOutputTokens: MAX_OUTPUT_TOKENS,
     };
     return { request, given: near, retrieval, question };

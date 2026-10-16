@@ -28,8 +28,33 @@ export function maskPersonal(text: string): string {
     .replace(LONG_DIGITS, '[number]');
 }
 
-/** Masks what is personal, tidies whitespace, and caps the length. */
-export function redact(text: string, maxChars = MAX_QUESTION_CHARS): string {
-  const masked = maskPersonal(text).replace(/\s+/g, ' ').trim();
+/**
+ * Masks what is personal, tidies whitespace, and caps the length. Strings in `keep` are left as they are
+ * (compared without regard to case): the owner's own published contact details, which an answer is meant to give.
+ */
+export function redact(
+  text: string,
+  maxChars = MAX_QUESTION_CHARS,
+  keep: readonly string[] = [],
+): string {
+  // each kept string is swapped for a marker while the rest is masked, then put back as it was written
+  const held: string[] = [];
+  let work = text;
+  for (const value of keep) {
+    const needle = value.toLowerCase();
+    let out = '';
+    let from = 0;
+    for (;;) {
+      const at = work.toLowerCase().indexOf(needle, from);
+      if (at === -1) break;
+      out += `${work.slice(from, at)}⟦${held.push(work.slice(at, at + needle.length)) - 1}⟧`;
+      from = at + needle.length;
+    }
+    work = out + work.slice(from);
+  }
+  const masked = maskPersonal(work)
+    .replace(/⟦(\d+)⟧/g, (_, i: string) => held[Number(i)])
+    .replace(/\s+/g, ' ')
+    .trim();
   return masked.length > maxChars ? `${masked.slice(0, maxChars - 1).trimEnd()}…` : masked;
 }

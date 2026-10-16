@@ -17,7 +17,7 @@ The frontend uses Vite to serve and bundle the React application. Files are smal
 │   ├── sections/           the parts of each page, in a folder per page (home, projects, case, experience, contact)
 │   ├── components/         shared pieces (project card and row, stack list, tech logo) and ui/ (shadcn)
 │   ├── content/            all page copy and data: projects, history, diagrams/ (the figures)
-│   ├── diagrams/           the animated isometric figures: stations/ (the machines), scene/ (layout, timeline), iso/vendor (the Anatomy kit)
+│   ├── diagrams/           the animated flow charts: flow/ (layout, timeline, boxes, the packet's motion)
 │   ├── Guide/              the chat: state (useGuide), panel, launcher, thread, storage, API client, Avatar/ (the animated face)
 │   ├── lib/                small helpers (cn, useInView)
 │   ├── DotGrid.tsx, MistPortrait.tsx, portrait/   the pointer-reactive background and the portrait that condenses from particles

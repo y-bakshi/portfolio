@@ -166,13 +166,15 @@ const asText = (v: unknown) => (typeof v === 'string' ? v : '');
 export async function askStream(
   message: string,
   onToken: (piece: string) => void,
+  /** The page being read, so the guide knows what "this project" means. */
+  page?: string,
 ): Promise<AskResult> {
   const controller = new AbortController();
   const timer = watchdog(controller, STREAM_IDLE_MS);
   try {
     const res = await send(
       '/api/chat',
-      { method: 'POST', body: JSON.stringify({ message }) },
+      { method: 'POST', body: JSON.stringify({ message, page }) },
       controller,
     );
     if (!res.body) throw new ApiFailure('The API sent no stream.');

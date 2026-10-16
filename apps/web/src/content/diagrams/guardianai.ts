@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** GuardianAI: a question takes a fast lane through database summaries or a slower one through a ReAct agent. */
 export const guardianai: Diagram = {
   summary:
-    'A production line with two lanes. Incident feeds enter a hopper and reach a pusher that routes each question. A location question goes straight on to a cabinet of database summaries, in 1 to 2 seconds. An open-ended one is pushed sideways to a press that stands for the ReAct agent, in 3 to 4 seconds. Both end at the safety response tray.',
+    'A flow chart with two branches. Incident feeds reach a router that sends each question one of two ways. A location question takes the summary path, in 1 to 2 seconds. An open-ended one takes the ReAct agent path, in 3 to 4 seconds. Both end in the safety response.',
   stations: [
     {
       id: 'feeds',

@@ -7,7 +7,6 @@
 {"id":"q07","category":"recruiter","question":"Has he led a team?","expect":["insight"],"acceptableSources":["catscript","testpilot","thryv"],"mustInclude":[["eight","8 people","team lead"]]}
 {"id":"q08","category":"recruiter","question":"What did he do at Tata Consultancy Services?","expect":["tcs-dev","tcs-ase"],"mustInclude":[["ServiceNow","CMDB","RHEL"]]}
 {"id":"q09","category":"recruiter","question":"Where did he study?","expect":["asu","manipal"],"mustInclude":["Arizona State","Manipal"]}
-{"id":"q10","category":"recruiter","question":"Does he have any certifications?","expect":["manipal"],"mustInclude":[["ServiceNow Certified System Administrator","Discovery"]]}
 {"id":"q11","category":"recruiter","question":"Which project won an award?","expect":["citywatch"],"acceptableSources":["insight"],"mustInclude":["CityWatch"]}
 {"id":"q12","category":"architecture","question":"What does CityWatch do and how fast is it?","expect":["citywatch"],"mustInclude":["15 seconds"]}
 {"id":"q13","category":"architecture","question":"How is the AWS alerting pipeline built?","expect":["citywatch"],"mustInclude":["Kinesis"]}

@@ -1,4 +1,4 @@
-/** The machines a figure is built from. Each one stands for a kind of step in a pipeline. */
+/** The kinds of step in a flow chart. Each has its own icon. */
 export type StationKind =
   | 'hopper' // where things enter: a repository, a feed, a prompt
   | 'press' // something is made or transformed
@@ -21,7 +21,15 @@ export type DiagramStation = {
 };
 
 /** A belt from one station to another. A belt that runs back against the line is drawn as a return lane. */
-export type DiagramLink = { from: string; to: string };
+export type DiagramLink = {
+  from: string;
+  to: string;
+  /** A few words written on the arrow, for a loop back. */
+  label?: string;
+};
+
+/** A boundary drawn round some steps, such as the cloud or a device. Only where the project notes name one. */
+export type DiagramGroup = { label: string; members: string[] };
 
 /** A project's figure: its steps, the belts between them, and the routes a packet takes through them. */
 export type Diagram = {
@@ -29,6 +37,7 @@ export type Diagram = {
   summary: string;
   stations: DiagramStation[];
   links: DiagramLink[];
+  groups?: DiagramGroup[];
   /** Station ids in the order a packet visits them. Several routes are taken in turn. */
   routes: string[][];
 };

@@ -10,7 +10,7 @@ import { streamingPipeline } from './streaming-pipeline';
 import { testpilot } from './testpilot';
 import type { Diagram } from './types';
 
-export type { Diagram, DiagramLink, DiagramStation, StationKind } from './types';
+export type { Diagram, DiagramGroup, DiagramLink, DiagramStation, StationKind } from './types';
 
 /** Each project's figure, by project id. */
 export const diagrams: Record<string, Diagram> = {

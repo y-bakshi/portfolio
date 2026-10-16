@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { askChip, bar, cannedGuide, openHome, panel } from './helpers';
+import { features } from '../src/layout/features';
+import { askChip, cannedGuide, openChat, openHome, panel } from './helpers';
 
 type Violation = { id: string; impact?: string | null; nodes: { html: string }[] };
 const serious = (violations: Violation[]) =>
@@ -25,7 +26,7 @@ for (const path of pages) {
 test('the guide open and answering has none either', async ({ page }) => {
   await cannedGuide(page);
   await openHome(page);
-  await bar(page).click();
+  await openChat(page);
   await askChip(page, 'What has Yash built with RAG?');
   const results = await new AxeBuilder({ page }).analyze();
   expect(
@@ -36,7 +37,7 @@ test('the guide open and answering has none either', async ({ page }) => {
 
 test('every figure step can be reached by keyboard', async ({ page }) => {
   await page.goto('/projects/testpilot/');
-  const steps = page.locator('figure.iso [data-step]');
+  const steps = page.locator('main figure [data-step]');
   for (let i = 0; i < (await steps.count()); i++) {
     expect(await steps.nth(i).getAttribute('tabindex')).toBe('0');
   }
@@ -45,14 +46,16 @@ test('every figure step can be reached by keyboard', async ({ page }) => {
 test('reduced motion removes the movement', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);
-  await bar(page).click();
+  await openChat(page);
   await expect(panel(page)).toBeVisible();
   const scroll = await page.evaluate(
     () => getComputedStyle(document.documentElement).scrollBehavior,
   );
   expect(scroll).toBe('auto');
-  const strip = await page
-    .locator('.marquee-track')
-    .evaluate((el) => getComputedStyle(el).animationName);
-  expect(strip).toBe('none');
+  if (features.techStrip) {
+    const strip = await page
+      .locator('.marquee-track')
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(strip).toBe('none');
+  }
 });

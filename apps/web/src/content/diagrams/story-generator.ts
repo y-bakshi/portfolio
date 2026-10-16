@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** Gemini story generator: a child's age, theme and characters become a prompt, and Gemini returns a story and pictures. */
 export const storyGenerator: Diagram = {
   summary:
-    'A production line. A story request enters a hopper, a press builds the prompt, a second press stands for Gemini, and the story and its pictures arrive in the tray.',
+    'A flow chart. A story request becomes a prompt, the prompt goes to Gemini, and the story and its pictures come back.',
   stations: [
     {
       id: 'request',

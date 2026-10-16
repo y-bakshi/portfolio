@@ -2,6 +2,7 @@ import { renderToString } from 'react-dom/server';
 import AllProjects from '../AllProjects';
 import Home from '../App';
 import CaseStudy from '../CaseStudy';
+import ChatPage from '../ChatPage';
 import ContactPage from '../ContactPage';
 import ExperiencePage from '../ExperiencePage';
 import NotFound from '../NotFound';
@@ -13,6 +14,7 @@ export const pageComponents = {
   'projects/testpilot/index.html': CaseStudy,
   'experience/index.html': ExperiencePage,
   'contact/index.html': ContactPage,
+  'chat/index.html': ChatPage,
   '404.html': NotFound,
 } as const;
 

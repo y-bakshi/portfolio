@@ -1,8 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
+import { features } from '../src/layout/features';
 import { openHome } from './helpers';
 
 const pages = [
-  { path: '/', heading: /hi, i.m yash/i },
+  { path: '/', heading: /hi yash here/i },
   { path: '/projects/', heading: /engineering projects/i },
   { path: '/projects/testpilot/', heading: /^testpilot$/i },
   { path: '/experience/', heading: /engineering experience/i },
@@ -27,25 +28,23 @@ for (const width of [320, 375, 768, 1024, 1440]) {
 test('the header stays visible while scrolling and the current page is marked', async ({
   page,
 }) => {
-  await page.goto('/experience/');
+  await page.goto('/projects/');
   const header = page.getByRole('banner');
   await page.evaluate(() => window.scrollTo(0, 600));
   await expect(header).toBeInViewport();
   expect((await header.boundingBox())!.y).toBeLessThanOrEqual(1);
   await expect(page.locator('header a[aria-current="page"]').first()).toHaveAttribute(
     'href',
-    '/experience/',
+    '/projects/',
   );
 });
 
 test('the links between pages go where they say', async ({ page }) => {
-  await openHome(page);
-  await page.getByRole('link', { name: /view projects/i }).click();
-  await expect(page).toHaveURL(/\/projects\/$/);
+  await page.goto('/projects/');
   await page.getByRole('link', { name: /read case study/i }).click();
   await expect(page).toHaveURL(/\/projects\/testpilot\/$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
-  await page.getByRole('link', { name: /contact yash/i }).click();
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Contact' }).click();
   await expect(page).toHaveURL(/\/contact\/$/);
 });
 
@@ -82,6 +81,7 @@ test('the contact page copies the email address', async ({ page, context }) => {
 });
 
 test('the technology strip can be paused', async ({ page }) => {
+  test.skip(!features.techStrip, 'the strip is switched off in src/layout/features.ts');
   await openHome(page);
   const pause = page.getByRole('button', { name: /pause the technology strip/i });
   await pause.click();

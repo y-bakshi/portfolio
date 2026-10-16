@@ -7,9 +7,6 @@ import {
   unavailableAnswer,
 } from './content';
 
-// only the file names matter here, so the files are listed and never loaded
-const logoFiles = Object.keys(import.meta.glob('../public/logos/*'));
-
 const ids = [...projects, ...roles, ...education].map((x) => x.id);
 
 describe('content data', () => {
@@ -17,10 +14,11 @@ describe('content data', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('points every logo at a file that exists', () => {
-    const withLogo = [...roles, ...education].filter((e) => e.logo);
-    expect(withLogo.length).toBeGreaterThan(0);
-    for (const e of withLogo) expect(logoFiles, e.id).toContain(`../public${e.logo}`);
+  it('has no company or school logos', () => {
+    for (const e of [...roles, ...education]) {
+      expect(e).not.toHaveProperty('logo');
+      expect(e).not.toHaveProperty('mark');
+    }
   });
 
   it('describes every project completely', () => {

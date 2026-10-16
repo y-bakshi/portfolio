@@ -1,5 +1,15 @@
 import { expect, test, type Page } from '@playwright/test';
-import { answers, askChip, bar, input, openHome, questions, ready } from './helpers';
+import {
+  answers,
+  askChip,
+  bar,
+  input,
+  openHome,
+  questions,
+  ready,
+  isPhone,
+  openChat,
+} from './helpers';
 
 const QUESTION = 'What has Yash built with RAG?';
 const SERVED = 'This answer came from the mocked server.';
@@ -69,7 +79,7 @@ async function mockApi(page: Page, options: { failAsk?: boolean } = {}) {
 
 async function askOnce(page: Page) {
   await openHome(page);
-  await bar(page).click();
+  await openChat(page);
   await askChip(page, QUESTION);
   await expect(answers(page).filter({ hasText: SERVED }).first()).toBeVisible();
 }
@@ -87,6 +97,10 @@ test.describe('the stored chat', () => {
   test('after a refresh the conversation waits for the portrait, then comes back', async ({
     page,
   }) => {
+    test.skip(
+      isPhone(page),
+      'a phone has the chat on its own page, so there is nothing to wait for',
+    );
     await mockApi(page);
     await askOnce(page);
     await page.reload();
@@ -101,7 +115,7 @@ test.describe('the stored chat', () => {
   test('after a refresh the newest exchange is in view, not the oldest', async ({ page }) => {
     await mockApi(page);
     await openHome(page);
-    await bar(page).click();
+    await openChat(page);
     for (const chip of [
       'What has Yash built with RAG?',
       'Show me his backend experience',
@@ -128,7 +142,7 @@ test.describe('the stored chat', () => {
   test('the notice is shown in the open chat', async ({ page }) => {
     await mockApi(page);
     await openHome(page);
-    await bar(page).click();
+    await openChat(page);
     await expect(
       page.getByText(
         'Questions and answers are saved anonymously for 90 days to improve the guide.',
@@ -150,7 +164,7 @@ test.describe('the stored chat', () => {
   test('when the API fails the guide says it cannot answer', async ({ page }) => {
     await mockApi(page, { failAsk: true });
     await openHome(page);
-    await bar(page).click();
+    await openChat(page);
     await askChip(page, QUESTION);
     await expect(
       answers(page)
@@ -182,7 +196,7 @@ test.describe('the stored chat', () => {
   test('the panel stays open and the draft stays in the box after a reload', async ({ page }) => {
     await mockApi(page);
     await openHome(page);
-    await bar(page).click();
+    await openChat(page);
     await input(page).fill('half written');
     await page.reload();
     await expect(input(page)).toHaveValue('half written');

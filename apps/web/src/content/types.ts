@@ -25,13 +25,11 @@ export type Entry = {
   when: string;
   note: string;
   /** The note broken into the separate things done, for the experience timeline. */
-  points: string[];
+  points?: string[];
+  /** A short paragraph on what was done, for a job on the experience timeline. */
+  summary?: string;
   /** Short topics, for the home page's recent experience strip. */
   tags?: string[];
-  /** Initials shown in the logo slot until there is a logo image. */
-  mark: string;
-  /** Path of a logo image under public/, for example '/logos/thryv.svg'. */
-  logo?: string;
 };
 
 export type Answer = { text: string; cites: string[] };

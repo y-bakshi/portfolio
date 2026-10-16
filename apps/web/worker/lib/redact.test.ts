@@ -57,3 +57,23 @@ describe('redact', () => {
     expect(out).not.toContain('someone');
   });
 });
+
+describe('redact with details to keep', () => {
+  const keep = ['ybakshi@asu.edu', 'bakshi.yash@outlook.com'];
+
+  it('leaves the owner’s own addresses alone, in whatever case they are written', () => {
+    const text = 'Email ybakshi@asu.edu or Bakshi.Yash@Outlook.com.';
+    expect(redact(text, 1000, keep)).toBe('Email ybakshi@asu.edu or Bakshi.Yash@Outlook.com.');
+  });
+
+  it('still masks every other address and number', () => {
+    const text = 'Write to ybakshi@asu.edu, not boss@example.com, or call 480-555-0123.';
+    expect(redact(text, 1000, keep)).toBe(
+      'Write to ybakshi@asu.edu, not [email], or call [phone].',
+    );
+  });
+
+  it('masks everything when nothing is to be kept', () => {
+    expect(redact('ybakshi@asu.edu')).toBe('[email]');
+  });
+});

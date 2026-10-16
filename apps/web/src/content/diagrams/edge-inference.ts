@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** Edge inference: detection runs on the device, and only detected faces cross the network to the cloud. */
 export const edgeInference: Diagram = {
   summary:
-    'A production line. A camera frame enters a hopper, a scanner on the edge device looks for faces, and only the faces ride on through a queue to the cloud cabinet that recognizes them. Frames with no face never leave the device.',
+    'A flow chart. A camera frame is checked for faces on the edge device. Only the faces go on, through MQTT and SQS, to cloud recognition. Frames with no face never leave the device.',
   stations: [
     {
       id: 'frame',
@@ -42,6 +42,10 @@ export const edgeInference: Diagram = {
     { from: 'frame', to: 'edge' },
     { from: 'edge', to: 'mqtt' },
     { from: 'mqtt', to: 'cloud' },
+  ],
+  groups: [
+    { label: 'Edge device', members: ['edge'] },
+    { label: 'Cloud', members: ['cloud'] },
   ],
   routes: [['frame', 'edge', 'mqtt', 'cloud']],
 };

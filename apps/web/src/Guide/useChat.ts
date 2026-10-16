@@ -120,11 +120,15 @@ export function useChat() {
       // the first message of a visit asks for the chat cookie before anything is stored
       if (!triedSession.current && !history.some((e) => e.id)) await startSession();
       triedSession.current = true;
-      const result = await askStream(q, (piece) => {
-        if (!live() || reduce) return;
-        setStatus('answering');
-        writer.push(piece);
-      });
+      const result = await askStream(
+        q,
+        (piece) => {
+          if (!live() || reduce) return;
+          setStatus('answering');
+          writer.push(piece);
+        },
+        window.location.pathname,
+      );
       final = {
         text: result.text,
         cites: result.cites,
@@ -147,6 +151,8 @@ export function useChat() {
       setStatus('answering');
       if (!reduce) wordsOf(final.text).forEach((w) => writer.push(w));
     }
+    // an answer that arrived whole is still being written out, so the face should say so
+    if (!reduce) setStatus('answering');
     if (!reduce) await writer.drained();
     if (!live()) return;
     setShown(final.text);

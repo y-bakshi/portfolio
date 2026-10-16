@@ -12,7 +12,7 @@ describe('the avatar engine', () => {
       expect(face.body.startsWith('M')).toBe(true);
       expect(face.body.endsWith('Z')).toBe(true);
       expect(face.eyes).toHaveLength(2);
-      for (const e of face.eyes)
+      for (const e of [...face.eyes, face.mouth])
         for (const v of Object.values(e)) expect(Number.isFinite(v)).toBe(true);
     }
   });
@@ -24,6 +24,42 @@ describe('the avatar engine', () => {
   it('draws the moods differently from each other', () => {
     const faces = names.map((n) => sample(moods[n], 2).body);
     expect(new Set(faces).size).toBe(names.length);
+  });
+
+  it('shows a mouth only when the guide is talking or thinking, and opens and shuts it as it talks', () => {
+    expect(sample(moods.idle, 1).mouth.rx).toBe(0);
+    expect(sample(moods.listening, 1).mouth.rx).toBe(0);
+    expect(sample(moods.thinking, 1).mouth.rx).toBeGreaterThan(0);
+    const heights = Array.from(
+      { length: 40 },
+      (_, i) => sample(moods.answering, i * 0.05).mouth.ry,
+    );
+    expect(Math.max(...heights)).toBeGreaterThan(3);
+    expect(Math.min(...heights)).toBeLessThan(1);
+  });
+
+  it('makes the moods plainly different at the size they are drawn', () => {
+    // about 36 pixels across for a 100 unit drawing: a gap of 3 units is about a pixel
+    const eyes = (m: Mood) => sample(moods[m], 0).eyes[0];
+    expect(Math.abs(eyes('thinking').cy - eyes('idle').cy)).toBeGreaterThan(3);
+    expect(Math.abs(eyes('listening').ry - eyes('idle').ry)).toBeGreaterThan(1);
+    // while it thinks the eyes sweep across, so look at how far they travel
+    const across = Array.from({ length: 60 }, (_, i) => sample(moods.thinking, i * 0.1).eyes[0].cx);
+    expect(Math.max(...across) - Math.min(...across)).toBeGreaterThan(6);
+  });
+
+  it('shuts the eyes and settles low when it sleeps', () => {
+    const asleep = sample(moods.sleeping, 3);
+    const awake = sample(moods.idle, 3);
+    expect(asleep.eyes[0].ry).toBeLessThan(awake.eyes[0].ry / 4);
+    expect(asleep.mouth.rx).toBe(0);
+  });
+
+  it('winks with one eye only', () => {
+    const [left, right] = sample(moods.wink, 1).eyes;
+    expect(right.ry).toBeLessThan(left.ry / 4);
+    const [l, r] = sample(moods.idle, 1).eyes;
+    expect(r.ry).toBeCloseTo(l.ry, 5);
   });
 
   it('keeps the eyes apart, one each side, and shuts them to a line', () => {

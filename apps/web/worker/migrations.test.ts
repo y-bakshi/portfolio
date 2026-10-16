@@ -13,6 +13,7 @@ describe('the database schema', () => {
       )
       .all<{ name: string }>();
     expect(results.map((r) => r.name)).toEqual([
+      'answer_cache',
       'chats',
       'chunks',
       'events',

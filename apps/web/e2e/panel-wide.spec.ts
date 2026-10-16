@@ -62,7 +62,7 @@ test('answers keep earlier ones, and a long answer is readable from its first li
 });
 
 test('a source button scrolls the page to the card it names and marks it', async ({ page }) => {
-  await openHome(page);
+  await page.goto('/projects/');
   await bar(page).click();
   await askChip(page, 'What has Yash built with RAG?');
   await page.getByRole('button', { name: 'Show TestPilot on the page' }).click();
@@ -77,7 +77,7 @@ test('a source button scrolls the page to the card it names and marks it', async
 test('a source on another page opens that page, and the chat is open there too', async ({
   page,
 }) => {
-  await openHome(page);
+  await page.goto('/projects/');
   await bar(page).click();
   await input(page).fill('Tell me about his education');
   await input(page).press('Enter');

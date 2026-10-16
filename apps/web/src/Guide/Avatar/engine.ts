@@ -27,6 +27,16 @@ export type Params = {
   /** Where the eyes look, -1 to 1 across and up and down. */
   gazeX: number;
   gazeY: number;
+  /** How far the eyes sweep from side to side, and how fast (cycles a second). */
+  sweepX: number;
+  sweepRate: number;
+  /** How far the whole face sways from side to side, as a share of the body radius. */
+  sway: number;
+  /** How open the mouth is, 0 none to 1 wide, and how fast it opens and shuts when speaking (0 holds it). */
+  mouth: number;
+  mouthRate: number;
+  /** How far the right eye is shut on its own, 0 open to 1 closed, for a wink. */
+  wink: number;
 };
 
 export type Point = { x: number; y: number };
@@ -35,6 +45,8 @@ export type Face = {
   /** The body outline as an SVG path. */
   body: string;
   eyes: { cx: number; cy: number; rx: number; ry: number }[];
+  /** The mouth, an ellipse. It has no width when it is closed. */
+  mouth: { cx: number; cy: number; rx: number; ry: number };
 };
 
 const round = (v: number) => Math.round(v * 100) / 100;
@@ -67,12 +79,13 @@ function smooth(points: Point[]): string {
 /** The face at time `t`, drawn in a box `size` wide centred on the origin. */
 export function sample(p: Params, t: number, size = 100): Face {
   const base = size * 0.4;
+  const swayX = base * p.sway * Math.sin(t * 1.3);
   const points: Point[] = [];
   for (let i = 0; i < POINTS; i++) {
     const angle = (i / POINTS) * TAU;
     const r = base * radiusAt(p, angle, t);
     points.push({
-      x: r * Math.cos(angle),
+      x: r * Math.cos(angle) + swayX,
       y: r * Math.sin(angle) * (1 - p.squash) + base * p.squash * 0.35,
     });
   }
@@ -80,11 +93,26 @@ export function sample(p: Params, t: number, size = 100): Face {
   const eyeY = -base * 0.08 + base * p.squash * 0.35;
   const ry = base * 0.19 * p.eyes;
   const rx = base * 0.085 * (1 + (1 - p.eyes) * 0.9);
+  const gazeX = p.gazeX + p.sweepX * Math.sin(t * p.sweepRate * TAU);
   const eyes = [-1, 1].map((side) => ({
-    cx: round(side * spread + p.gazeX * base * 0.12),
-    cy: round(eyeY + p.gazeY * base * 0.1),
+    cx: round(side * spread + gazeX * base * 0.2 + swayX),
+    cy: round(eyeY + p.gazeY * base * 0.16),
     rx: round(rx),
     ry: round(Math.max(ry, base * 0.018)),
   }));
-  return { body: smooth(points), eyes };
+  // a wink shuts one eye only
+  eyes[1].ry = round(Math.max(eyes[1].ry * (1 - 0.94 * p.wink), base * 0.018));
+  // speaking opens and shuts the mouth unevenly, like syllables; a held mouth stays as it is
+  const talk = p.mouthRate
+    ? Math.abs(Math.sin(t * p.mouthRate * Math.PI)) *
+      (0.65 + 0.35 * Math.sin(t * p.mouthRate * 2.3))
+    : 1;
+  const open = p.mouth * talk;
+  const mouth = {
+    cx: round(p.gazeX * base * 0.1 + swayX),
+    cy: round(base * 0.34 + p.gazeY * base * 0.06),
+    rx: round(open > 0.02 ? base * (0.1 + 0.12 * open) : 0),
+    ry: round(open > 0.02 ? base * (0.03 + 0.17 * open) : 0),
+  };
+  return { body: smooth(points), eyes, mouth };
 }

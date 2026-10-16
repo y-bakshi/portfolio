@@ -2,8 +2,7 @@ import type { Diagram } from './types';
 
 /** Serverless face recognition: detection and recognition are separate functions with a queue between them. */
 export const faceRecognition: Diagram = {
-  summary:
-    'A production line. A scanner detects faces, a queue joins the two stages, and a cabinet recognizes each face.',
+  summary: 'A flow chart. Faces are detected, passed through an SQS queue, and then recognized.',
   stations: [
     {
       id: 'detect',

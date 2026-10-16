@@ -75,6 +75,31 @@ describe('POST /api/chat', () => {
     expect(seen[5].question).toBe('mail me at [email] or [phone]');
   });
 
+  it('tells the answerer which page is open, and stores only what was typed', async () => {
+    const seen: string[] = [];
+    const answerer: Answerer = {
+      answer: async (question) => {
+        seen.push(question);
+        return { text: 'ok', cites: [] };
+      },
+    };
+    const { post, rows } = setup({ answerer });
+    await (
+      await post('/api/chat', {
+        message: 'what is this project about',
+        page: '/projects/testpilot/',
+      })
+    ).text();
+    await (await post('/api/chat', { message: 'hello', page: '/not/a/page' })).text();
+    expect(seen[0]).toBe(
+      'The visitor is reading the case study page for TestPilot.\nwhat is this project about',
+    );
+    expect(seen[1]).toBe('hello');
+    const stored = JSON.stringify((await rows('messages')).results);
+    expect(stored).toContain('what is this project about');
+    expect(stored).not.toContain('The visitor is reading');
+  });
+
   it('stores the question and answer redacted, and sends the redacted answer', async () => {
     const { ask, rows } = setup({ answerer: stub('Write to boss@example.com now', []) });
     const res = await ask('my number is 480 555 0123');

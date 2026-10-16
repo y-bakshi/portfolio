@@ -3,15 +3,9 @@ import type { Entry } from './types';
 export const roles: Entry[] = [
   {
     id: 'thryv',
-    points: [
-      'Independent deployment for the team’s Java and Micronaut services',
-      'Gated CircleCI promotion, with hermetic JMH and K6 tests',
-      'OpenAPI compatibility checks across 100+ operations',
-      '40 pull requests',
-    ],
+    summary:
+      'Moved the team’s Java and Micronaut services off a shared, schedule-based release train onto pipelines of their own, each with quality gates, a hotfix lane, performance tests and an API-compatibility check. Opened 40 pull requests across eight repositories.',
     tags: ['CI/CD', 'API compatibility', 'Performance testing'],
-    mark: 'Th',
-    logo: '/logos/thryv.png',
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
@@ -19,14 +13,8 @@ export const roles: Entry[] = [
   },
   {
     id: 'insight',
-    points: [
-      'Led eight people across five ServiceNow projects',
-      'Mentored 12 developers',
-      'Zero critical post-deployment defects',
-      'Best Team Award among 30+ teams',
-    ],
-    mark: 'In',
-    logo: '/logos/insight.webp',
+    summary:
+      'Led an eight-person ServiceNow team across five client projects and mentored 12 developers. Set up peer review, checklists and testing gates that kept critical post-deployment defects at zero, and the team won the Best Team Award among 30+ teams.',
     title: 'Technical team lead',
     org: 'InfoCenter, an Insight Company',
     when: 'Jun to Dec 2024',
@@ -34,13 +22,8 @@ export const roles: Entry[] = [
   },
   {
     id: 'tcs-dev',
-    points: [
-      'Python and LLDP discovery that kept a CMDB of 10,000+ devices current',
-      '100+ portals and forms, and monitoring integrations',
-      'Runbooks that cut onboarding from two weeks to five days',
-    ],
-    mark: 'TCS',
-    logo: '/logos/tcs.svg',
+    summary:
+      'Built a Python discovery tool that used LLDP to keep a CMDB of 10,000+ devices current across about 20 closed network zones, plus 100+ ServiceNow portals and forms and integrations with Azure IoT Hub, SolarWinds and CloudWatch. Wrote runbooks that cut onboarding from two weeks to five days.',
     title: 'ServiceNow developer',
     org: 'Tata Consultancy Services',
     when: 'Sep 2022 to May 2024',
@@ -48,12 +31,8 @@ export const roles: Entry[] = [
   },
   {
     id: 'tcs-ase',
-    points: [
-      'RHEL, Docker and HPC operations with IBM Spectrum LSF',
-      'Monitoring, and 99.9% documented uptime',
-    ],
-    mark: 'TCS',
-    logo: '/logos/tcs.svg',
+    summary:
+      'Supported RHEL, Docker and HPC operations around IBM Spectrum LSF job scheduling, monitoring system and queue health and triaging emergency tickets under senior-engineer guidance, with 99.9% uptime documented in SLA reports.',
     title: 'Assistant systems engineer',
     org: 'Tata Consultancy Services',
     when: 'Nov 2021 to Sep 2022',
@@ -69,8 +48,6 @@ export const education: Entry[] = [
       'Data processing at scale and cloud computing',
       'Software project management',
     ],
-    mark: 'ASU',
-    logo: '/logos/asu.png',
     title: 'MS, Computer Software Engineering',
     org: 'Arizona State University',
     when: 'Jan 2025 to Dec 2026',
@@ -78,15 +55,10 @@ export const education: Entry[] = [
   },
   {
     id: 'manipal',
-    points: [
-      'Data structures and algorithms, databases, computer networks, object-oriented programming',
-      'ServiceNow Certified System Administrator and ServiceNow Discovery certifications',
-    ],
-    mark: 'MUJ',
-    logo: '/logos/manipal.png',
+    points: ['Data structures and algorithms, web technology, data science and programming'],
     title: 'Bachelor of Information Technology',
     org: 'Manipal University Jaipur',
     when: 'Aug 2017 to Aug 2021',
-    note: 'Data structures and algorithms, databases, computer networks, object-oriented programming. ServiceNow Certified System Administrator and ServiceNow Discovery certifications.',
+    note: 'Data structures and algorithms, web technology, data science and programming.',
   },
 ];

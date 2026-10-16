@@ -10,7 +10,7 @@ type FeedbackProps = {
 };
 
 const button =
-  'rounded-md p-2 text-muted transition-colors hover:bg-ink/5 hover:text-ink aria-pressed:bg-ink aria-pressed:text-panel';
+  'rounded-md p-2 text-muted transition-colors duration-150 ease-out hover:bg-ink/5 hover:text-ink aria-pressed:bg-ink aria-pressed:text-panel';
 
 /** Thumbs up and down under a stored answer. The chosen one stays filled in. */
 export function Feedback({ id, rating, onRate }: FeedbackProps) {

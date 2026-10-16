@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight02Icon, BubbleChatIcon } from '@hugeicons/core-free-icons';
-import { Button } from '@/components/ui/button';
+import { ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
 import { useGuideContext } from '../../Guide';
 import { Container } from '../../layout/Container';
 import { MistPortrait } from '../../MistPortrait';
+import { HeroLinks } from './HeroLinks';
 
-/** The first screen: who Yash is, two ways in, and the portrait. */
+/** The first screen: who Yash is, how to ask the guide or reach him, and the portrait. */
 export function Hero({ isMobile, onFormed }: { isMobile: boolean; onFormed: () => void }) {
-  const { setOpen } = useGuideContext();
+  const { openChat } = useGuideContext();
   // a phone draws the portrait about 700 pixels wide, so it gets the smaller file; chosen once, so turning
   // the phone does not restart the animation
   const [portrait] = useState(() =>
@@ -20,27 +20,41 @@ export function Hero({ isMobile, onFormed }: { isMobile: boolean; onFormed: () =
     <Container
       as="section"
       aria-labelledby="hero-title"
-      className="grid items-center gap-6 pt-8 pb-10 md:grid-cols-[1.15fr_1fr] md:gap-4 md:pt-14"
+      className="grid items-center gap-6 overflow-x-clip pt-8 pb-10 md:grid-cols-[1.15fr_1fr] md:gap-4 md:pt-14"
     >
       <div className="order-2 md:order-1">
-        <h1 id="hero-title" className="display text-[clamp(2.5rem,5.2vw,4.7rem)] text-ink">
-          Hi, I’m Yash. I build AI applications, backend services and cloud delivery.
+        <h1 id="hero-title" className="display text-[clamp(3rem,6.4vw,5.6rem)] text-ink">
+          hi yash here.{' '}
+          <span aria-hidden="true" className="font-sans">
+            👋
+          </span>
         </h1>
-        <p className="mt-6 max-w-[34rem] text-lg text-muted">
-          The guide in the corner answers questions about my projects from my own notes.
+        <p className="mt-4 text-xl text-ink">
+          software engineer, finishing an MS at Arizona State University
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Button asChild size="lg">
-            <a href="/projects/">
-              View projects
-              <HugeiconsIcon icon={ArrowRight02Icon} size={20} />
-            </a>
-          </Button>
-          <Button variant="outline" size="lg" onClick={() => setOpen(true)}>
-            <HugeiconsIcon icon={BubbleChatIcon} size={20} />
-            Chat with the guide
-          </Button>
-        </div>
+        <p className="mt-5 max-w-[30rem] text-lg text-muted">
+          Backend by trade, full-stack by passion. I build AI applications, backend services and
+          cloud delivery.
+        </p>
+        <p className="mt-8 text-lg font-semibold text-ink">
+          For Q&amp;A,{' '}
+          <button
+            type="button"
+            onClick={openChat}
+            className="inline-flex items-center gap-1 underline decoration-ink/30 underline-offset-4 hover:decoration-ink focus-visible:outline-2 focus-visible:outline-ring"
+          >
+            start a chat with the guide
+            <HugeiconsIcon aria-hidden icon={ArrowUpRight01Icon} size={18} />
+          </button>
+        </p>
+        <p className="mt-1 text-sm text-muted">
+          For anything the guide cannot answer, please{' '}
+          <a href="/contact/" className="font-semibold text-ink underline underline-offset-4">
+            contact me
+          </a>{' '}
+          instead.
+        </p>
+        <HeroLinks />
       </div>
       <figure className="order-1 mx-auto w-full max-w-[34rem] md:order-2 md:max-w-none">
         <MistPortrait

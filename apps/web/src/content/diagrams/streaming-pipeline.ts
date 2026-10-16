@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** Streaming data pipeline: taxi events go through Kafka and a custom consumer into a Neo4j graph. */
 export const streamingPipeline: Diagram = {
   summary:
-    'A production line. Taxi events enter a hopper and go through a Kafka stream. A press stands for the custom consumer, and a cabinet is the Neo4j graph they are written into.',
+    'A flow chart. Taxi events go through Kafka to a custom consumer, which writes them into a Neo4j graph.',
   stations: [
     {
       id: 'events',

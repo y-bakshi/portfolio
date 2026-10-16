@@ -67,4 +67,5 @@ svg { display: block; width: 100%; height: auto; }
 .bar { fill: var(--ink); }
 .axis { stroke: var(--line); stroke-width: 1; }
 .label { fill: var(--muted); font: 11px var(--code); }
+.value { fill: var(--ink); font: 600 12px var(--code); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
 `;

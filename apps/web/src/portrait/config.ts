@@ -3,6 +3,9 @@ import { PUSH_RADIUS } from '../pointerPush';
 export type RGB = [number, number, number];
 
 export const SAMPLE_WIDTH = 420;
+// How far the canvas reaches past the picture on every side, so particles and specks pushed off the
+// edge keep going instead of being cut off in a straight line.
+export const BLEED = 48;
 // where the face sits in the portrait, so it gets more particles and stays recognisable
 export const FACE = { cx: 0.35, cy: 0.31, rx: 0.15, ry: 0.16 };
 export const FORM_MS = 3200;

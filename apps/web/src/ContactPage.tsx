@@ -1,7 +1,6 @@
 import { Container } from './layout/Container';
 import { PageFrame } from './layout/PageFrame';
 import { BookingCard, ContactLinks } from './sections/contact/ContactActions';
-import { ExploreLinks } from './sections/contact/ExploreLinks';
 
 /** How to reach Yash. */
 export function ContactPage() {
@@ -19,7 +18,6 @@ export function ContactPage() {
           </div>
           <BookingCard />
         </div>
-        <ExploreLinks />
       </Container>
     </PageFrame>
   );

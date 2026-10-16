@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** ProcWatch: /proc is read, events are detected, and they are shown in the terminal and written to logs. */
 export const procwatch: Diagram = {
   summary:
-    'A production line. A hopper stands for /proc, a scanner detects spawn, exit, CPU-spike and memory-growth events, a screen shows them in the terminal, and a cabinet keeps the session logs.',
+    'A flow chart. ProcWatch reads /proc, detects spawn, exit, CPU-spike and memory-growth events, shows them in the terminal UI, and keeps the session logs.',
   stations: [
     {
       id: 'proc',

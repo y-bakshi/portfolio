@@ -195,7 +195,7 @@ export const notes: Fact[] = [
     id: 'note:manipal-nothing-beyond-the-site',
     sourceId: 'manipal',
     title: 'Manipal: nothing beyond the site',
-    text: "The sources add nothing to the site's entry for the Bachelor of Information Technology at Manipal University Jaipur (August 2017 to August 2021) beyond the résumé's coursework list: data structures and algorithms, database management systems, computer networks and object-oriented programming, plus the ServiceNow Certified System Administrator and ServiceNow Discovery certifications. No project, grade or thesis material was found.",
+    text: "The sources add nothing to the site's entry for the Bachelor of Information Technology at Manipal University Jaipur (August 2017 to August 2021) beyond its coursework: data structures and algorithms, web technology, data science and programming. No project, grade or thesis material was found.",
   },
   {
     id: 'note:testpilot-deployment-path-and-why-it-changed',
@@ -206,8 +206,8 @@ export const notes: Fact[] = [
   {
     id: 'note:guardianai-how-the-two-lane-chat-works-team-design',
     sourceId: 'guardianai',
-    title: 'GuardianAI: how the two-lane chat works (team design)',
-    text: "The team's chat module routes each question with a rule-based Python classifier that makes no model call. Location questions take a fast lane that geocodes, queries the incident database and has Claude summarise in one streaming call, in about 1 to 2 seconds. People and group questions take a ReAct lane in which Claude calls tools in a loop capped at five iterations, in about 3 to 4 seconds. Incident cards are built server-side from database rows so the model cannot invent incidents.",
+    title: 'GuardianAI: how the two-lane chat and its ReAct agent work (team design)',
+    text: "The team's chat module routes each question with a rule-based Python classifier that makes no model call. Location questions take a fast lane that geocodes, queries the incident database and has Claude summarise in one streaming call, in about 1 to 2 seconds. People and group questions take a ReAct agent lane in which Claude, acting as an agent, calls tools in a loop capped at five iterations, in about 3 to 4 seconds. Incident cards are built server-side from database rows so the model cannot invent incidents.",
   },
   {
     id: 'note:cv-studio-compile-pipeline-and-security-choices',

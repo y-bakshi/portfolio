@@ -1,15 +1,11 @@
 import indexHtml from '../index.html?raw';
 import tailwind from './tailwind.css?raw';
 
-// the anatomy kit under diagrams/iso/vendor is copied in as it came, so it is not held to this
-const sources = import.meta.glob(
-  ['./**/*.{ts,tsx}', '!./**/*.test.*', '!./diagrams/iso/vendor/**'],
-  {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  },
-) as Record<string, string>;
+const sources = import.meta.glob(['./**/*.{ts,tsx}', '!./**/*.test.*'], {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
 
 describe('source files', () => {
   it('keep page copy in the content modules, not in arrays inside components', () => {

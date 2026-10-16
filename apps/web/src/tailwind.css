@@ -1,7 +1,5 @@
 /* The site's one stylesheet: Tailwind v4 (with its reset), the palette, and a few base rules. */
 @import 'tailwindcss';
-@import './diagrams/iso/vendor/iso-base.css';
-@import './diagrams/iso/iso-theme.css';
 
 :root {
   color-scheme: light;
@@ -140,4 +138,76 @@
 
 @utility marquee-mask {
   mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* The z's that float up from the guide's face while it sleeps: each rises, grows and fades, one after the other. */
+@keyframes zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 8px) scale(0.6);
+  }
+  25%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(9px, -16px) scale(1.15);
+  }
+}
+
+@utility zzz {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: zzz 2.9s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
+/* The sparks that fly off the guide's face when it bursts: out, shrinking, and gone. */
+@keyframes spark {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.5);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(1);
+  }
+}
+
+@utility spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spark 0.9s cubic-bezier(0.23, 1, 0.32, 1) both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* A small entrance for what appears because of something the visitor did (a new message, the suggestions on opening the chat). */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility rise {
+  animation: rise 220ms var(--ease-out) both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: fade-in 200ms ease both;
+  }
 }

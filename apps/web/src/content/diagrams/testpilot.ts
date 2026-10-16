@@ -3,7 +3,7 @@ import type { Diagram } from './types';
 /** TestPilot: coding standards are retrieved first, tests are drafted against them, and a critique sends weak ones back. */
 export const testpilot: Diagram = {
   summary:
-    'A production line. A repository enters a hopper, a cabinet looks up the five closest coding standards, a press drafts tests against them, and a gate scores each draft. A draft that scores below 0.6 rides a return belt back to the press; the rest go to the tray of finished tests.',
+    'A flow chart with a loop. A repository is read, the five closest coding standards are retrieved, and tests are drafted against them. A critique gate scores each draft. A draft that scores below 0.6 goes back to be redrafted; the rest are kept as tests.',
   stations: [
     {
       id: 'repo',
@@ -50,7 +50,7 @@ export const testpilot: Diagram = {
     { from: 'repo', to: 'standards' },
     { from: 'standards', to: 'draft' },
     { from: 'draft', to: 'critique' },
-    { from: 'critique', to: 'draft' },
+    { from: 'critique', to: 'draft', label: 'Below 0.6: redraft' },
     { from: 'critique', to: 'tests' },
   ],
   routes: [

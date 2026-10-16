@@ -55,7 +55,19 @@ export async function openHome(page: Page) {
 
 export const bar = (page: Page) => page.getByRole('button', { name: /^ask the guide/i });
 export const input = (page: Page) => page.getByLabel(/ask the guide about yash/i);
-export const panel = (page: Page) => page.locator('#guide-panel');
+/** The chat: the side panel on a wide screen, or the chat page on a phone. */
+export const panel = (page: Page) =>
+  page.locator('#guide-panel, main[aria-label="Chat with the guide"]');
+
+/** A phone gets the chat as a page of its own; a wide screen gets the panel. */
+export const isPhone = (page: Page) => (page.viewportSize()?.width ?? 1280) <= 900;
+
+/** Open the chat from the launcher button, and wait for it to be there. */
+export async function openChat(page: Page) {
+  await bar(page).click();
+  if (isPhone(page)) await page.waitForURL('**/chat/');
+  await expect(panel(page)).toBeVisible();
+}
 export const answers = (page: Page) => page.locator('[data-answer]');
 export const questions = (page: Page) => page.locator('[data-question]');
 
@@ -66,6 +78,12 @@ export async function ready(page: Page) {
 
 /** Ask one of the suggested questions and wait for the answer. */
 export async function askChip(page: Page, name: string) {
-  await panel(page).getByRole('button', { name, exact: true }).first().click();
+  const chip = panel(page).getByRole('button', { name, exact: true }).first();
+  // on a phone the suggestions go once one is tapped, so a later question is typed
+  if (await chip.count()) await chip.click();
+  else {
+    await input(page).fill(name);
+    await input(page).press('Enter');
+  }
   await ready(page);
 }

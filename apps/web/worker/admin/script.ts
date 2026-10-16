@@ -27,15 +27,16 @@ function stat(label, value) {
 
 function bars(host, rows, key, format) {
   clear(host);
-  var w = 600, h = 140, pad = 18;
+  var w = 600, h = 140, pad = 18, top = 30;
   var max = Math.max.apply(null, rows.map(function (r) { return r[key]; }).concat([1]));
   var svg = document.createElementNS(SVG, 'svg');
   svg.setAttribute('viewBox', '0 0 ' + w + ' ' + (h + pad));
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', rows.length + ' days, highest ' + format(max));
   var step = w / rows.length;
+  var numbers = [];
   rows.forEach(function (r, i) {
-    var bh = (r[key] / max) * h;
+    var bh = (r[key] / max) * (h - top);
     var rect = document.createElementNS(SVG, 'rect');
     rect.setAttribute('class', 'bar');
     rect.setAttribute('x', String(i * step + step * 0.12));
@@ -46,7 +47,24 @@ function bars(host, rows, key, format) {
     title.textContent = r.day + ': ' + format(r[key]);
     rect.appendChild(title);
     svg.appendChild(rect);
+    if (r[key] > 0) {
+      // the number sits on top of its bar
+      var num = document.createElementNS(SVG, 'text');
+      num.setAttribute('class', 'value');
+      var text = format(r[key]);
+      var centre = i * step + step / 2;
+      var wide = text.length * 7.2 > step;
+      // a number wider than its bar ends at the bar's right edge, so it hangs out to the left
+      // over empty space instead of under a taller neighbour; neighbours are staggered
+      var right = i * step + step * 0.88;
+      num.setAttribute('x', String(wide ? right : centre));
+      num.setAttribute('y', String(h - bh - 4 - (wide && i % 2 ? 13 : 0)));
+      num.setAttribute('text-anchor', wide ? 'end' : 'middle');
+      num.textContent = text;
+      numbers.push(num);
+    }
   });
+  numbers.forEach(function (n) { svg.appendChild(n); });
   var axis = document.createElementNS(SVG, 'line');
   axis.setAttribute('class', 'axis');
   axis.setAttribute('x1', '0'); axis.setAttribute('x2', String(w));

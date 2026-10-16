@@ -6,6 +6,7 @@ import ContactPage from './ContactPage';
 import ExperiencePage from './ExperiencePage';
 import NotFound from './NotFound';
 import { education, heroStack, projects, roles, smallProjects } from './content';
+import { features } from './layout/features';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
 vi.mock('./MistPortrait', () => ({
@@ -40,59 +41,76 @@ describe('every page', () => {
     expect(strip.nextElementSibling?.tagName).toBe('HEADER');
   });
 
-  it('links to the three pages and marks the current one', () => {
-    render(<ExperiencePage />);
+  it('links to projects and contact in the header, and marks the current page', () => {
+    render(<AllProjects />);
     const nav = screen.getByRole('navigation', { name: /main/i });
     expect(within(nav).getByRole('link', { name: 'Projects' })).toHaveAttribute(
       'href',
       '/projects/',
     );
-    expect(within(nav).getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact/');
-    expect(within(nav).getByRole('link', { name: 'Experience' })).toHaveAttribute(
+    expect(within(nav).getByRole('link', { name: 'Projects' })).toHaveAttribute(
       'aria-current',
       'page',
     );
+    expect(within(nav).getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact/');
+    // experience is on the home page now, so it has no link of its own in the header
+    expect(within(nav).queryByRole('link', { name: 'Experience' })).toBeNull();
   });
 });
 
 describe('home page', () => {
-  it('shows who Yash is, two ways in, and the portrait', () => {
+  it('greets the visitor, offers the guide, and shows how to reach Yash and his portrait', () => {
     home();
-    expect(screen.getByRole('link', { name: /view projects/i })).toHaveAttribute(
-      'href',
-      '/projects/',
-    );
-    expect(screen.getByRole('button', { name: /chat with the guide/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/hi yash here/i);
+    expect(
+      screen.getByRole('button', { name: /start a chat with the guide/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /contact me/i })).toHaveAttribute('href', '/contact/');
+    for (const name of ['LinkedIn', 'GitHub', 'Email'])
+      expect(screen.getByRole('link', { name })).toBeInTheDocument();
     expect(screen.getByAltText(/portrait of yash bakshi/i)).toBeInTheDocument();
   });
 
-  it('lists the technologies once for screen readers', () => {
+  it('shows every job and degree under the first screen', () => {
+    home();
+    expect(
+      screen.getByRole('heading', { level: 2, name: /engineering experience/i }),
+    ).toBeInTheDocument();
+    for (const e of [...roles, ...education]) {
+      expect(document.getElementById(e.id), e.id).toHaveTextContent(e.org);
+    }
+  });
+
+  it.skipIf(!features.techStrip)('lists the technologies once for screen readers', () => {
     home();
     expect(screen.getByText(/technologies i work with/i)).toHaveTextContent(heroStack[0]);
   });
 
-  it('puts exactly the four featured projects in the selected work, with a link to the rest', () => {
-    home();
-    const work = document.getElementById('work') as HTMLElement;
-    expect(within(work).getByRole('heading', { level: 2 })).toHaveTextContent(/selected/i);
-    const cards = [...work.querySelectorAll('article')].map((t) => t.id);
-    expect(cards).toEqual(projects.filter((p) => p.featured).map((p) => p.id));
-    expect(within(work).getByRole('link', { name: /see all projects/i })).toHaveAttribute(
-      'href',
-      '/projects/',
-    );
-    for (const p of projects.filter((p) => !p.featured))
-      expect(document.getElementById(p.id), p.id).toBeNull();
-  });
+  it.skipIf(!features.selectedWork)(
+    'puts exactly the four featured projects in the selected work, with a link to the rest',
+    () => {
+      home();
+      const work = document.getElementById('work') as HTMLElement;
+      expect(within(work).getByRole('heading', { level: 2 })).toHaveTextContent(/selected/i);
+      const cards = [...work.querySelectorAll('article')].map((t) => t.id);
+      expect(cards).toEqual(projects.filter((p) => p.featured).map((p) => p.id));
+      expect(within(work).getByRole('link', { name: /see all projects/i })).toHaveAttribute(
+        'href',
+        '/projects/',
+      );
+      for (const p of projects.filter((p) => !p.featured))
+        expect(document.getElementById(p.id), p.id).toBeNull();
+    },
+  );
 
-  it('links to the TestPilot case study and only that one', () => {
+  it.skipIf(!features.selectedWork)('links to the TestPilot case study and only that one', () => {
     home();
     const links = screen.getAllByRole('link', { name: /case study/i });
     expect(links).toHaveLength(1);
     expect(links[0]).toHaveAttribute('href', '/projects/testpilot/');
   });
 
-  it('points to the recent experience', () => {
+  it.skipIf(!features.techStrip)('points to the recent experience', () => {
     home();
     expect(screen.getByText(/recent experience/i).closest('p')).toHaveTextContent(roles[0].org);
   });
@@ -185,7 +203,8 @@ describe('experience page', () => {
       const el = document.getElementById(e.id);
       expect(el, e.id).toHaveTextContent(e.org);
       expect(el, e.id).toHaveAttribute('tabindex', '-1');
-      for (const point of e.points) expect(el, point).toHaveTextContent(point);
+      for (const point of e.points ?? []) expect(el, point).toHaveTextContent(point);
+      if (e.summary) expect(el, e.id).toHaveTextContent(e.summary);
     }
   });
 });

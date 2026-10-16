@@ -2,6 +2,7 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { motion } from './test/setup';
 import Home from './App';
+import AllProjects from './AllProjects';
 import { answerStream, cannedGuide, fakeApi } from './test/fake-api';
 
 vi.mock('./DotGrid', () => ({ DotGrid: () => null }));
@@ -17,7 +18,7 @@ vi.mock('./MistPortrait', async () => {
 });
 
 // the page's own guide is the API; these are the answers it gives in these tests
-const renderHome = () => {
+const renderHome = (page: React.ReactElement = <Home />) => {
   cannedGuide({
     'What has Yash built with RAG?': [
       'TestPilot is the RAG project. It retrieves coding standards first.',
@@ -40,7 +41,7 @@ const renderHome = () => {
       ['citywatch', 'face-recognition', 'testpilot'],
     ],
   });
-  return render(<Home />);
+  return render(page);
 };
 
 const bar = () => screen.getByRole('button', { name: /^ask the guide/i });
@@ -144,7 +145,7 @@ describe('the guide chat', () => {
 
   it('jumps to a cited card, focuses it and highlights it', async () => {
     const user = userEvent.setup();
-    renderHome();
+    renderHome(<AllProjects />);
     await openAndAsk(user, 'What has Yash built with RAG?');
     await user.click(await screen.findByRole('button', { name: 'Show TestPilot on the page' }));
     const card = document.getElementById('testpilot') as HTMLElement;

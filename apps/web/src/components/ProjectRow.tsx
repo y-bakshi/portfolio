@@ -1,10 +1,14 @@
 import { cn } from '@/lib/cn';
+import { markedHalo } from '@/lib/marked';
 import { ProjectDiagram } from '../diagrams/ProjectDiagram';
 import type { Project } from '../content';
 import { ProjectActions } from './ProjectActions';
-import { StackList } from './StackList';
+import { StackInline } from './StackInline';
 
-/** A project as a wide row: what it is on the left, its figure on the right. */
+/**
+ * A project as a compact row: its name, what it is and what Yash did, its technologies and its links on
+ * the left, and its flow chart on the right. The longer write-up folds away under "About this project".
+ */
 export function ProjectRow({ p, marked }: { p: Project; marked: string | null }) {
   return (
     <article
@@ -12,24 +16,29 @@ export function ProjectRow({ p, marked }: { p: Project; marked: string | null })
       tabIndex={-1}
       aria-labelledby={`${p.id}-name`}
       className={cn(
-        'grid gap-6 border-t border-line/70 py-9 md:grid-cols-[1fr_1.15fr] md:items-center md:gap-10',
-        'data-marked:rounded-xl data-marked:bg-mark/15 data-marked:ring-2 data-marked:ring-mark',
+        'grid gap-6 border-t border-ink/40 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] md:items-center md:gap-10',
+        markedHalo,
       )}
       data-marked={marked === p.id || undefined}
     >
-      <div className="space-y-4">
-        <div>
-          <h2 id={`${p.id}-name`} className="display text-4xl">
-            {p.name}
-          </h2>
-          <p className="mt-1.5 text-lg text-ink">{p.line}</p>
+      <div className="space-y-3">
+        <h2 id={`${p.id}-name`} className="display text-4xl">
+          {p.name}
+        </h2>
+        <div className="space-y-0.5 text-[1.02rem] text-ink">
+          <p>{p.line}</p>
+          <p>{p.role}</p>
         </div>
-        <p className="text-muted">{p.detail}</p>
-        <p className="text-[0.95rem] font-medium">{p.role}</p>
-        <StackList name={p.name} stack={p.stack} />
+        <StackInline name={p.name} stack={p.stack} />
+        <details className="group text-[0.95rem] text-muted">
+          <summary className="w-fit cursor-pointer font-medium text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
+            About this project
+          </summary>
+          <p className="mt-2 max-w-[34rem]">{p.detail}</p>
+        </details>
         <ProjectActions p={p} />
       </div>
-      <ProjectDiagram id={p.id} />
+      <ProjectDiagram id={p.id} bare />
     </article>
   );
 }
