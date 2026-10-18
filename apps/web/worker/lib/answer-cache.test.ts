@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { testDb } from '../test/sqlite-d1';
 import { CACHE_TTL_MS, cachedAnswerer, normalise } from './answer-cache';
 import type { AnswerResult, Answerer, Turn } from './answerer';
