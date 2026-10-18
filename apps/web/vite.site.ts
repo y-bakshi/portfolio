@@ -1,30 +1,84 @@
 import type { Plugin } from 'vite';
+import { jsonLdScript } from './src/seo/jsonld';
+import { llmsFullTxt, llmsTxt } from './src/seo/llms';
+import { pageMeta } from './src/seo/pages';
 
 /** The address the site is served from. Every absolute URL in the pages and the sitemap comes from here. */
 export const SITE = 'https://yashbakshi.com';
 
 /** The pages worth indexing, as paths. The not-found page is left out. */
-export const PAGES = ['/', '/projects/', '/projects/testpilot/'];
+export const PAGES = pageMeta.map((m) => m.path);
+
+/**
+ * The assistants and search crawlers that are welcome. They get a group of their own so the rule is
+ * visible, and it repeats the private paths because a crawler with its own group ignores the `*` group.
+ * Common Crawl (CCBot) is in the list on purpose: it feeds many search and answer tools, and the owner
+ * wants the portfolio found. Delete a name here to turn that crawler away.
+ */
+export const AI_CRAWLERS = [
+  'GPTBot',
+  'ChatGPT-User',
+  'OAI-SearchBot',
+  'ClaudeBot',
+  'Claude-User',
+  'Claude-SearchBot',
+  'PerplexityBot',
+  'Perplexity-User',
+  'Google-Extended',
+  'Applebot-Extended',
+  'CCBot',
+];
+
+const RULES = 'Allow: /\nDisallow: /api/\nDisallow: /admin\n';
 
 export const robotsTxt = (site: string) =>
-  `User-agent: *\nAllow: /\n\nSitemap: ${site}/sitemap.xml\n`;
+  `User-agent: *\n${RULES}\n` +
+  `${AI_CRAWLERS.map((a) => `User-agent: ${a}\n`).join('')}${RULES}\n` +
+  `Sitemap: ${site}/sitemap.xml\n`;
 
-export const sitemapXml = (site: string, pages: string[]) =>
+export const sitemapXml = (
+  site: string,
+  pages: string[],
+  lastmod = new Date().toISOString().slice(0, 10),
+) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages
-    .map((p) => `  <url><loc>${site}${p}</loc></url>\n`)
+    .map((p) => `  <url><loc>${site}${p}</loc><lastmod>${lastmod}</lastmod></url>\n`)
     .join('')}</urlset>\n`;
 
 /**
- * Fills `%SITE%` in every page with the site address, and writes robots.txt and sitemap.xml next to
- * the pages, so the domain is written down in one place.
+ * The two fonts every page draws above the fold (Geist and Instrument Sans, Latin subset) start
+ * downloading with the page instead of after the stylesheet is read. Their file names carry a hash,
+ * so they are found in the build's own file list.
+ */
+export const fontPreloads = (files: string[]) =>
+  files
+    .filter((f) => /^assets\/(geist|instrument-sans)-latin-w\w+-normal-[\w-]+\.woff2$/.test(f))
+    .map((f) => `<link rel="preload" as="font" type="font/woff2" href="/${f}" crossorigin />`);
+
+/**
+ * Fills `%SITE%` in every page with the site address, adds each page's structured data, and writes
+ * robots.txt, sitemap.xml, llms.txt and llms-full.txt next to the pages, so the domain is written
+ * down in one place.
  */
 export function sitePlugin(site = SITE, pages = PAGES): Plugin {
   return {
     name: 'site',
-    transformIndexHtml: (html) => html.split('%SITE%').join(site),
+    transformIndexHtml: (html, ctx) => {
+      const filled = html.split('%SITE%').join(site);
+      const extra = [
+        ctx?.path ? jsonLdScript(ctx.path, site) : '',
+        ...fontPreloads(Object.keys(ctx?.bundle ?? {})),
+      ].filter(Boolean);
+      const lines = extra.map((e) => `    ${e}\n`).join('');
+      return extra.length ? filled.replace('</head>', () => `${lines}  </head>`) : filled;
+    },
     generateBundle() {
-      this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robotsTxt(site) });
-      this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemapXml(site, pages) });
+      const emit = (fileName: string, source: string) =>
+        this.emitFile({ type: 'asset', fileName, source });
+      emit('robots.txt', robotsTxt(site));
+      emit('sitemap.xml', sitemapXml(site, pages));
+      emit('llms.txt', llmsTxt(site));
+      emit('llms-full.txt', llmsFullTxt(site));
     },
   };
 }

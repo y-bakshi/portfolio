@@ -1,0 +1,213 @@
+/* The site's one stylesheet: Tailwind v4 (with its reset), the palette, and a few base rules. */
+@import 'tailwindcss';
+
+:root {
+  color-scheme: light;
+  --ground: #e8e0d2; /* ivory */
+  --panel: #f4efe5;
+  --ink: #0e1d61; /* deep atlas navy */
+  --muted: #4b547f;
+  --line: #bdb09a;
+  --action: #1a2e8a;
+  --action-ink: #f4efe5;
+  --mark: #b89a5a; /* gold */
+  --field: #fbf8f1; /* the chat input, a touch lighter than the panel */
+  --wip: #ffe600; /* the work in progress strip at the top, until launch */
+  --display: 'Instrument Sans Variable', 'Arial Narrow', Arial, sans-serif;
+  --text: 'Geist Variable', system-ui, sans-serif;
+  --code: 'Geist Mono Variable', Consolas, monospace;
+  --gutter: clamp(20px, 5vw, 72px);
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-action: var(--action);
+  --color-action-ink: var(--action-ink);
+  --color-mark: var(--mark);
+  --color-field: var(--field);
+  --color-background: var(--ground);
+  --color-foreground: var(--ink);
+  --color-border: var(--line);
+  --color-ring: var(--action);
+  --color-primary: var(--action);
+  --color-primary-foreground: var(--action-ink);
+  --color-card: var(--panel);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--panel);
+  --color-popover-foreground: var(--ink);
+  --color-secondary: var(--panel);
+  --color-secondary-foreground: var(--ink);
+  --color-accent: var(--panel);
+  --color-accent-foreground: var(--ink);
+  --color-input: var(--line);
+  --font-sans: var(--text);
+  --font-mono: var(--code);
+  --font-display: var(--display);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-soft: 0 1px 2px rgb(14 29 97 / 0.08), 0 6px 20px -6px rgb(14 29 97 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(14 29 97 / 0.1), 0 14px 32px -10px rgb(14 29 97 / 0.28);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@layer base {
+  html {
+    min-width: 320px;
+    scroll-padding-top: 88px;
+    background: var(--ground);
+    scrollbar-color: var(--ink) var(--ground);
+  }
+
+  /* one smooth-scroll setting for nav links, the skip link and the guide's "Show" buttons */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* the full-screen chat on a phone owns the screen, so the page behind it must not scroll */
+  html.chat-open {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--ground);
+    font-family: var(--text);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    font-weight: 450;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--action);
+    outline-offset: 3px;
+  }
+
+  [tabindex='-1']:focus {
+    outline: none;
+  }
+
+  [tabindex='-1']:focus-visible {
+    outline: 3px solid var(--action);
+    outline-offset: 3px;
+  }
+
+  /* navy with ivory text: gold would vanish on the gold highlight colour */
+  ::selection {
+    background: var(--ink);
+    color: var(--panel);
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* Headlines: the heavy, condensed face the whole site uses for names and titles. */
+@utility display {
+  font-family: var(--font-display);
+  font-stretch: 80%;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+}
+
+/* The scrolling technology strip: one slow loop, edges faded, still for people who ask for less motion. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility marquee-track {
+  animation: marquee 50s linear infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* The z's that float up from the guide's face while it sleeps: each rises, grows and fades, one after the other. */
+@keyframes zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 8px) scale(0.6);
+  }
+  25%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(9px, -16px) scale(1.15);
+  }
+}
+
+@utility zzz {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: zzz 2.9s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
+/* The sparks that fly off the guide's face when it bursts: out, shrinking, and gone. */
+@keyframes spark {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.5);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(1);
+  }
+}
+
+@utility spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spark 0.9s cubic-bezier(0.23, 1, 0.32, 1) both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* A small entrance for what appears because of something the visitor did (a new message, the suggestions on opening the chat). */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility rise {
+  animation: rise 220ms var(--ease-out) both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: fade-in 200ms ease both;
+  }
+}

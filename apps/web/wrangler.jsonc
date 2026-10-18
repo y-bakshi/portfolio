@@ -1,13 +1,45 @@
 {
-  // the site is plain static files: Cloudflare serves the build folder and shows 404.html for any other address
+  // the site is plain static files, with a small API under /api: Cloudflare serves the build folder,
+  // shows 404.html for any other address, and runs the Worker only for addresses under /api and the owner page at /admin
   "name": "portfolio",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // the site is served from its own domain only: no workers.dev address and no public preview addresses
   "workers_dev": false,
   "preview_urls": false,
+  "vars": {
+    "SITE_ORIGIN": "https://yashbakshi.com",
+    "LLM_PROVIDER": "gemini",
+  },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/*", "/admin", "/admin/*", "/resume.pdf"],
   },
+  // The model-backed guide (docs/architecture/rag.md). Turn it on in this order:
+  //   1. uncomment "ai" below (Workers AI: embeddings and the fallback chat model)
+  //   2. set the secret:  wrangler secret put GEMINI_API_KEY
+  //   3. create the index:  wrangler vectorize create guide-chunks --dimensions=768 --metric=cosine
+  //      and uncomment "vectorize" below (without it, the notes are searched in D1, which is fine here)
+  //   4. add "LLM_PROVIDER": "gemini" to vars (and optionally "GEMINI_MODEL", "RAG_MIN_SCORE")
+  //   5. index the notes: see "Rebuilding the index" in docs/architecture/rag.md
+  // "ai": { "binding": "AI" },
+  // "vectorize": [{ "binding": "VECTORIZE", "index_name": "guide-chunks" }],
+  // once a day (03:17 UTC) the Worker deletes saved chats, messages and events older than 90 days
+  "triggers": { "crons": ["17 3 * * *"] },
+  // rate-limit counters and the spend total live in a small Durable Object
+  "durable_objects": { "bindings": [{ "name": "GUARD", "class_name": "Guard" }] },
+  "migrations": [{ "tag": "v1-guard", "new_sqlite_classes": ["Guard"] }],
+  // the résumé is kept in storage, not in the repository: upload it with `wrangler r2 object put`
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "portfolio-files" }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "guide",
+      "database_id": "d1248f05-490a-4b53-9d0c-b7eb097602a6",
+      "migrations_dir": "worker/migrations",
+    },
+  ],
 }

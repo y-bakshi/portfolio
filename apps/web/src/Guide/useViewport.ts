@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-/** Phones show the conversation inside the chat; wide screens show it in the hero. */
+/** Phones get a full-screen chat sheet; wide screens get a column on the right. */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches,
@@ -12,34 +12,6 @@ export function useIsMobile() {
     return () => mq.removeEventListener('change', on);
   }, []);
   return isMobile;
-}
-
-/** True once the page has scrolled past the first screen. */
-export function useScrolled() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 400);
-    on();
-    window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
-  }, []);
-  return scrolled;
-}
-
-/**
- * Opening the bar on a wide screen makes the page end lower, to leave room for it. A visitor who is
- * at the end of the page when it opens is taken down to the new end, so the footer stays in view.
- */
-export function useFollowPageEnd(open: boolean, isMobile: boolean) {
-  useEffect(() => {
-    if (!open || isMobile) return;
-    const room =
-      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-room')) || 0;
-    const end = document.documentElement.scrollHeight - window.innerHeight;
-    // the new end is `room` lower than the old one, so being within `room` of it means being at the old end
-    if (end > 0 && window.scrollY >= end - room - 4)
-      window.scrollTo({ top: end, behavior: 'smooth' });
-  }, [open, isMobile]);
 }
 
 /**

@@ -1,47 +1,47 @@
 # API Design
 
-Status: proposed v1 contract; no backend routes exist. FastAPI's generated OpenAPI schema will become the machine-readable contract when implemented.
+Status: the Worker, `/api/health`, the shared guards (request id, origin check, body limit, error format) and the stored anonymous chat (`/api/session`, `/api/chat` GET, POST and DELETE, `/api/feedback`, answered by the keyword guide) are implemented. The remaining routes are added phase by phase on the `feature/guide-chat` branch; this page is the contract they follow.
+
+The API is a Hono app inside the same Cloudflare Worker that serves the site (`apps/web/worker/`). Only addresses under `/api` run code (`assets.run_worker_first`); every other address is served as a static file, so the API is same-origin: no CORS and the same cookie.
 
 ## Endpoints
 
-| Method / path | Purpose | Protection |
-| --- | --- | --- |
-| `GET /api/v1/health` | Lightweight readiness, no provider calls or internal configuration. | Public; cheap. |
-| `POST /api/v1/session` | Issue short-lived signed anonymous session cookie. | App Check plus network burst limit. |
-| `POST /api/v1/chat` | Return grounded answer, citations, actions, usage. | App Check, session, all quota/budget checks, idempotency. |
-| `GET /api/v1/usage` | Current allowance/reset; never expose other sessions. | App Check and session; separate cheap-request limit. |
-| `POST /api/v1/feedback` | Submit optional `helpful` or `unhelpful` rating. | App Check, session, feedback limit. |
-| `POST /api/v1/speech` | Optional speech synthesis for server-authorized answer IDs. | App Check, session, voice budget; only if server TTS is selected. |
+| Method / path                                     | Purpose                                                                                 | Protection                                             |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `GET /api/health`                                 | Readiness. `?db=1` also checks the database. No provider calls, no configuration shown. | Public; cheap.                                         |
+| `POST /api/session`                               | Verify the bot check and set the anonymous chat cookie.                                 | Turnstile token, network burst limit, origin check.    |
+| `GET /api/chat`                                   | Return this visitor's saved transcript, so a refresh restores the chat.                 | Chat cookie.                                           |
+| `POST /api/chat`                                  | Ask a question; the answer streams back over server-sent events.                        | Chat cookie, all rate and budget checks, origin check. |
+| `DELETE /api/chat`                                | Delete this visitor's chat and its messages.                                            | Chat cookie, origin check.                             |
+| `POST /api/feedback`                              | A thumbs up or down on one answer.                                                      | Chat cookie, ownership check, feedback limit.          |
+| `POST /api/events`                                | A browser-only usage event. Only `cite_clicked` with a known `sourceId`; returns 204.   | Origin check; source id checked against the content.   |
+| `GET /api/admin/summary?days=30`                  | Owner-only usage summary as JSON (1 to 90 days).                                        | Cloudflare Access token, checked in the Worker.        |
+| `GET /admin`, `/admin/app.js`, `/admin/style.css` | The owner page. Strict CSP, `no-store`, `noindex`.                                      | Cloudflare Access token, checked in the Worker.        |
 
-Every protected call includes `X-Firebase-AppCheck`. Session cookie is `Secure`, `HttpOnly`, and `SameSite=Lax`, scoped to the same origin. Mutations verify `Origin`; CORS is not an authentication mechanism. Paid calls use `Idempotency-Key` to prevent duplicate charges. Tokens, keys, and prompts must not appear in URLs or logs.
+## Owner routes
 
-## Chat Example
+The admin routes check the `Cf-Access-Jwt-Assertion` header: RS256 only, keys from the team's certs endpoint (cached for an hour), and `iss` and `aud` must match `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD`. If either variable is missing they refuse every request. `ADMIN_DEV_BYPASS=true` skips the check for requests to `localhost` only. `/admin` is not under `/api`, so `assets.run_worker_first` lists `/admin` and `/admin/*` too. Setup: [analytics](../deployment/analytics.md).
+
+## Rules for every route
+
+- Every response carries `x-request-id` and `cache-control: no-store`.
+- A request that can change something (any method other than GET, HEAD or OPTIONS) must carry an `Origin` header equal to the site's own origin, or `SITE_ORIGIN`. CORS is not an authentication mechanism.
+- Request bodies are limited to 8 KB. A chat message is at most 1,000 characters, and at most the last 6 turns of history are used. History is untrusted context.
+- The chat cookie is `chat`: a random 128-bit id, signed, `Secure`, `HttpOnly`, `SameSite=Lax`, 30 days. It identifies a chat, never a person. Clearing it starts a new chat but does not reset the rate limits.
+- Tokens, keys and prompts never appear in URLs or logs.
+
+## Chat
 
 ```json
-{
-  "message": "How does TestPilot use RAG?",
-  "detail": "brief",
-  "currentPath": "/",
-  "history": []
-}
+{ "message": "How does TestPilot use RAG?" }
 ```
 
-```json
-{
-  "requestId": "req_example",
-  "answer": "TestPilot retrieves coding-standard chunks to ground test-generation prompts.",
-  "citations": [{"projectId": "testpilot", "path": "/projects/testpilot/", "label": "TestPilot architecture"}],
-  "actions": [{"type": "spotlight_project", "projectId": "testpilot"}],
-  "usage": {"remainingQuestions": 8, "resetAt": "2026-09-28T00:00:00Z"}
-}
-```
+The response is `text/event-stream` with these events: `meta` (message ids), `token` (a piece of the answer), `done` (the full answer, `cites`, the usage allowance) and `error`. `cites` holds ids of cards on the page (a project, role or degree), checked against the content registry; the client shows them as "Show on the page" buttons. If the answer cannot be grounded, the text says it is not in the notes and `cites` is empty.
 
-The allowance above is illustrative; final quotas depend on provider costs. `detail` accepts `brief` or `technical`. Proposed validation: message ≤2,000 characters, history ≤6 text turns, bounded total input tokens and response tokens. Treat history as untrusted context, not evidence of user identity or authority.
+`GET /api/chat` returns `{ messages: [{ id, role, text, cites, createdAt }] }`, oldest first.
 
-Allowed actions: `spotlight_project` and `offer_case_study`, each with a known project ID. Resolve links from the content registry; never accept arbitrary URLs, selectors, scripts, or HTML from the model. The client offers navigation rather than automatically opening a case-study route.
+## Errors
 
-## Errors and Cancellation
+`{ "error": { "code": "rate_limited", "message": "…", "retryAt": "…" }, "requestId": "…" }` with 400 for malformed input, 401 for a missing or invalid session, 403 for a failed origin or bot check, 404 for an unknown address, 413 for an oversized body, 429 for limits, and 503 for an unavailable dependency. `retryAt` (an ISO time) is omitted when unknown; for 429 and 503 refusals from the protection layer it is always present, and routes send `Retry-After` using `retryAfterSeconds(error)` from `worker/lib/protect.ts`. The bot check (`verifyHuman` in `worker/lib/turnstile.ts`) reads the token from the `cf-turnstile-response` header or the JSON body field `turnstileToken`. An unexpected failure returns 500 with no detail about the cause, which stays in the logs under the same request id.
 
-Return `{ "error": { "code": "daily_limit", "message": "…", "retryAt": "…" }, "requestId": "…" }` with 400 for malformed input, 401 for expired/missing session, 403 for failed attestation/origin, 413 for oversized payload, 422 for invalid fields, 429 for quotas, and 503 for unavailable dependencies. Omit `retryAt` when unknown. Include `Retry-After` where meaningful.
-
-No automatic retries for paid calls without the same idempotency key. Cancellation stops UI/audio; it may not stop already incurred provider cost. Initial chat uses bounded JSON responses; streaming and audio upload require a separate contract decision. Signed short-lived answer handles for feedback/speech must be ownership-checked server-side before use.
+When the API cannot answer (down, rate-limited, budget spent) the guide says plainly that it cannot answer just now and points at the project cards and the contact block. Nothing is stored for that reply, and there is no second, weaker guide.
