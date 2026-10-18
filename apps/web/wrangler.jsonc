@@ -9,6 +9,8 @@
   "preview_urls": false,
   "vars": {
     "SITE_ORIGIN": "https://yashbakshi.com",
+    // read by the owner page for traffic numbers; the matching secret is CF_ANALYTICS_TOKEN (see docs/deployment/analytics.md)
+    "CF_ZONE_ID": "67c84dd1f94cbbe0c20d8dc19d6d9eea",
     "LLM_PROVIDER": "gemini",
     "REQUIRE_TURNSTILE": "true",
     "ACCESS_TEAM_DOMAIN": "orange-sky-2180.cloudflareaccess.com",

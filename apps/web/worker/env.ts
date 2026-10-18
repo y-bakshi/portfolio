@@ -51,6 +51,10 @@ export interface Env {
   ADMIN_DEV_BYPASS?: string;
   /** Exactly 'true' skips the question limits (not the spending cap), on localhost only. */
   LIMITS_DEV_BYPASS?: string;
+  /** Secret. A read-only Cloudflare API token (Zone, Analytics, Read) for the owner page's traffic numbers. Unset: the panel says it is not set up. */
+  CF_ANALYTICS_TOKEN?: string;
+  /** The zone id of the site's domain, for the traffic numbers. Public, so it can be a plain variable. */
+  CF_ZONE_ID?: string;
   /** Secret that signs the chat cookie. Set with `wrangler secret put`; locally in .dev.vars. */
   SESSION_SECRET: string;
 }

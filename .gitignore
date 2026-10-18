@@ -37,3 +37,4 @@ apps/web/worker/rag/vectors.generated.ndjson
 
 # résumé has a phone number; keep it out of the public repo
 apps/web/public/Yash_Bakshi_Resume.*
+apps/web/worker/rag/eval-run.generated.sql

@@ -26,6 +26,7 @@ export const privacySections: PrivacySection[] = [
     title: 'What the site counts',
     body: [
       'The site counts a few things without your words: that a chat started, how long a question was, how long an answer took, which source button was pressed, and whether you gave an answer a thumbs up or down. To stop abuse it also limits how often one visitor can ask. For that it uses a code made from your connection that changes every day and cannot be turned back into your address.',
+      'Cloudflare, which serves the site, also counts requests to it in aggregate: how many page loads, from which countries and browsers, and which pages. The owner sees only those totals, not individual visitors, and nothing is added to the pages for it.',
     ],
   },
   {

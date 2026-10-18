@@ -16,6 +16,7 @@ describe('the database schema', () => {
       'answer_cache',
       'chats',
       'chunks',
+      'eval_runs',
       'events',
       'feedback',
       'messages',

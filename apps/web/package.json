@@ -19,6 +19,7 @@
     "worker:dev": "wrangler dev --port 8788 --var REQUIRE_TURNSTILE:false",
     "corpus:build": "node scripts/run.mjs scripts/build-corpus.ts",
     "corpus:index": "node scripts/run.mjs scripts/index-corpus.ts",
+    "eval:record": "node scripts/run.mjs scripts/record-eval.ts",
     "e2e": "playwright test",
     "logos:copy": "node scripts/copy-logos.mjs"
   },

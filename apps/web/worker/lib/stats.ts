@@ -8,6 +8,7 @@ export const LOW_SCORE = 0.5;
 
 export type Daily = { day: string; questions: number; answers: number; costMicroUsd: number };
 export type Question = { text: string; count: number };
+export type Tally = { key: string; count: number };
 export type WeakQuestion = { text: string; score: number | null; refused: boolean; at: string };
 
 export type Summary = {
@@ -21,6 +22,8 @@ export type Summary = {
   rateLimited: number;
   topQuestions: Question[];
   lowConfidence: WeakQuestion[];
+  /** How often each kind of event carried a code: which source buttons were pressed, which limits fired, why answers fell back. */
+  breakdowns: { sources: Tally[]; rateLimits: Tally[]; fallbacks: Tally[]; errors: Tally[] };
 };
 
 /** Nearest-rank percentile of already sorted numbers, or null when there are none. */
@@ -136,6 +139,24 @@ export async function getSummary(
     .bind(...range, lowScore)
     .all<{ text: string; score: number | null; at: number; refused: number }>();
 
+  const tally = async (type: string, key: string): Promise<Tally[]> =>
+    (
+      await db
+        .prepare(
+          `SELECT json_extract(data_json, '$.${key}') AS key, COUNT(*) AS count FROM events
+           WHERE type = ? AND created_at BETWEEN ? AND ? AND json_extract(data_json, '$.${key}') IS NOT NULL
+           GROUP BY key ORDER BY count DESC, key LIMIT 15`,
+        )
+        .bind(type, ...range)
+        .all<Tally>()
+    ).results;
+  const breakdowns = {
+    sources: await tally('cite_clicked', 'sourceId'),
+    rateLimits: await tally('rate_limited', 'scope'),
+    fallbacks: await tally('fallback_used', 'reason'),
+    errors: await tally('error', 'code'),
+  };
+
   const questions = count('question_asked');
   return {
     range: { days, from: new Date(from).toISOString(), to: new Date(to).toISOString() },
@@ -147,6 +168,7 @@ export async function getSummary(
     fallbackRate: questions ? count('fallback_used') / questions : null,
     rateLimited: count('rate_limited'),
     topQuestions: top.results,
+    breakdowns,
     lowConfidence: weak.results.map((r) => ({
       text: r.text,
       score: r.score,
