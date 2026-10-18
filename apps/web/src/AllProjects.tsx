@@ -1,48 +1,21 @@
-import { useEffect } from 'react';
-import { projects, smallProjects } from './content';
-import { DotGrid } from './DotGrid';
-import { SiteHeader, WipBanner } from './parts';
-import { ProjectTile } from './sections/ProjectTile';
+import { Container } from './layout/Container';
+import { PageFrame } from './layout/PageFrame';
+import { ProjectList } from './sections/projects/ProjectList';
+import { SmallProjects } from './sections/projects/SmallProjects';
 
-/** Every project: the four featured, the rest, and the shared card for coursework. */
+/** Every project: the four featured, the rest, and the shared cards for coursework. */
 export function AllProjects() {
-  // the page is drawn after load, so a link to one project has to scroll to it by hand
-  useEffect(() => {
-    const id = window.location.hash.slice(1);
-    if (id) document.getElementById(id)?.scrollIntoView();
-  }, []);
-
   return (
-    <>
-      <DotGrid />
-      <WipBanner />
-      <SiteHeader />
-      <main id="main" className="all">
-        <p className="case-back">
-          <a href="/#work">Back to projects</a>
+    <PageFrame current="projects">
+      <Container className="pt-10 pb-6 md:pt-14">
+        <h1 className="display text-[clamp(2.8rem,6vw,4.8rem)]">Engineering projects</h1>
+        <p className="mt-3 mb-8 max-w-[40rem] text-xl text-muted">
+          Backend services, AI applications, and cloud systems.
         </p>
-        <div className="section-card">
-          <h1 className="section-title">All projects</h1>
-        </div>
-        <div className="tiles">
-          {projects.map((p) => (
-            <ProjectTile key={p.id} p={p} marked={null} />
-          ))}
-        </div>
-        <article className="row more-card" aria-labelledby="small-name">
-          <h2 id="small-name" className="more-title">
-            Smaller projects
-          </h2>
-          <ul className="small-list">
-            {smallProjects.map((sp) => (
-              <li key={sp.name}>
-                <strong>{sp.name}.</strong> {sp.line}
-              </li>
-            ))}
-          </ul>
-        </article>
-      </main>
-    </>
+        <ProjectList />
+        <SmallProjects />
+      </Container>
+    </PageFrame>
   );
 }
 

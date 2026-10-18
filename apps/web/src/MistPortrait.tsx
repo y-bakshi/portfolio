@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { FORM_MS, TILE, token, type P } from './portrait/config';
+import { BLEED, FORM_MS, TILE, token, type P } from './portrait/config';
 import { makePacer } from './portrait/pace';
+import { PortraitCanvas } from './portrait/PortraitCanvas';
 import { drawBuckets, makeBuckets, stepParticles } from './portrait/particles';
-import { sampleParticles } from './portrait/sample';
+import { sampleParticles, smallCanvas } from './portrait/sample';
 import {
   drawSpecks,
   springTiles,
@@ -13,10 +14,9 @@ import {
 } from './portrait/tiles';
 
 /**
- * The portrait condenses out of a rotating sphere of suspended particles when it scrolls into view.
- * The pointer pushes particles and the picture itself aside and they spring back. Once the portrait
- * is formed and nothing is moving the animation loop stops, so it costs nothing while idle. With
- * reduced motion the finished image is shown as a plain picture instead.
+ * The portrait condenses out of a rotating sphere of particles when it scrolls into view. The pointer
+ * pushes particles and the picture aside and they spring back. Once formed and at rest the loop stops.
+ * With reduced motion the finished image is shown as a plain picture.
  */
 export function MistPortrait({
   src,
@@ -77,11 +77,12 @@ export function MistPortrait({
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cw = rect.width;
-      ch = rect.height;
-      canvas.width = Math.round(cw * dpr);
-      canvas.height = Math.round(ch * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // the canvas reaches BLEED past the picture on every side, so specks pushed off the edge keep going
+      cw = rect.width - 2 * BLEED;
+      ch = rect.height - 2 * BLEED;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, BLEED * dpr, BLEED * dpr);
       tilesX = Math.ceil(cw / TILE);
       tilesY = Math.ceil(ch / TILE);
       tileState = new Float32Array(tilesX * tilesY * 4);
@@ -89,7 +90,8 @@ export function MistPortrait({
       activeTiles = [];
       tileDark = new Float32Array(tilesX * tilesY);
       // a hidden canvas has no size, and reading pixels from nothing throws
-      if (portrait && tilesX > 0 && tilesY > 0) tileDark = tileTones(portrait, tilesX, tilesY);
+      if (portrait && tilesX > 0 && tilesY > 0)
+        tileDark = tileTones(smallCanvas(portrait), tilesX, tilesY);
     };
 
     const paint = (now: number) => {
@@ -98,7 +100,7 @@ export function MistPortrait({
 
       // if frames are running long, draw every other particle so slower devices stay smooth
       const stride = pace(now);
-      ctx.clearRect(0, 0, cw, ch);
+      ctx.clearRect(-BLEED, -BLEED, cw + 2 * BLEED, ch + 2 * BLEED);
       const t = started ? Math.min(1, Math.max(0, (now - started) / FORM_MS)) : 0;
       const formed = t >= 1;
       if (formed && !announced) {
@@ -160,7 +162,7 @@ export function MistPortrait({
 
     const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
-      mouse = { x: e.clientX - r.left, y: e.clientY - r.top };
+      mouse = { x: e.clientX - r.left - BLEED, y: e.clientY - r.top - BLEED };
       wake();
     };
     const onLeave = () => {
@@ -207,13 +209,5 @@ export function MistPortrait({
     return <img src={src} width={width} height={height} alt={alt} />;
   }
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="mist"
-      role="img"
-      aria-label={alt}
-      style={{ aspectRatio: `${width} / ${height}` }}
-    />
-  );
+  return <PortraitCanvas canvasRef={canvasRef} width={width} height={height} alt={alt} />;
 }

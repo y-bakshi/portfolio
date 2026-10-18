@@ -10,7 +10,7 @@ Yash Bakshi is a software engineer and former technical team lead with experienc
 
 | Role | Organization / dates | Editorial focus |
 | --- | --- | --- |
-| Software Engineering Intern | Thryv; May–Aug 2026 | Java/Micronaut service releases, gated CircleCI promotion, hermetic performance tests, API compatibility, schema validation, production-readiness documentation. |
+| Software Engineering Intern | Thryv; May–Aug 2026 | Decoupled five Java/Micronaut services for independent releases (CircleCI approval gates), OpenAPI and JMH/k6 checks, offline Avro validation, SLOs and release playbooks. |
 | Technical Team Lead | InfoCenter, an Insight Company; Jun–Dec 2024 | ServiceNow delivery leadership, mentoring, reviews, testing, stakeholder coordination. |
 | ServiceNow Developer | Tata Consultancy Services; Sep 2022–May 2024 | Python/LLDP discovery, CMDB automation, portals, monitoring integrations, operational runbooks. |
 | Assistant Systems Engineer | Tata Consultancy Services; Nov 2021–Sep 2022 | RHEL, Docker, HPC/LSF operations, monitoring, deployment validation, guided incident response. |

@@ -1,22 +1,32 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { askChip, bar, openHome } from './helpers';
+import { features } from '../src/layout/features';
+import { askChip, cannedGuide, openChat, openHome, panel } from './helpers';
 
-const serious = (violations: { id: string; impact?: string | null }[]) =>
+type Violation = { id: string; impact?: string | null; nodes: { html: string }[] };
+const serious = (violations: Violation[]) =>
   violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
 
-test('home page has no serious accessibility violations', async ({ page }) => {
-  await openHome(page);
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(
-    serious(results.violations),
-    JSON.stringify(serious(results.violations).map((v) => v.id)),
-  ).toEqual([]);
-});
+const pages = ['/', '/projects/', '/projects/testpilot/', '/experience/', '/contact/', '/404.html'];
 
-test('home page with the guide open and answering has none either', async ({ page }) => {
+for (const path of pages) {
+  test(`${path} has no serious accessibility violations`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(
+      serious(results.violations),
+      JSON.stringify(
+        serious(results.violations).map((v) => [v.id, v.nodes[0]?.html.slice(0, 120)]),
+      ),
+    ).toEqual([]);
+  });
+}
+
+test('the guide open and answering has none either', async ({ page }) => {
+  await cannedGuide(page);
   await openHome(page);
-  await bar(page).click();
+  await openChat(page);
   await askChip(page, 'What has Yash built with RAG?');
   const results = await new AxeBuilder({ page }).analyze();
   expect(
@@ -25,34 +35,27 @@ test('home page with the guide open and answering has none either', async ({ pag
   ).toEqual([]);
 });
 
-test('case study has no serious accessibility violations', async ({ page }) => {
+test('every figure step can be reached by keyboard', async ({ page }) => {
   await page.goto('/projects/testpilot/');
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(
-    serious(results.violations),
-    JSON.stringify(serious(results.violations).map((v) => v.id)),
-  ).toEqual([]);
-});
-
-test('all projects page has no serious accessibility violations', async ({ page }) => {
-  await page.goto('/projects/');
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(
-    serious(results.violations),
-    JSON.stringify(serious(results.violations).map((v) => v.id)),
-  ).toEqual([]);
+  const steps = page.locator('main figure [data-step]');
+  for (let i = 0; i < (await steps.count()); i++) {
+    expect(await steps.nth(i).getAttribute('tabindex')).toBe('0');
+  }
 });
 
 test('reduced motion removes the movement', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);
-  await bar(page).click();
-  const transition = await page
-    .locator('.dock')
-    .evaluate((el) => getComputedStyle(el).transitionProperty);
-  expect(transition).toBe('none');
+  await openChat(page);
+  await expect(panel(page)).toBeVisible();
   const scroll = await page.evaluate(
     () => getComputedStyle(document.documentElement).scrollBehavior,
   );
   expect(scroll).toBe('auto');
+  if (features.techStrip) {
+    const strip = await page
+      .locator('.marquee-track')
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(strip).toBe('none');
+  }
 });

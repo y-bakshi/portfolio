@@ -8,7 +8,7 @@ Static frontend: Cloudflare Workers static assets, on the domain `yashbakshi.com
 
 ## Frontend Release
 
-1. The site address lives in one place, `SITE` in `apps/web/vite.site.ts`. Every canonical and social-preview URL, `robots.txt` and `sitemap.xml` are generated from it at build time.
+1. The site address lives in one place, `SITE` in `apps/web/vite.site.ts`. Every canonical and social-preview URL, `robots.txt` and `sitemap.xml` are generated from it at build time. The same build also draws each page to static HTML and writes the structured data and `llms.txt` files: see [seo.md](seo.md).
 2. `apps/web/wrangler.jsonc` points Cloudflare at `./dist`, with `404-page` handling and trailing-slash handling for the case study pages (each is a real directory page, so there is no single-page fallback).
 3. `workers.dev` and the public preview addresses are turned off in the same file (`workers_dev` and `preview_urls`), so the site is only reachable on its own domain. A toggle flipped in the dashboard would be undone by the next deploy, so this is set in the file. The cost: Cloudflare builds no per-pull-request preview links; GitHub's checks and the local dev server still work.
 4. Security headers (a content security policy, no framing, no MIME sniffing) and one-year caching for the hashed files in `/assets/` are in `apps/web/public/_headers`.

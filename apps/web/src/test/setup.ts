@@ -6,6 +6,8 @@ import { afterEach, beforeEach, vi } from 'vitest';
 export const motion = { reduce: true };
 
 beforeEach(() => {
+  // the Worker's tests run in plain Node, where there is no window to prepare
+  if (typeof window === 'undefined') return;
   motion.reduce = true;
   window.matchMedia = ((query: string) => ({
     matches: query.includes('prefers-reduced-motion') ? motion.reduce : false,
@@ -18,13 +20,36 @@ beforeEach(() => {
     dispatchEvent: () => false,
   })) as typeof window.matchMedia;
 
+  // no test talks to a real API: the guide falls back to its built-in answers unless a test says otherwise
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(() => Promise.reject(new TypeError('no network in tests'))),
+  );
+
+  // jsdom has no IntersectionObserver: the figures use one to run only while they are on screen
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return [];
+      }
+    },
+  );
+
   // jsdom does not lay anything out or scroll
   Element.prototype.scrollIntoView = vi.fn();
   window.scrollTo = vi.fn() as typeof window.scrollTo;
 });
 
 afterEach(() => {
-  cleanup();
   vi.useRealTimers();
+  if (typeof document === 'undefined') return;
+  cleanup();
+  // the guide remembers its chat and panel in the browser, which must not leak into the next test
+  window.localStorage.clear();
+  window.sessionStorage.clear();
   document.documentElement.className = '';
 });

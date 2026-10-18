@@ -1,34 +1,47 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Answer, answerFor, projects } from '../content';
-import { prefersReducedMotion, type Status } from './shared';
-import { Chips, Thread, type Exchange } from './Thread';
+import { destinationFor } from './destinations';
+import { prefersReducedMotion } from './shared';
+import { loadUi, saveUi } from './storage';
+import { Chips, Thread } from './Thread';
+import { trackCiteClick } from './track';
+import { useChat } from './useChat';
 import { useFollowNewest } from './useFollowNewest';
-import { useFollowPageEnd, useIsMobile, usePinToVisualViewport, useScrolled } from './useViewport';
+import { useIsMobile, usePinToVisualViewport } from './useViewport';
 
 /**
- * The guide's state and behaviour. On wide screens the conversation shows in the hero; on phones it
- * shows inside the chat itself.
+ * The guide's state and behaviour. The conversation lives in the chat panel on every screen. A chat
+ * that was open before a refresh opens again once the home page's portrait has formed
+ * (`portraitFormed`), so the page loads in order: portrait first, then the conversation.
  */
-export function useGuide() {
-  const [question, setQuestion] = useState('');
-  const [asked, setAsked] = useState('');
-  /** Finished exchanges, oldest first. The one in progress lives in asked, answer and shown. */
-  const [history, setHistory] = useState<Exchange[]>([]);
-  const [answer, setAnswer] = useState<Answer | null>(null);
-  const [shown, setShown] = useState('');
-  const [announce, setAnnounce] = useState('');
-  const [status, setStatus] = useState<Status>('ready');
+export function useGuide(portraitFormed = true, page = false) {
+  const saved = useRef(loadUi());
+  const [question, setQuestion] = useState(saved.current.draft);
+  const chat = useChat();
+  const { history, asked, answer, shown, announce, status } = chat;
   const [marked, setMarked] = useState<string | null>(null);
   const timers = useRef<number[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const feedRef = useRef<HTMLDivElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  /** Phones show the conversation inside the chat; wide screens show it in the hero. */
-  const showLog = isMobile;
-  const [open, setOpen] = useState(false);
-  const scrolled = useScrolled();
+  const [open, setOpen] = useState(page);
+  // on a phone the suggested questions take a lot of the screen, so once one is tapped they all go
+  const [chipTapped, setChipTapped] = useState(false);
+  // a chat open before a refresh opens again on a wide screen; a phone has a page for it instead
+  const pendingOpen = useRef(saved.current.open && !page && !isMobile);
+  useEffect(() => {
+    if (portraitFormed && pendingOpen.current) {
+      pendingOpen.current = false;
+      restoredOpen.current = true; // restored, not opened by the visitor, so it takes no focus
+      setOpen(true);
+    }
+  }, [portraitFormed]);
+
+  // this tab remembers whether the chat was open and what was typed but not sent
+  // (nothing is saved while a saved open chat waits for the portrait, or a second refresh would forget it)
+  useEffect(() => {
+    if (!pendingOpen.current) saveUi({ open: page ? false : open, draft: question });
+  }, [open, question]);
 
   const clearTimers = () => {
     timers.current.forEach((t) => window.clearTimeout(t));
@@ -37,14 +50,24 @@ export function useGuide() {
   useEffect(() => clearTimers, []);
 
   usePinToVisualViewport(open, isMobile);
-  useFollowPageEnd(open, isMobile);
+  // a chat restored open after a refresh does not steal focus; one the visitor opens does
+  const restoredOpen = useRef(saved.current.open);
   useEffect(() => {
-    if (open) inputRef.current?.focus({ preventScroll: true });
+    if (open && !restoredOpen.current) inputRef.current?.focus({ preventScroll: true });
+    restoredOpen.current = false;
   }, [open]);
-  useFollowNewest({ feedRef, logRef, isMobile, asked, shown, status, count: history.length });
+  // a saved conversation shows up late (after the portrait), so follow it again when it does
+  const appeared = `${portraitFormed}-${open}`;
+  useFollowNewest({
+    logRef,
+    asked,
+    shown,
+    status,
+    count: history.length,
+    appeared,
+  });
 
-  const [closing, setClosing] = useState(false);
-  // The bar is hidden while the chat is open, so focus can only go back to it once it is showing again.
+  // the launcher is hidden while the panel is open, so focus can only go back to it once it shows again
   const returnFocus = useRef(false);
   useEffect(() => {
     if (!open && returnFocus.current) {
@@ -54,68 +77,25 @@ export function useGuide() {
   }, [open]);
   const closeDock = () => {
     returnFocus.current = true;
-    if (showLog || prefersReducedMotion()) {
-      setOpen(false);
-      return;
-    }
-    // let the open bar fade out (120 ms) before it collapses to the pill
-    setClosing(true);
-    timers.current.push(
-      window.setTimeout(() => {
-        setOpen(false);
-        setClosing(false);
-      }, 130),
-    );
+    setOpen(false);
   };
   const onDockKey = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Escape' && open) closeDock();
+  };
+
+  /** Opens the chat: the panel on a wide screen, the chat page on a phone. */
+  const openChat = () => {
+    if (isMobile && !page) window.location.assign('/chat/');
+    else setOpen(true);
   };
 
   const ask = (text: string) => {
     const q = text.trim();
     if (!q || status !== 'ready') return;
     setOpen(true);
-    if (!showLog && window.scrollY > 0) window.scrollTo({ top: 0 });
-    clearTimers();
-    if (asked && answer)
-      setHistory((h) => [...h, { q: asked, text: answer.text, cites: answer.cites }]);
-    setAsked(q);
     setQuestion('');
-    setAnswer(null);
-    setShown('');
-    setAnnounce('');
     setMarked(null);
-    setStatus('thinking');
-
-    const result = answerFor(q);
-    const reduce = prefersReducedMotion();
-    timers.current.push(
-      window.setTimeout(
-        () => {
-          setAnswer(result);
-          setStatus('answering');
-          if (reduce) {
-            setShown(result.text);
-            setAnnounce(result.text);
-            setStatus('ready');
-            return;
-          }
-          const words = result.text.split(' ');
-          let i = 0;
-          const tick = () => {
-            i += 1;
-            setShown(words.slice(0, i).join(' '));
-            if (i < words.length) timers.current.push(window.setTimeout(tick, 28));
-            else {
-              setStatus('ready');
-              setAnnounce(result.text);
-            }
-          };
-          tick();
-        },
-        reduce ? 0 : 450,
-      ),
-    );
+    void chat.send(q);
   };
 
   const onSubmit = (e: FormEvent) => {
@@ -128,10 +108,13 @@ export function useGuide() {
   };
 
   const show = (id: string) => {
+    trackCiteClick(id);
     const el = document.getElementById(id);
     if (!el) {
-      // only the four featured projects are on this page; the rest are on the all-projects page
-      if (projects.some((p) => p.id === id)) window.location.assign(`/projects/#${id}`);
+      // an item that lives on another page: go there. On a wide screen the panel is beside the page, so
+      // the chat reopens as it was; on a phone it covers the page, so it is left closed to show the card.
+      if (isMobile) saveUi({ open: false, draft: question });
+      window.location.assign(destinationFor(id));
       return;
     }
     if (isMobile) setOpen(false);
@@ -154,9 +137,18 @@ export function useGuide() {
       shown={shown}
       answer={answer}
       onShow={show}
+      onRate={chat.rate}
     />
   );
-  const chipList = <Chips status={status} onAsk={ask} />;
+  const askFromChip = (text: string) => {
+    if (status === 'ready') setChipTapped(true);
+    ask(text);
+  };
+  const chipList = isMobile && chipTapped ? null : <Chips status={status} onAsk={askFromChip} />;
+  const clear = async () => {
+    setChipTapped(false); // an emptied chat starts over, with its suggestions
+    await chat.clear();
+  };
 
   return {
     question,
@@ -167,21 +159,20 @@ export function useGuide() {
     shown,
     announce,
     status,
+    clear,
     marked,
     open,
     setOpen,
-    closing,
+    openChat,
     closeDock,
     onDockKey,
-    scrolled,
     isMobile,
-    showLog,
     ask,
     onSubmit,
     show,
     thread,
     chipList,
-    refs: { inputRef, toggleRef, feedRef, logRef },
+    refs: { inputRef, toggleRef, logRef },
   };
 }
 

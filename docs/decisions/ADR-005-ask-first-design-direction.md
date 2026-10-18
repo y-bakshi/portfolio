@@ -1,5 +1,7 @@
 # ADR-005: Ask-first design direction
 
+> Partly superseded by [ADR-007](ADR-007-tailwind-shadcn-redesign.md): the styling, the Flaticon icons and the chat feed in the hero were replaced in October 2026.
+
 Status: accepted. Date: 2026-10-09.
 
 ## Context

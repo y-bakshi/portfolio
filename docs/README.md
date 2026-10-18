@@ -4,7 +4,7 @@ This documentation describes Yash Bakshi's responsive portfolio for desktop and 
 
 ## Current State
 
-The implemented application is a React + TypeScript frontend built with Vite and styled with hand-written CSS in `apps/web/`. It has a starter homepage and working `check` and `build` scripts. The backend, AI guide, database, automated tests, infrastructure, and deployment workflows are not implemented yet.
+The implemented application is a React + TypeScript frontend built with Vite and styled with Tailwind v4 and shadcn/ui in `apps/web/`. It has a home page, projects, case study, experience and contact pages, each project explained by an animated figure, and working `check`, `build`, unit and browser test scripts. The backend, AI guide, database, automated tests, infrastructure, and deployment workflows are not implemented yet.
 
 Unless explicitly labeled implemented, contracts and operational settings in these documents are planned. Proposed values are starting points for verification, not measured results. Public source availability does not mean the website has launched.
 
@@ -22,7 +22,7 @@ Unless explicitly labeled implemented, contracts and operational settings in the
 | Assets and visual references | [Asset brief](design/asset-brief.md), [reference gallery](design/references/README.md) |
 | Local development | [Setup](development/setup.md) |
 | Verification | [Testing strategy](testing/testing-strategy.md) |
-| Operations | [Deployment](deployment/deployment.md), [infrastructure](deployment/infrastructure.md) |
+| Operations | [Deployment](deployment/deployment.md), [infrastructure](deployment/infrastructure.md), [analytics](deployment/analytics.md) |
 | Technical decisions | [Previous frontend decision](decisions/ADR-001-frontend-framework.md), [current frontend decision](decisions/ADR-004-react-vite-frontend.md), [database](decisions/ADR-002-database-choice.md), [authentication](decisions/ADR-003-authentication.md) |
 | Delivery order | [Roadmap](roadmap.md) |
 
