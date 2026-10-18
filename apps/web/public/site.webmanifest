@@ -1,0 +1,13 @@
+{
+  "name": "Yash Bakshi",
+  "short_name": "Yash Bakshi",
+  "description": "Software engineer working on AI applications, backend services and cloud delivery.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#e8e0d2",
+  "theme_color": "#e8e0d2",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
