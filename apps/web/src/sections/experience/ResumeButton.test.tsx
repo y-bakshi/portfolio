@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { labelFor, ResumeButton, RESUME_HREF } from './ResumeButton';
 
-const pdf = () => new Blob(['%PDF'], { type: 'application/pdf' });
+const pdf = () => new Uint8Array([0x25, 0x50, 0x44, 0x46]);
 
 function stubDownload() {
   const created = vi.fn(() => 'blob:resume');
