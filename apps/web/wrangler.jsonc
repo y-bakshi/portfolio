@@ -9,6 +9,7 @@
   "preview_urls": false,
   "vars": {
     "SITE_ORIGIN": "https://yashbakshi.com",
+    "LLM_PROVIDER": "gemini",
   },
   "assets": {
     "directory": "./dist",
