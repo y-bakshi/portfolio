@@ -196,8 +196,8 @@
     "sourceId": "thryv",
     "kind": "role",
     "title": "Software engineering intern, Thryv",
-    "text": "Software engineering intern at Thryv, May to Aug 2026. Independent deployment for the team’s Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.",
-    "contentHash": "1ff6fc34f837b9"
+    "text": "Software engineering intern at Thryv, May to Aug 2026. Independent releases for five Java and Micronaut services, CircleCI approval gates, OpenAPI and JMH/k6 checks across 100+ operations, offline Avro validation, SLOs and release playbooks.",
+    "contentHash": "145629ddd5ed7e"
   },
   {
     "id": "role:insight",

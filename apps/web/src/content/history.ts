@@ -4,12 +4,12 @@ export const roles: Entry[] = [
   {
     id: 'thryv',
     summary:
-      'Moved the team’s Java and Micronaut services off a shared, schedule-based release train onto pipelines of their own, each with quality gates, a hotfix lane, performance tests and an API-compatibility check. Opened 40 pull requests across eight repositories.',
+      'Decoupled five Java and Micronaut services from a shared, schedule-based release train so each could release on its own, with approval gates in CircleCI. Added OpenAPI and performance checks across 100+ API operations, validated messages offline against Avro schemas, and defined SLOs and release playbooks for four services.',
     tags: ['CI/CD', 'API compatibility', 'Performance testing'],
     title: 'Software engineering intern',
     org: 'Thryv',
     when: 'May to Aug 2026',
-    note: 'Independent deployment for the team’s Java and Micronaut services, gated CircleCI promotion, hermetic JMH and K6 tests, OpenAPI compatibility checks across 100+ operations, 40 pull requests.',
+    note: 'Independent releases for five Java and Micronaut services, CircleCI approval gates, OpenAPI and JMH/k6 checks across 100+ operations, offline Avro validation, SLOs and release playbooks.',
   },
   {
     id: 'insight',

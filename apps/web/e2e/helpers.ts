@@ -10,7 +10,7 @@ const ANSWERS: Record<string, [string, string[]]> = {
     ['guardianai'],
   ],
   'Show me his backend experience': [
-    'Yash is a software engineer with experience across AI application engineering, production backend services, enterprise platforms, cloud delivery, and Linux infrastructure. During his internship at Thryv, he worked on Java and Micronaut backend services and opened 40 pull requests across eight repositories to improve release pipelines and fix dependency vulnerabilities. At Tata Consultancy Services, he worked as a ServiceNow developer using Python and LLDP discovery to keep a CMDB current and built runbooks that reduced onboarding time. Any other reasons to hire him are not in my notes.',
+    'Yash is a software engineer with experience across AI application engineering, production backend services, enterprise platforms, cloud delivery, and Linux infrastructure. During his internship at Thryv, he worked on Java and Micronaut backend services and decoupled five services so they could release independently. At Tata Consultancy Services, he worked as a ServiceNow developer using Python and LLDP discovery to keep a CMDB current and built runbooks that reduced onboarding time. Any other reasons to hire him are not in my notes.',
     ['thryv', 'tcs-dev'],
   ],
   'Tell me about his education': ['Arizona State University, after a degree in India.', ['asu']],

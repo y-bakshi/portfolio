@@ -78,8 +78,8 @@ describe('faithfulness', () => {
       of: 1,
     });
     // every other word is in the notes, but 90 is not
-    expect(faithful(sample('Yash had 90 pull requests at Thryv.', [], notes)).pass).toBe(0);
-    expect(faithful(sample('Yash had 40 pull requests at Thryv.', [], notes)).pass).toBe(1);
+    expect(faithful(sample('Yash gated 90 API operations at Thryv.', [], notes)).pass).toBe(0);
+    expect(faithful(sample('Yash gated 100 API operations at Thryv.', [], notes)).pass).toBe(1);
   });
 
   it('does not count the sentences the site writes as claims', () => {
