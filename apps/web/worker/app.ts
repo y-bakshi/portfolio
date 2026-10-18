@@ -61,6 +61,20 @@ export function createApp(deps: Partial<Deps> = {}) {
     return c.json(body);
   });
 
+  /** The résumé lives in storage, not in the repository, so it can change without a deploy. */
+  app.get('/resume.pdf', async (c) => {
+    const file = await c.env.FILES?.get('resume.pdf');
+    if (!file) return c.text('The résumé is not available right now.', 404);
+    return new Response(file.body as unknown as ReadableStream, {
+      headers: {
+        'content-type': 'application/pdf',
+        'content-disposition': 'attachment; filename="Yash_Bakshi_Resume.pdf"',
+        'cache-control': 'public, max-age=300',
+        etag: file.httpEtag,
+      },
+    });
+  });
+
   registerChatRoutes(app, { ...defaultDeps, ...deps });
 
   app.notFound((c) => {

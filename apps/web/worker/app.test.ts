@@ -16,6 +16,32 @@ function setup() {
   };
 }
 
+describe('the résumé download', () => {
+  const file = { body: 'pdf-bytes', httpEtag: '"abc"' };
+  const withFiles = (get: () => unknown) =>
+    ({ DB: testDb(), SITE_ORIGIN: SITE, FILES: { get } }) as unknown as Env;
+
+  it('serves the stored file as a download', async () => {
+    const res = await createApp().request(
+      `${SITE}/resume.pdf`,
+      undefined,
+      withFiles(() => file),
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toBe('application/pdf');
+    expect(res.headers.get('content-disposition')).toContain('Yash_Bakshi_Resume.pdf');
+  });
+
+  it('says so, without an error page, when no file is stored', async () => {
+    const res = await createApp().request(
+      `${SITE}/resume.pdf`,
+      undefined,
+      withFiles(() => null),
+    );
+    expect(res.status).toBe(404);
+  });
+});
+
 describe('the API foundation', () => {
   it('answers a cheap health check without touching the database', async () => {
     const { call } = setup();

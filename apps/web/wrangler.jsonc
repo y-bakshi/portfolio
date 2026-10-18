@@ -15,7 +15,7 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
-    "run_worker_first": ["/api/*", "/admin", "/admin/*"],
+    "run_worker_first": ["/api/*", "/admin", "/admin/*", "/resume.pdf"],
   },
   // The model-backed guide (docs/architecture/rag.md). Turn it on in this order:
   //   1. uncomment "ai" below (Workers AI: embeddings and the fallback chat model)
@@ -31,12 +31,13 @@
   // rate-limit counters and the spend total live in a small Durable Object
   "durable_objects": { "bindings": [{ "name": "GUARD", "class_name": "Guard" }] },
   "migrations": [{ "tag": "v1-guard", "new_sqlite_classes": ["Guard"] }],
+  // the résumé is kept in storage, not in the repository: upload it with `wrangler r2 object put`
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "portfolio-files" }],
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "guide",
-      // replace with the id from `wrangler d1 create guide` before the first deploy
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "d1248f05-490a-4b53-9d0c-b7eb097602a6",
       "migrations_dir": "worker/migrations",
     },
   ],

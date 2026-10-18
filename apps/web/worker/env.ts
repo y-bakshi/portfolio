@@ -3,6 +3,7 @@ import type {
   D1Database,
   DurableObjectNamespace,
   Fetcher,
+  R2Bucket,
   Vectorize,
 } from '@cloudflare/workers-types';
 
@@ -10,6 +11,8 @@ import type {
 export interface Env {
   /** The built site, served for every address that is not under /api. */
   ASSETS: Fetcher;
+  /** Files kept out of the repository, for now the résumé at `resume.pdf`. */
+  FILES?: R2Bucket;
   /** Chats, messages, feedback and events. */
   DB: D1Database;
   /** The address the site is served from; the only origin allowed to change anything. */
