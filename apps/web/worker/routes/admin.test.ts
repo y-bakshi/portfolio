@@ -4,6 +4,10 @@ import { createApp } from '../app';
 import type { Env } from '../env';
 import { registerAdminRoutes } from './admin';
 import { registerEventRoutes } from './events';
+import type { Graphql } from '../lib/traffic';
+import { evalRunSql } from '../rag/eval-record';
+import type { EvalReport } from '../rag/eval-types';
+import { corpusVersion } from '../rag/version';
 import { testDb } from '../test/sqlite-d1';
 import { AUD, fakeCerts, goodClaims, makeKeys, signToken, TEAM } from '../test/access-token';
 
@@ -15,7 +19,7 @@ beforeAll(async () => {
   keys = await makeKeys();
 });
 
-function setup(extra: Partial<Env> = {}, getChatId?: () => string | null) {
+function setup(extra: Partial<Env> = {}, getChatId?: () => string | null, graphql?: Graphql) {
   const db = testDb();
   const env = {
     DB: db,
@@ -25,7 +29,7 @@ function setup(extra: Partial<Env> = {}, getChatId?: () => string | null) {
     ...extra,
   } as unknown as Env;
   const app = createApp();
-  registerAdminRoutes(app, { fetch: fakeCerts([keys.jwk]).fetch, clock: () => NOW });
+  registerAdminRoutes(app, { fetch: fakeCerts([keys.jwk]).fetch, clock: () => NOW, graphql });
   registerEventRoutes(app, { getChatId, clock: () => NOW });
   return { db, call: (url: string, init?: RequestInit) => app.request(url, init, env) };
 }
@@ -36,7 +40,14 @@ const signed = async () => ({
 describe('admin routes', () => {
   it('refuse every request without a token', async () => {
     const { call } = setup();
-    for (const path of ['/admin', '/admin/app.js', '/admin/style.css', '/api/admin/summary']) {
+    for (const path of [
+      '/admin',
+      '/admin/app.js',
+      '/admin/style.css',
+      '/api/admin/summary',
+      '/api/admin/traffic',
+      '/api/admin/evals',
+    ]) {
       const res = await call(`${SITE}${path}`);
       expect(res.status, path).toBe(401);
       expect(res.headers.get('x-robots-tag')).toBe('noindex');
@@ -79,6 +90,41 @@ describe('admin routes', () => {
     const body = (await res.json()) as { range: { days: number }; totals: { chats: number } };
     expect(body.range.days).toBe(7);
     expect(body.totals.chats).toBe(1);
+  });
+
+  it('say traffic is not set up when there is no token, without calling Cloudflare', async () => {
+    let called = false;
+    const { call } = setup({}, undefined, async () => {
+      called = true;
+      return {};
+    });
+    const res = await call(`${SITE}/api/admin/traffic?days=7`, await signed());
+    expect(await res.json()).toEqual({ ok: false, reason: 'not_set_up' });
+    expect(called).toBe(false);
+  });
+
+  it('return the saved evaluations, marking one made with older notes', async () => {
+    const { call, db } = setup();
+    const report = {
+      questions: 65,
+      faithfulness: 0.93,
+      latencyMs: { p50: 1, p95: 2, total: 3 },
+      cost: { perQuestionMicroUsd: 0 },
+      failures: [],
+    } as unknown as EvalReport;
+    const save = (id: string, at: number, version: string) =>
+      db.raw.exec(
+        evalRunSql({ id, createdAt: at, kind: 'live', model: 'm', corpusVersion: version, report }),
+      );
+    save('old', NOW - 5000, 'something-else');
+    save('new', NOW - 1000, corpusVersion());
+    const body = (await (await call(`${SITE}/api/admin/evals`, await signed())).json()) as {
+      runs: { id: string; current: boolean }[];
+    };
+    expect(body.runs.map((r) => [r.id, r.current])).toEqual([
+      ['new', true],
+      ['old', false],
+    ]);
   });
 
   it('let localhost skip Access only with the bypass flag', async () => {

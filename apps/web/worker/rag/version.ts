@@ -22,3 +22,11 @@ export function answerVersion(env: Pick<Env, 'LLM_PROVIDER' | 'GEMINI_MODEL'>): 
     .join('\n');
   return hash(`${SYSTEM_PROMPT}\n${env.LLM_PROVIDER ?? ''}:${env.GEMINI_MODEL ?? ''}\n${notes}`);
 }
+
+/** Names the notes and the rules the guide answers from, whatever model writes the answer. */
+export function corpusVersion(): string {
+  const notes = buildChunks()
+    .map((c) => `${c.id}\n${c.text}`)
+    .join('\n');
+  return hash(`${SYSTEM_PROMPT}\n${notes}`);
+}

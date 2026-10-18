@@ -68,4 +68,21 @@ svg { display: block; width: 100%; height: auto; }
 .axis { stroke: var(--line); stroke-width: 1; }
 .label { fill: var(--muted); font: 11px var(--code); }
 .value { fill: var(--ink); font: 600 12px var(--code); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
+[hidden] { display: none !important; }
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 14px clamp(16px, 5vw, 48px) 0;
+  border-bottom: 2px solid var(--ink);
+  background: var(--panel);
+}
+.tabs button { border-bottom: 0; white-space: nowrap; }
+.tabs button[aria-selected='true'] { background: var(--ink); color: var(--panel); }
+[role='tabpanel'] { display: grid; gap: 24px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+td { font-family: var(--code); }
+.fail { color: #8a1c1c; font-weight: 700; }
 `;

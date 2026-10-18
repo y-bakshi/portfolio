@@ -5,11 +5,16 @@ import { ADMIN_HTML } from '../admin/page';
 import { ADMIN_CSS } from '../admin/style';
 import { ACCESS_HEADER, createAccessVerifier, isDevBypass } from '../lib/access';
 import { systemClock, type Clock } from '../lib/clock';
+import { listEvalRuns } from '../lib/eval-runs';
 import { clampDays, getSummary } from '../lib/stats';
+import { getTraffic, type Graphql } from '../lib/traffic';
+import { corpusVersion } from '../rag/version';
 
 type Deps = {
   fetch?: (url: string) => Promise<{ ok: boolean; json(): Promise<unknown> }>;
   clock?: Clock;
+  /** Asks Cloudflare for traffic numbers; tests pass their own so nothing leaves the machine. */
+  graphql?: Graphql;
 };
 
 /** Never cached, never indexed, no framing; scripts and styles only from this address. */
@@ -52,5 +57,18 @@ export function registerAdminRoutes(app: Hono<AppEnv>, deps: Deps = {}) {
   app.get('/api/admin/summary', async (c) => {
     const days = clampDays(c.req.query('days'));
     return c.json(await getSummary(c.env.DB, clock, { days }));
+  });
+
+  app.get('/api/admin/traffic', async (c) =>
+    c.json(await getTraffic(c.env, clampDays(c.req.query('days')), clock, deps.graphql)),
+  );
+
+  /** Saved evaluations. A database without the table yet (the migration not applied) shows none. */
+  app.get('/api/admin/evals', async (c) => {
+    try {
+      return c.json({ runs: await listEvalRuns(c.env.DB, corpusVersion()) });
+    } catch {
+      return c.json({ runs: [] });
+    }
   });
 }
