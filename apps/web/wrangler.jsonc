@@ -10,6 +10,7 @@
   "vars": {
     "SITE_ORIGIN": "https://yashbakshi.com",
     "LLM_PROVIDER": "gemini",
+    "REQUIRE_TURNSTILE": "true",
   },
   "assets": {
     "directory": "./dist",
