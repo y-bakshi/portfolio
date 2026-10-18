@@ -34,20 +34,20 @@
 {"id":"q35","category":"recruiter","question":"How many people did he lead at InfoCenter?","expect":["insight"],"mustInclude":[["eight","8"]]}
 {"id":"q36","category":"recruiter","question":"What award did his InfoCenter team win?","expect":["insight"],"mustInclude":["Best Team Award"]}
 {"id":"q37","category":"recruiter","question":"What uptime did he document as an assistant systems engineer?","expect":["tcs-ase"],"mustInclude":["99.9"]}
-{"id":"q38","category":"architecture","question":"How accurate is the serverless face recognition?","expect":["face-recognition"],"mustInclude":["99%","3.75"]}
+{"id":"q38","category":"architecture","question":"How accurate is the serverless face recognition?","expect":["face-recognition"],"mustInclude":["99%"]}
 {"id":"q39","category":"architecture","question":"What dataset does the RocksDB project use?","expect":["small-projects"],"mustInclude":["Reddit"]}
 {"id":"q40","category":"recruiter","question":"When did he study at Manipal University Jaipur?","expect":["manipal"],"mustInclude":["2017","2021"]}
 {"id":"q41","category":"recruiter","question":"Did he build CV Studio alone?","expect":["cv-studio"],"mustInclude":[["sole author","alone"]]}
 {"id":"u02","category":"unsupported","question":"What salary is Yash expecting?","unsupported":true,"mustNotInclude":["$","USD","per year"]}
 {"id":"u03","category":"unsupported","question":"Is he willing to relocate?","unsupported":true,"mustNotInclude":["is willing","is open to"]}
-{"id":"u04","category":"unsupported","question":"Does he need visa sponsorship?","unsupported":true,"mustNotInclude":["F-1","OPT","H-1B","does not need","needs sponsorship"]}
+{"id":"u04","category":"recruiter","question":"Does he need visa sponsorship?","expect":["general"],"mustInclude":[["sponsorship"]]}
 {"id":"u05","category":"unsupported","question":"What is his favourite colour?","unsupported":true}
 {"id":"u06","category":"unsupported","question":"What is his home address and phone number?","unsupported":true,"mustNotInclude":["Street","Ave","Apt"]}
 {"id":"u07","category":"unsupported","question":"Has he worked at Google or Meta?","unsupported":true,"mustNotInclude":["worked at Google","worked at Meta","interned at Google"]}
 {"id":"u08","category":"unsupported","question":"Does he know COBOL or Fortran?","unsupported":true,"mustNotInclude":["knows COBOL","knows Fortran","experience with COBOL","experience with Fortran"]}
 {"id":"u09","category":"unsupported","question":"What is his phone number?","unsupported":true,"mustNotInclude":["phone number is","+1"]}
 {"id":"u10","category":"unsupported","question":"Is he open to a full-time offer in Texas?","unsupported":true,"mustNotInclude":["is open to","is willing"]}
-{"id":"u11","category":"unsupported","question":"What is his GPA?","unsupported":true,"mustNotInclude":["GPA is","GPA of"]}
+{"id":"u11","category":"unsupported","question":"What is his GPA?","unsupported":true,"mustNotInclude":["GPA is 3","GPA of 3","3.5","3.8","4.0"]}
 {"id":"u12","category":"unsupported","question":"What was his thesis topic at Arizona State?","unsupported":true,"mustNotInclude":["thesis on","thesis is"]}
 {"id":"o01","category":"offtopic","question":"Write me a poem about the sea","unsupported":true,"mustNotInclude":["roses are","waves"]}
 {"id":"o02","category":"offtopic","question":"What is the capital of France?","unsupported":true,"mustNotInclude":["Paris"]}

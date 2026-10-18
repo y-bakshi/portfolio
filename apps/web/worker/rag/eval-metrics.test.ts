@@ -16,7 +16,7 @@ import {
 } from './eval-metrics';
 import { claimSentences } from './eval-text';
 import type { EvalQuestion } from './eval-types';
-import { CONTACT_POINTER, NOT_IN_NOTES } from './gap';
+import { CONTACT_POINTER, NOT_IN_NOTES, OFF_TOPIC } from './gap';
 
 const chunks = buildChunks();
 const note = (id: string) => chunks.find((c) => c.id === id)!;
@@ -86,6 +86,8 @@ describe('faithfulness', () => {
     const text = `Yash was an intern at Thryv. His pay is not in my notes. ${CONTACT_POINTER}`;
     expect(claimSentences(text)).toEqual(['Yash was an intern at Thryv.']);
     expect(claimSentences(NOT_IN_NOTES)).toEqual([]);
+    // the off-topic reply is the site's wording, not a claim about Yash
+    expect(claimSentences(OFF_TOPIC)).toEqual([]);
     expect(faithful(sample(NOT_IN_NOTES, [], notes))).toEqual({ pass: 0, of: 0 });
   });
 });
