@@ -1,5 +1,5 @@
 import type { AnswerResult } from '../lib/answerer';
-import { CONTACT_POINTER, NOT_IN_NOTES_RE } from './gap';
+import { CONTACT_POINTER, NOT_IN_NOTES_RE, OFF_TOPIC_RE } from './gap';
 import { claimSentences, coverage, isNumber, terms } from './eval-text';
 import type { Chunk } from './types';
 import type { EvalQuestion, Needed, Share } from './eval-types';
@@ -30,7 +30,8 @@ export const RELEVANT_SHARE = 0.3;
 export const share = (pass: number, of: number): Share => ({ pass, of });
 export const ratio = (s: Share) => (s.of ? s.pass / s.of : 1);
 export const add = (a: Share, b: Share): Share => share(a.pass + b.pass, a.of + b.of);
-export const refused = (r: AnswerResult) => NOT_IN_NOTES_RE.test(r.text);
+export const refused = (r: AnswerResult) =>
+  NOT_IN_NOTES_RE.test(r.text) || OFF_TOPIC_RE.test(r.text);
 export const hasPointer = (r: AnswerResult) =>
   r.cites.includes('contact') && r.text.includes(CONTACT_POINTER);
 

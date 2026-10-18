@@ -1,4 +1,4 @@
-import { CONTACT_POINTER, NOT_IN_NOTES, NOT_IN_NOTES_RE } from './gap';
+import { CONTACT_POINTER, NOT_IN_NOTES, NOT_IN_NOTES_RE, OFF_TOPIC, OFF_TOPIC_RE } from './gap';
 
 // words that carry no claim, so a sentence is judged on its content words only
 const STOP = new Set(
@@ -28,7 +28,9 @@ export const sentences = (text: string) =>
     .filter(Boolean);
 
 // every sentence the site writes itself: the pointer, the nearest-cards line and the plain refusal
-const SITE_SENTENCES = new Set([NOT_IN_NOTES, CONTACT_POINTER].flatMap((t) => sentences(t)));
+const SITE_SENTENCES = new Set(
+  [NOT_IN_NOTES, OFF_TOPIC, CONTACT_POINTER].flatMap((t) => sentences(t)),
+);
 
 /**
  * The sentences that make claims. The refusal sentence, the pointer to Yash and the line about the
@@ -36,7 +38,9 @@ const SITE_SENTENCES = new Set([NOT_IN_NOTES, CONTACT_POINTER].flatMap((t) => se
  * not checked as claims.
  */
 export function claimSentences(text: string): string[] {
-  return sentences(text).filter((s) => !NOT_IN_NOTES_RE.test(s) && !SITE_SENTENCES.has(s));
+  return sentences(text).filter(
+    (s) => !NOT_IN_NOTES_RE.test(s) && !OFF_TOPIC_RE.test(s) && !SITE_SENTENCES.has(s),
+  );
 }
 
 /** The share of `wanted` terms that also appear in `have`. 1 when nothing is wanted. */

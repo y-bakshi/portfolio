@@ -12,6 +12,7 @@ import {
   NEAR_MISS,
   NOT_IN_NOTES,
   NOT_IN_NOTES_RE,
+  OFF_TOPIC_RE,
   withPointer,
 } from './gap';
 import { buildMessages } from './prompt';
@@ -102,7 +103,9 @@ export function createRagAnswerer(env: Env, options: RagOptions = {}): Answerer 
   function finish(raw: string, p: Asked, r?: ChatResult) {
     let text = stripMarkers(raw) || 'That is not in my notes.';
     let cites = validateCites(raw, p.given, registryIds).sourceIds;
-    if (NOT_IN_NOTES_RE.test(text)) {
+    // not about Yash at all: nothing to point to, and Yash is not the one to ask
+    if (OFF_TOPIC_RE.test(text)) cites = [];
+    else if (NOT_IN_NOTES_RE.test(text)) {
       const g = withPointer(text, p.question, cites, p.given);
       ({ text, cites } = g);
     }

@@ -127,7 +127,13 @@ export async function score(
     t.faith = add(t.faith, f);
     if (f.pass < f.of) fail(q, `${f.of - f.pass} claim sentence(s) not backed by the notes`);
     t.acc = add(t.acc, cited(sample, freq));
-    t.rel = tally(t.rel, relevant(sample));
+    const onTopic = relevant(sample);
+    t.rel = tally(t.rel, onTopic);
+    if (!onTopic)
+      fail(
+        q,
+        "the answer shares too few of the question's words (or refused a question it should answer)",
+      );
 
     if (deps.judge && claimSentences(result.text).length) {
       const j = await judge(deps.judge, q.question, result.text, notes);
