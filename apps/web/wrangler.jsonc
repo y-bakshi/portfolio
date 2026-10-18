@@ -11,6 +11,8 @@
     "SITE_ORIGIN": "https://yashbakshi.com",
     "LLM_PROVIDER": "gemini",
     "REQUIRE_TURNSTILE": "true",
+    "ACCESS_TEAM_DOMAIN": "orange-sky-2180.cloudflareaccess.com",
+    "ACCESS_AUD": "f17c4564d638ddfe689e04acae65ff492f814c8975f15f666c0bdbaf4c905c9c",
   },
   "assets": {
     "directory": "./dist",
