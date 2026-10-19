@@ -1,6 +1,6 @@
 # ADR-002: Operational Database
 
-Status: accepted for planned implementation; not provisioned. Date: 2026-09-28.
+Status: superseded by [ADR-009](ADR-009-data-and-abuse-protection.md). Firestore was never provisioned; the data lives in Cloudflare D1. Date: 2026-09-28.
 
 ## Context
 
