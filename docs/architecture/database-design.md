@@ -1,6 +1,6 @@
 # Database Design
 
-Status: the D1 schema in `apps/web/worker/migrations/0001_init.sql` is implemented and tested. Later migrations add the retrieval chunks. Portfolio content stays in version-controlled files; the database holds only chats, feedback, events and the retrieval index.
+Status: implemented, tested and in production. Four numbered migrations in `apps/web/worker/migrations/` create the tables (`0001_init`, `0002_chunks`, `0003_answer_cache`, `0004_eval_runs`). Portfolio content stays in version-controlled files; the database holds chats, feedback, events, the retrieval notes and vectors, saved answers and saved evaluations.
 
 Cloudflare D1 (SQLite) is the store. The Worker is the only client; there is no browser access to it. Queries go through a small `Db` interface (`worker/lib/db.ts`) that D1 satisfies and that the tests satisfy with an in-memory SQLite (`worker/test/sqlite-d1.ts`), so the real migrations and SQL are tested.
 
@@ -12,7 +12,9 @@ Cloudflare D1 (SQLite) is the store. The Worker is the only client; there is no 
 | `messages`       | `id`, `chat_id`, `seq`, `role`, `text`, `cites_json`, `model`, `retrieval_ids_json`, `top_score`, `input_tokens`, `output_tokens`, `cost_micro_usd`, `latency_ms`, `created_at` | The questions and answers, in order. `(chat_id, seq)` is unique; deleting a chat deletes its messages.                                   |
 | `feedback`       | `message_id`, `value` (-1 or 1), `created_at`                                                                                                                                   | One thumbs rating per answer.                                                                                                            |
 | `events`         | `id`, `chat_id`, `type`, `data_json`, `created_at`                                                                                                                              | Usage analytics: `chat_started`, `question_asked`, `answer_shown`, `cite_clicked`, `feedback`, `rate_limited`, `fallback_used`, `error`. |
-| `chunks` (later) | `id`, `source_id`, `title`, `text`, `content_hash`, `updated_at`                                                                                                                | The text of each retrieval chunk; the vectors live in Vectorize.                                                                         |
+| `chunks`         | `id`, `source_id`, `kind`, `title`, `text`, `content_hash`, `embedding_json`, `updated_at`                                                                                      | Each retrieval note and its 768-number vector, compared in code. No Vectorize index is used.                                              |
+| `answer_cache`   | `key`, `text`, `cites_json`, `created_at`                                                                                                                                       | Stored answers for the suggestion buttons. The key includes a hash of the notes, prompt and model, so a change makes old rows unused.    |
+| `eval_runs`      | `id`, `created_at`, `kind`, `model`, `corpus_version`, `questions`, `report_json`                                                                                                | One row per offline evaluation of the guide. Nothing here is about a visitor.                                                            |
 
 Events carry only the random chat id and a small JSON `data_json` whose keys are checked per type (numbers, thumbs of 1 or -1, and short codes such as a model name or card id; never free text; 1 KB at most). `worker/lib/events.ts` writes them and never throws; `worker/lib/stats.ts` reads them, with `messages` and `feedback`, for the owner page. Question text lives only in `messages`.
 
@@ -40,4 +42,6 @@ Retention: a daily cron (03:17 UTC) deletes messages, feedback, events and chats
 
 ## Operating it
 
-`npm run db:migrate:local` applies the migrations to the local database used by `wrangler dev`. For production, create the database with `wrangler d1 create guide`, put its id in `wrangler.jsonc`, and apply the migrations with `wrangler d1 migrations apply DB --remote`.
+`npm run db:migrate:local` applies the migrations to the local database used by `wrangler dev`. The production database is `guide`; its id is in `wrangler.jsonc`. Apply migrations with `npx wrangler d1 migrations apply DB --remote` before deploying code that reads a new table. Load the notes with `npm run corpus:index` and `wrangler d1 execute DB --remote --file=worker/rag/chunks.generated.sql` ([retrieval](rag.md)), and save an evaluation with `npm run eval:record` ([analytics](../deployment/analytics.md)).
+
+A changed local database id gives `wrangler dev` a new, empty local database; apply the migrations and notes again.

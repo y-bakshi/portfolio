@@ -2,35 +2,34 @@
 
 ## Start Here
 
-1. Read the [documentation index](README.md), [functional requirements](requirements/functional-requirements.md), and [quality targets](requirements/non-functional-requirements.md).
-2. Review [design language](design/design-language.md), [asset brief](design/asset-brief.md), [reference gallery](design/references/README.md), and [wireframes](design/wireframes/README.md).
-3. Use the [content snapshot](content/portfolio-content.md) and [source inventory](content/source-inventory.md) for initial copy and follow-up evidence requests.
-4. Run the [local setup](development/setup.md) and start with Phase 1 of the [roadmap](roadmap.md).
+1. Read the [documentation index](README.md), then [system architecture](architecture/system-architecture.md) and the [decision records](decisions/) (ADR-006 to ADR-010 describe what is built).
+2. Run the [local setup](development/setup.md). Everything is in `apps/web/`.
+3. Review [design language](design/design-language.md) and [asset brief](design/asset-brief.md) before changing the look.
+4. Use the [content snapshot](content/portfolio-content.md) and [source inventory](content/source-inventory.md) for copy and for evidence requests.
+5. See the [roadmap](roadmap.md) for what is left.
 
-## What Is Ready
+## What exists
 
-The repo includes a React/TypeScript/Vite scaffold, lockfile, check/build commands, product requirements, architecture/contracts, visual specifications, reference screenshots, content summary, operational plans, and ADRs. Agent files/private root briefs are ignored and are not needed to interpret the shared specification.
+The site is live at `yashbakshi.com`: a home page (the introduction, then the engineering experience and the degrees), a projects page where each project is explained by an animated flow chart, a TestPilot case study, a contact page, a privacy and credits page, and a chat page for phones. The old `/experience/` address redirects to the home page. It is built with React, Vite, Tailwind v4 and shadcn/ui ([ADR-007](decisions/ADR-007-tailwind-shadcn-redesign.md)) and prerendered to static HTML.
 
-The site has a home page, a projects page, a TestPilot case-study page, an experience page and a contact page, rebuilt with Tailwind and shadcn in October 2026 (see [ADR-007](decisions/ADR-007-tailwind-shadcn-redesign.md), which supersedes the styling of [ADR-005](decisions/ADR-005-ask-first-design-direction.md)), with an animated isometric figure per project; its guide answers through the Worker API (`apps/web/worker/`), with retrieval over the project notes and Gemini. No published case studies beyond the TestPilot template, real assistant, API, database, cloud infrastructure, deployment automation, or automated test suite exists. Documentation diagrams show intended architecture rather than provisioned services.
+The guide is a side panel on wide screens and a page of its own on phones. It answers through the Worker API (`apps/web/worker/`): retrieval over approved notes, Gemini for the answer, citations that highlight a card on the page, an anonymous stored chat, protection and a spending cap ([ADR-008](decisions/ADR-008-api-on-the-worker.md), [ADR-009](decisions/ADR-009-data-and-abuse-protection.md), [ADR-010](decisions/ADR-010-retrieval-and-evaluation.md)). An owner page at `/admin`, behind Cloudflare Access, shows page analytics, usage, weak questions, saved evaluations of the guide and cost.
 
-## Agreed Direction
+It deploys to Cloudflare from `main` ([deployment](deployment/deployment.md)). CI runs formatting, type checks, the build, about 630 unit tests and about 120 browser tests ([testing strategy](testing/testing-strategy.md)).
 
-- Recruiters/hiring managers and developer collaborators are the audiences.
+## Agreed direction
+
+- Recruiters, hiring managers and developer collaborators are the audiences.
 - AI application engineering leads; backend engineering supplies depth.
-- The guide is a side panel on every page: answers cite project and role cards, and the cited card is highlighted. The home page leads with who Yash is, not the chat.
-- Ivory, navy and gold visual system (supersedes the mid-century journal concept); desktop and mobile have equal functionality.
-- Full project catalog with stronger AI/SDE emphasis, pipeline traces per project, case studies.
-- Contact options: email, LinkedIn, GitHub, and scheduling (30 minute Google Calendar booking link is set); résumé secondary.
-- Text guide (voice later) with an animated face and a status line, explaining verified work and offering controlled navigation.
-- Planned GCP deployment: Firebase Hosting, Cloud Run/FastAPI, Firestore operational state; combined $25 monthly target with measured quotas.
-- Phased development; public website launch waits for integrated quality checks. Source code is public already.
+- The home page leads with who Yash is. The guide is available on every page; answers cite cards and the cited card is highlighted.
+- Ivory, navy and gold visual system; desktop and mobile have equal functionality.
+- Contact: email, LinkedIn, GitHub and a 30 minute booking link; the résumé is a download button.
+- Notes about past employers stay at the level of the résumé. Do not add internal details of an employer's systems.
+- Secrets, private CV material and agent context stay out of commits. The résumé PDF is in R2, not in the repository.
 
-## Open Decisions and Owner Inputs
+## Open items and owner inputs
 
-Domain (needed for an absolute `og:image`), résumé PDF, verified project URLs/metrics, featured order, final model/voice providers, and quotas. These are explicit outstanding inputs, not assumptions for a contributor to invent. Static layout/content schema work can proceed while they are resolved.
+See the [roadmap](roadmap.md): an up-to-date résumé upload, the guide's missing answers (target role, relocation, certifications, why hire), a photography page (later), a budget alert on the Gemini key, and a decision about branch previews behind Access.
 
-## Completion Criteria
+## Completion criteria for a change
 
-Follow the [test cases](testing/test-cases.md) and [release plan](deployment/deployment.md). The implemented portfolio must have verified content, usable contact paths, desktop/mobile and accessibility checks, grounded assistant behavior, quota/failure verification, deployment/rollback instructions, and operational cost controls before launch.
-
-Update docs and ADRs when implementation changes the contracts. Keep secrets, private CV material, and agent context out of commits. This handoff is ready for implementation; it is not a finished website or a deployment authorization.
+Follow the [test cases](testing/test-cases.md). Run `npm run format:check`, `npm run build`, `npm test` and `npm run e2e` before a commit. Rebuild the notes index when a note changes. Update the docs and the decision records when a contract changes.

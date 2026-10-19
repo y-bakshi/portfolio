@@ -1,34 +1,43 @@
 # Environment Variables
 
-The current scaffold requires no environment variables. The following names are proposed contracts, not implemented configuration. Add sanitized package-level `.env.example` files when code begins reading them.
+Settings come from three places: public values in `apps/web/wrangler.jsonc` (`vars`), secrets stored in Cloudflare with `wrangler secret put` (and in `.dev.vars` on a developer's machine), and one build variable for the front end. The Worker's typed list is `worker/env.ts`.
 
-## Frontend Build Configuration
+## Secrets (Cloudflare secrets, or `.dev.vars` locally)
 
-| Variable | Purpose | Classification |
-| --- | --- | --- |
-| `VITE_SITE_URL` | Canonical deployed origin. | Public |
-| `VITE_API_BASE_URL` | Prefer same-origin `/api/v1`; local development override. | Public |
-| `VITE_FIREBASE_API_KEY` | Firebase client project identifier. | Public; restrict API/domain use |
-| `VITE_FIREBASE_PROJECT_ID` | Firebase project selection. | Public |
-| `VITE_FIREBASE_APP_ID` | Registered web application. | Public |
-| `VITE_RECAPTCHA_SITE_KEY` | App Check attestation site key. | Public |
-| `VITE_SCHEDULING_URL` | Approved calendar destination. | Public |
-
-Vite variables prefixed with `VITE_` are exposed in the client build. Do not put provider secrets in them. Changing build configuration requires rebuilding the static site.
-
-## Backend Runtime Configuration
-
-| Variable | Purpose |
+| Name | Purpose |
 | --- | --- |
-| `APP_ENV`, `GCP_PROJECT_ID` | Environment and scoped project. |
-| `ALLOWED_ORIGINS` | Explicit website origins; no production wildcard. |
-| `MODEL_PROVIDER`, `MODEL_NAME` | Selected grounded-answer provider/model. |
-| `MODEL_API_KEY` | Provider secret, only if API-key authentication is needed. |
-| `TTS_PROVIDER`, `TTS_API_KEY` | Optional voice adapter and secret if needed. |
-| `SESSION_SIGNING_KEY`, `RATE_LIMIT_HMAC_KEY` | Session integrity and rotating quota pseudonyms. |
-| `DAILY_VISITOR_LIMIT`, `DAILY_NETWORK_LIMIT` | Validated positive request limits. |
-| `DAILY_AI_BUDGET_MICROS`, `MONTHLY_AI_BUDGET_MICROS` | Integer spend admission limits. |
-| `MAX_INPUT_TOKENS`, `MAX_OUTPUT_TOKENS` | Bounded model usage. |
-| `AI_ENABLED`, `VOICE_ENABLED` | Operational kill switches. |
+| `GEMINI_API_KEY` | Gemini API key for answers and embeddings. Without it the guide says it cannot answer. |
+| `SESSION_SECRET` | Signs the `chat` cookie. |
+| `HMAC_SECRET` | Keys the daily-rotating hash that stands in for an IP address. Guarded routes refuse every request without it. |
+| `TURNSTILE_SECRET` | Verifies bot-check tokens. |
+| `CF_ANALYTICS_TOKEN` | Read-only Cloudflare token (Zone, Analytics, Read) for the owner page's traffic. |
+| `KILL_SWITCH` | Optional. `true` stops all paid answers at once. |
 
-Use Secret Manager for secrets and workload identity/attached service accounts for Google access. Cloud Run supplies `PORT`; the container must bind `0.0.0.0` on that value. Emulator and App Check debug configuration belong only in development. Validate required settings at startup; fail closed for paid features when protection is missing.
+Never put a secret in the repository, in a `VITE_` variable or in a chat. `.dev.vars.example` lists the local ones.
+
+## Variables (`wrangler.jsonc`)
+
+| Name | Value now | Purpose |
+| --- | --- | --- |
+| `SITE_ORIGIN` | `https://yashbakshi.com` | The origin allowed to change anything. |
+| `LLM_PROVIDER` | `gemini` | `gemini`, `workers-ai` or `mock`. Unset means the guide says it cannot answer. |
+| `REQUIRE_TURNSTILE` | `true` | Require the bot check. Without a secret the check is skipped unless this is `true`. |
+| `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD` | the Access team and audience tag | The owner page refuses everything if either is missing. |
+| `CF_ZONE_ID` | the zone id | Which zone's traffic to read. Empty means traffic is not set up. |
+| `BUDGET_DAY_MICRO_USD`, `BUDGET_MONTH_MICRO_USD` | defaults 500,000 and 5,000,000 | Spending caps in millionths of a dollar. |
+| `GEMINI_MODEL`, `RAG_MIN_SCORE`, `RAG_CONTACT_MIN_SCORE` | unset | Overrides for the model and the retrieval thresholds. |
+| `ADMIN_DEV_BYPASS`, `LIMITS_DEV_BYPASS` | unset | Local only: skip Access or the question limits, on localhost requests only. Never set in production. |
+
+Bindings (not variables): `ASSETS`, `DB` (D1), `GUARD` (Durable Object), `FILES` (R2). `AI` and `VECTORIZE` are optional and commented out.
+
+## Front-end build
+
+| Name | Purpose |
+| --- | --- |
+| `VITE_TURNSTILE_SITE_KEY` | Public Turnstile site key. Set in the Cloudflare build settings; without it the page never loads the check and the chat cannot start. |
+
+Variables starting with `VITE_` are public. Changing one needs a rebuild.
+
+## Local overrides
+
+`npm run worker:dev` passes `--var REQUIRE_TURNSTILE:false`, so chats work locally. `.env` files are ignored by git.

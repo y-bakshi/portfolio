@@ -1,8 +1,6 @@
 # Development Setup
 
-## Current Frontend
-
-Requirements: Node.js ≥22.12.0 and npm. The committed lockfile records exact dependencies.
+Requirements: Node.js 22.12 or newer and npm. The lockfile records exact dependencies. Everything lives in `apps/web/`: the React site, the Worker API in `worker/`, the tests and the scripts.
 
 ```sh
 git clone https://github.com/y-bakshi/portfolio.git
@@ -11,23 +9,40 @@ npm ci
 npm run dev
 ```
 
-Open the URL reported by Vite, normally `http://localhost:5173`. Commands run from `apps/web/`:
+Open `http://localhost:5173`. The Vite dev server reloads the front end as you edit. It proxies `/api` to a local Worker on port 8788, so the chat only works while that is running too.
+
+## The site with its API
+
+```sh
+cp .dev.vars.example .dev.vars     # then edit the values
+npm run db:migrate:local           # creates the local database
+npm run build                      # the Worker serves the built site from dist/
+npm run worker:dev                 # http://localhost:8788
+```
+
+- `npm run worker:dev` starts the Worker with the bot check off, because Turnstile only works on the real domain. Without that flag, chats are refused locally.
+- Port 8788 serves `dist/`. After changing front-end code, rebuild with `npm run build` and restart `worker:dev`; refreshing is not enough, and rebuilding under a running server leaves it pointing at deleted files.
+- `.dev.vars` is ignored by git. It needs `SESSION_SECRET` and `HMAC_SECRET`, and `GEMINI_API_KEY` for real answers (without a key the guide says it cannot answer). Set `ADMIN_DEV_BYPASS=true` to open `/admin` on localhost without Access, and `LIMITS_DEV_BYPASS=true` to skip the question limits (the spending cap stays on). See [environment variables](environment-variables.md).
+- The local database starts empty. To give the guide notes: `npm run corpus:build`, `npm run corpus:index` (with `GEMINI_API_KEY`, or `-- --mock` for fake vectors), then `npx wrangler d1 execute DB --local --file=worker/rag/chunks.generated.sql`.
+- Local résumé: `npx wrangler r2 object put portfolio-files/resume.pdf --file=<pdf> --content-type application/pdf --local`.
+
+## Commands
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Local development server. |
+| `npm run dev` | Vite dev server. |
 | `npm run check` | TypeScript diagnostics. |
-| `npm run build` | Static production output in `dist/`. |
-| `npm run preview` | Inspect the production output locally. |
+| `npm run build` | Type check, then the production build and prerender into `dist/`. |
+| `npm run format` / `format:check` | Prettier, write or check. |
+| `npm test` | Vitest, React Testing Library, the Worker tests. |
+| `npm run e2e` | Playwright on a desktop and a phone viewport (`npx playwright install chromium` first). |
+| `npm run db:migrate:local` | Apply the migrations to the local database. |
+| `npm run corpus:build` / `corpus:index` | Rebuild the notes and embed them ([rag](../architecture/rag.md)). |
+| `npm run eval:record -- --mock` or `-- --live` | Run the labelled questions and save the scores for the owner page. `--live` spends money. |
+| `npm run logos:copy` | Copy technology logos into `public/logos`. |
 
-Never commit `node_modules/` or `dist/`. The Vite development server can use `npm run dev -- --host 0.0.0.0` when access from another device on the local network is needed.
+Never commit `node_modules/`, `dist/`, `.dev.vars` or `.wrangler/`. Use `npm run dev -- --host 0.0.0.0` to open the dev server from another device on the network.
 
-## Planned Backend
+## Before a commit
 
-`apps/api/` does not exist yet. Its Python version, dependency manager, lockfile, startup command, and test command must be chosen and documented when it is added. Do not assume a requirements file, container, or database emulator already exists.
-
-Start backend work against mock provider adapters and a local quota store/emulator. Add cloud credentials only for explicit integration testing. Avoid production Firestore during local development.
-
-## Content and Documentation
-
-Case studies will use validated typed content modules; changes should update the public page and backend evidence artifact together. Read [coding standards](coding-standards.md), [environment variables](environment-variables.md), and [roadmap](../roadmap.md) before introducing new services.
+CI runs `format:check`, `build`, `npm test` and `npm run e2e`. Run all of them locally for anything that is not a copy-only change. Read [coding standards](coding-standards.md) and [environment variables](environment-variables.md) before adding a service or a setting.

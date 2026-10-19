@@ -1,23 +1,26 @@
 # CI/CD
 
-Status: proposed GitHub Actions pipeline; `.github/workflows/` is not configured yet.
+Status: implemented. `.github/workflows/ci.yml` runs on every pull request and on pushes to `main`. A merge to `main` is deployed by Cloudflare's own build, not by GitHub Actions.
 
-## Pull Request Checks
+## Pull request checks
 
-Frontend job: checkout → pinned compatible Node version → `npm ci` in `apps/web/` → `npm run check` → `npm run build`. Add content validation, browser/accessibility tests, and documentation-link checks as tooling is implemented. Cache npm downloads, not arbitrary installed dependencies.
+Two jobs, both on Node 22 with the npm cache, working in `apps/web`:
 
-Backend job, once created: install from its lockfile → static checks → unit/emulator tests with mock providers → container build and dependency/security scan. CI should not require production API secrets for ordinary PRs.
+- **Format, types, build, unit tests:** `npm ci`, `npm run format:check`, `npm run build` (which runs `tsc --noEmit` first, then the Vite build and the prerender), then `npm test` (Vitest).
+- **Browser tests:** `npm ci`, `npx playwright install --with-deps chromium`, `npm run e2e` (Playwright on a 1280 px desktop and a 375 px phone). On failure the Playwright traces are kept for seven days.
 
-## Release Pipeline
+Neither job needs a secret. The unit tests use mock models and an in-memory SQLite, and the browser tests run against the dev server. Live evaluation runs (`npm run eval:record -- --live`) are not part of CI because they spend money.
 
-On reviewed changes to `main`, build immutable artifacts associated with the Git SHA. Publish a restricted staging/preview release, run smoke checks, then use a protected production environment for promotion. During private development, avoid publicly accessible previews; a random URL is not access control.
+A pull request should only be merged when both checks pass. The checks are not enforced by a branch rule yet; add one in the repository settings if more than one person will merge.
 
-Use GitHub OIDC with Google Workload Identity Federation and narrowly scoped deployment identities. Avoid long-lived downloaded service-account keys. Production jobs need explicit environment controls and concurrency protection against overlapping releases.
+## Release
 
-## Permissions and Evidence
+On a merge to `main`, Cloudflare builds and deploys ([deployment](deployment.md)). The CI run on that same commit is a second check, not a gate. Cloudflare may also build other branches as uploaded versions; they are not live and have no public address, because `preview_urls` is off.
 
-Set minimum workflow permissions; grant `id-token: write` only where federation is needed. Untrusted forks must never receive deployment secrets or execute modified code in a privileged release context. Record artifacts, content version, test evidence, and deployment revision without prompt/credential logs.
+Migrations are applied by hand with `npx wrangler d1 migrations apply DB --remote`, before the code that reads them goes live. A Worker endpoint that reads a new table should tolerate it being absent, as `/api/admin/evals` does.
 
-Coordinate knowledge-index and frontend releases so API citations resolve to the deployed content. Prefer backwards-compatible schema changes; document rollback for incompatible contracts.
+The notes index is not rebuilt by deploys. After a change to a note, rebuild and re-embed it ([rag.md](../architecture/rag.md)).
 
-Workflow files and required branch checks should be introduced in the roadmap's hardening phase. Commands in this document describe a future workflow rather than runnable release automation.
+## Permissions and evidence
+
+The workflow has no deployment credentials, so a pull request from a fork cannot reach production. Keep it that way: never add Cloudflare or Gemini secrets to GitHub Actions without a protected environment. Test evidence is the CI run for the commit.

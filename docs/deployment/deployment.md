@@ -1,34 +1,44 @@
 # Deployment
 
-Status: the frontend deploys to Cloudflare (see below). The backend sections are still a plan: no Cloud Run service or backend container exists, and some older documents still describe the Firebase Hosting setup that Cloudflare replaced.
+Status: the site and its API are live on Cloudflare at `yashbakshi.com`. A merge to `main` deploys both. This page describes how, and how to set up what a fresh account needs.
 
 ## Topology
 
-Static frontend: Cloudflare Workers static assets, on the domain `yashbakshi.com` (registered at Cloudflare, so DNS, TLS and hosting are one account). The build folder is served as it is; any address that is not a file or a page shows `404.html`. See [ADR-006](../decisions/ADR-006-cloudflare-hosting.md). The backend is not built yet; when it is, keep the publication independent of its availability.
+One Cloudflare Worker named `portfolio` serves the static site (Workers static assets, from `apps/web/dist`) and the API ([ADR-008](../decisions/ADR-008-api-on-the-worker.md)). Only `/api/*`, `/admin`, `/admin/*` and `/resume.pdf` run Worker code (`assets.run_worker_first`); every other address is a file. Around the Worker: a D1 database (`guide`), a Durable Object (`Guard`), an R2 bucket (`portfolio-files`), Turnstile, Access and a read-only analytics token. The diagram is in [system-architecture](../architecture/system-architecture.md). The domain is registered at Cloudflare, so DNS, TLS and hosting are one account ([ADR-006](../decisions/ADR-006-cloudflare-hosting.md)).
 
-## Frontend Release
+## Release
 
-1. The site address lives in one place, `SITE` in `apps/web/vite.site.ts`. Every canonical and social-preview URL, `robots.txt` and `sitemap.xml` are generated from it at build time. The same build also draws each page to static HTML and writes the structured data and `llms.txt` files: see [seo.md](seo.md).
-2. `apps/web/wrangler.jsonc` points Cloudflare at `./dist`, with `404-page` handling and trailing-slash handling for the case study pages (each is a real directory page, so there is no single-page fallback).
-3. `workers.dev` and the public preview addresses are turned off in the same file (`workers_dev` and `preview_urls`), so the site is only reachable on its own domain. A toggle flipped in the dashboard would be undone by the next deploy, so this is set in the file. The cost: Cloudflare builds no per-pull-request preview links; GitHub's checks and the local dev server still work.
-4. Security headers (a content security policy, no framing, no MIME sniffing) and one-year caching for the hashed files in `/assets/` are in `apps/web/public/_headers`.
-5. Connect the GitHub repository in the Cloudflare dashboard (Workers and Pages, create, import a repository). Set the root directory to `apps/web`, the build command to `npm ci && npm run build` and the deploy command to `npx wrangler deploy`. Every pull request then gets a preview address, and a merge to `main` deploys.
-6. Add the domain to the Worker as a custom domain, and check deep links, the 404 page, assets and the contact links on the live site.
+1. **Change reaches `main`.** Work happens on a branch and a pull request. CI ([ci-cd.md](ci-cd.md)) must pass.
+2. **Cloudflare builds it.** The Worker is connected to the GitHub repository (Workers and Pages). Root directory `apps/web`, build command `npm ci && npm run build`, deploy command `npx wrangler deploy`. The build also draws each page to static HTML and writes `robots.txt`, `sitemap.xml`, the structured data and `llms.txt` ([seo.md](seo.md)).
+3. **Build variable.** `VITE_TURNSTILE_SITE_KEY` (public) is set under the Worker's Settings, Build, Variables, because the page loads the bot check only when it is built with the key. `NODE_VERSION` is 22.
+4. **Live in about two minutes.** `wrangler.jsonc` is the source of truth for bindings and variables; a setting changed in the dashboard that the file also sets is overwritten by the next deploy.
+
+## One-time setup in a new account
+
+From `apps/web` after `npx wrangler login`:
+
+| Step | Command or place |
+| --- | --- |
+| Database | `npx wrangler d1 create guide`, put the id in `wrangler.jsonc`, then `npx wrangler d1 migrations apply DB --remote` |
+| Notes index | `npm run corpus:build`, then `GEMINI_API_KEY=... npm run corpus:index`, then `npx wrangler d1 execute DB --remote --file=worker/rag/chunks.generated.sql` |
+| Résumé | Enable R2 in the dashboard, then `npx wrangler r2 bucket create portfolio-files` and `npx wrangler r2 object put portfolio-files/resume.pdf --file=<pdf> --content-type application/pdf --remote` |
+| Secrets | `npx wrangler secret put` for `GEMINI_API_KEY`, `SESSION_SECRET`, `HMAC_SECRET`, `TURNSTILE_SECRET` and `CF_ANALYTICS_TOKEN` (each asks for the value; do not paste secrets into chats or commits) |
+| Bot check | A Turnstile widget for the domain (see [protection](protection.md)) |
+| Owner page | An Access application for `/admin`, `/admin/*` and `/api/admin/*`, with the team domain and audience tag in `wrangler.jsonc` (see [analytics](analytics.md)) |
+| Domain | Add the domain to the Worker as a custom domain; check deep links, the 404 page, assets and the contact links |
+
+Zero Trust is on its Free plan. Check which plan the account has for Workers, D1, Durable Objects and R2 and what their allowances are; the only usage known to cost money is the Gemini key (see [infrastructure](infrastructure.md)).
 
 ## Redirect domain and renewal
 
 The free `yashbakshi.dev` year at Name.com renews at $22.99, against $12.20 at Cloudflare. Do not let it renew at Name.com: unlock it, get the authorization code and transfer it to Cloudflare before the renewal date, then redirect it to `yashbakshi.com`.
 
-## Backend Release
+## Previews
 
-Once `apps/api/` exists: build/test a container, bind `0.0.0.0:$PORT`, push an immutable image to Artifact Registry, and deploy a Cloud Run revision with a dedicated service account. Configure Secret Manager, App Check verification, Firestore access, quota settings, and restricted origins before enabling paid inference.
+`workers_dev` and `preview_urls` are off, so there is no public address other than the domain. A preview address would run the real Worker with the real database and key. To turn previews back on, put Cloudflare Access in front of them first, then set `preview_urls` to `true`.
 
-Start with request-based billing and zero minimum instances; measure cold starts. Maximum instances and timeout are bounded starting settings, not a guarantee of a hard dollar cap. [Cloud Run billing](https://docs.cloud.google.com/run/docs/configuring/billing-settings), [maximum instances](https://docs.cloud.google.com/run/docs/configuring/max-instances)
+## Verification and rollback
 
-## Verification and Rollback
+After a deploy: the pages and `/resume.pdf` return 200, `GET /api/health?db=1` says the database answers, `/admin` redirects to the Access login, an unknown address shows the 404 page, and a real chat question is answered in a browser (the bot check needs one).
 
-Check public page health, API health, session bootstrap, grounding, invalid action rejection, daily limits, voice fallback, and keyboard/touch behavior. Confirm managed logs meet privacy configuration.
-
-Retain a known-good Hosting release and Cloud Run revision. Roll back both together if their content/API versions differ. Disable AI/voice independently during incidents so the publication remains available. Do not use database deletion or billing-account removal as routine rollback.
-
-Source repository visibility is already public; the website launch remains gated until the complete experience is polished.
+To undo a bad deploy, redeploy an earlier commit from the Cloudflare dashboard (Deployments) or revert on `main`. To stop paid answers at once without a deploy, set the `KILL_SWITCH` secret to `true` (`npx wrangler secret put KILL_SWITCH`); the static site keeps working. Applying a migration is not undone by redeploying code, so keep migrations additive.
