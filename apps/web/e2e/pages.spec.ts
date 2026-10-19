@@ -6,7 +6,6 @@ const pages = [
   { path: '/', heading: /hi yash here/i },
   { path: '/projects/', heading: /engineering projects/i },
   { path: '/projects/testpilot/', heading: /^testpilot$/i },
-  { path: '/experience/', heading: /engineering experience/i },
   { path: '/contact/', heading: /let.s talk/i },
   { path: '/404.html', heading: /page not found/i },
 ];

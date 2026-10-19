@@ -1,6 +1,6 @@
 # Functional Requirements
 
-Status: planned, except the frontend scaffold. IDs are stable references for implementation and tests.
+Status: FR-01 to FR-09, FR-11, FR-12 and FR-13 are implemented; FR-10 (voice) is not built. IDs are stable references for implementation and tests.
 
 | ID | Requirement | Acceptance criteria |
 | --- | --- | --- |
@@ -22,4 +22,4 @@ Status: planned, except the frontend scaffold. IDs are stable references for imp
 
 The assistant may explain technologies represented in the work; it is not a general-purpose chatbot. It cannot execute code, edit the website, contact people, schedule appointments autonomously, or submit applications. Site navigation is a small allowlisted command interface, not arbitrary model-generated DOM manipulation.
 
-The first implementation phase delivers the editorial site. Complete integration and verification precede public website launch. Model, voice provider, domain, scheduling service, and exact quotas remain open decisions.
+The site is live. Voice and its provider remain an open, optional decision; the model is Gemini, the domain is `yashbakshi.com`, scheduling is a booking link, and the quotas are in [protection](../deployment/protection.md).

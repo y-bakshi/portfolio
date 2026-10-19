@@ -32,6 +32,7 @@ export const projects: Project[] = [
     categories: ['cloud', 'ai'],
     featured: true,
     name: 'CityWatch',
+    award: 'Won the AWS Ideathon 2026',
     line: 'Turns noisy public signals into alerts for the right department.',
     detail:
       'A serverless pipeline on AWS that turns social-media signals into department alerts within 15 seconds. Kinesis ingests, Lambda and Rekognition analyse, Bedrock classifies, and EventBridge routes each alert. Won the AWS Ideathon 2026.',

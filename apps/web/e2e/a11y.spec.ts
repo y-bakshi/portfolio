@@ -7,7 +7,7 @@ type Violation = { id: string; impact?: string | null; nodes: { html: string }[]
 const serious = (violations: Violation[]) =>
   violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
 
-const pages = ['/', '/projects/', '/projects/testpilot/', '/experience/', '/contact/', '/404.html'];
+const pages = ['/', '/projects/', '/projects/testpilot/', '/contact/', '/404.html'];
 
 for (const path of pages) {
   test(`${path} has no serious accessibility violations`, async ({ page }) => {

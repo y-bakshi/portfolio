@@ -4,7 +4,6 @@ import Home from '../App';
 import CaseStudy from '../CaseStudy';
 import ChatPage from '../ChatPage';
 import ContactPage from '../ContactPage';
-import ExperiencePage from '../ExperiencePage';
 import NotFound from '../NotFound';
 import PrivacyPage from '../PrivacyPage';
 
@@ -13,7 +12,6 @@ export const pageComponents = {
   'index.html': Home,
   'projects/index.html': AllProjects,
   'projects/testpilot/index.html': CaseStudy,
-  'experience/index.html': ExperiencePage,
   'contact/index.html': ContactPage,
   'chat/index.html': ChatPage,
   'privacy/index.html': PrivacyPage,

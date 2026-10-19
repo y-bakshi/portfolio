@@ -1,6 +1,6 @@
 # Test Cases
 
-Status: acceptance cases to implement; not an executed test report.
+Status: acceptance cases. Many are covered by the automated tests ([testing strategy](testing-strategy.md)); this is not an executed test report. The cases that mention App Check, Firestore or voice describe plans that changed: read App Check as Turnstile and the signed cookie, and Firestore as D1 and the Durable Object; voice is not built.
 
 | ID | Requirements | Scenario | Expected result |
 | --- | --- | --- | --- |
@@ -15,13 +15,13 @@ Status: acceptance cases to implement; not an executed test report.
 | TC-09 | FR-10 | Stop audio or cancel request during response. | Playback stops; late response cannot restart audio or trigger navigation. |
 | TC-10 | FR-11 | Submit concurrent calls at the quota boundary. | Atomic admission never exceeds the configured limit; denied calls do not invoke provider. |
 | TC-11 | FR-11 | Retry the same paid request/idempotency key. | No duplicate inference charge; conflicting payload returns an error. |
-| TC-12 | FR-11 | Fail Firestore, exhaust budget, or time out provider. | Paid inference fails closed; static content remains usable; cost reservation handled safely. |
+| TC-12 | FR-11 | Fail the store, exhaust the budget, or time out the provider. | Paid inference fails closed; static content remains usable; cost reservation handled safely. |
 | TC-13 | FR-12 | Submit a question containing email/IP/secret-like text. | Original prompt absent from storage/logs; unsafe text redacted or discarded. |
 | TC-14 | FR-12 | Submit optional rating twice. | Defined duplicate handling; no session/IP linked to retained question data. |
 | TC-15 | FR-13 | Test 320, 375, 768, 1024, and 1440 px, both orientations. | No unintended page overflow, clipped controls, lost information, or blocked contact links. |
 | TC-16 | NFR-02 | Navigate with keyboard and screen reader. | Logical reading order, visible focus, labeled controls, restrained announcements. |
 | TC-17 | FR-13 | Open guide with virtual keyboard and safe-area inset. | Input and send/close controls remain visible and usable. |
-| TC-18 | NFR-09 | Missing/expired attestation/session, spoofed origin, oversized body. | Reject before provider call; return documented error; no secrets exposed. |
+| TC-18 | NFR-09 | Missing bot-check token or session, spoofed origin, oversized body. | Reject before provider call; return documented error; no secrets exposed. |
 | TC-19 | FR-06 | Open contact options and résumé link. | Real approved destinations; no placeholder calendar or dead download. |
 | TC-20 | NFR-07 | Simulate reservation settlement and ambiguous provider failure. | Used spend retained; unused reservation released only with safe reconciliation. |
 

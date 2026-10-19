@@ -1,31 +1,38 @@
 # System Architecture
 
-## Implemented and Planned
+## What is built
 
-Implemented: a React and TypeScript frontend built with Vite and styled with hand-written CSS, served as static files by a Cloudflare Worker on `yashbakshi.com`, and a Hono API in the same Worker (health check and the shared request guards). Built phase by phase on the `feature/guide-chat` branch: anonymous stored chat, retrieval-augmented answers, abuse and budget protection, usage analytics. The earlier Firebase and Cloud Run design is replaced by this one (ADR-006).
-
-There is no current diagram. The old one (`architecture-diagram.png`, produced by `render-diagram.py`) shows Firebase Hosting and Cloud Run and is out of date.
+A React and TypeScript front end, built with Vite and styled with Tailwind v4 and shadcn/ui, served as static files by one Cloudflare Worker on `yashbakshi.com`. The same Worker runs a Hono API ([ADR-008](../decisions/ADR-008-api-on-the-worker.md)) behind the guide: anonymous stored chat, retrieval-augmented answers, abuse and budget protection, usage analytics and an owner page. The earlier Firebase, Cloud Run and FastAPI design was replaced ([ADR-006](../decisions/ADR-006-cloudflare-hosting.md)).
 
 ## Components
 
-- **Frontend:** Vite bundles the React application, CSS and optimized assets into `dist/`, which the Worker serves with Cloudflare's static assets.
-- **Worker and API:** Hono under `/api` in the same Worker: sessions, chat, feedback, a small owner-only admin view. Same origin, so no CORS.
-- **Database:** Cloudflare D1 for chats, messages, feedback, events and chunk text. See the database design.
-- **Retrieval:** a build script turns the content modules into chunks, embeds them with Workers AI and stores the vectors in Vectorize. A question is embedded, the nearest chunks are retrieved, and the model answers from them and cites their ids.
-- **Models:** a thin `LlmProvider` interface with adapters (Gemini for answers, Workers AI for embeddings and as a fallback), reached through Cloudflare AI Gateway for logging, caching and provider fallback.
-- **Rate limits and budget:** a Durable Object holds the counters; Turnstile guards the first message.
-- **Knowledge artifact:** one versioned content source feeds both the rendered pages and the retrieval index, so they cannot drift.
+- **Front end.** Vite builds several real HTML pages (home, projects, a case study, experience, contact, privacy, chat, 404) into `dist/`. A prerender step draws each to static HTML with its own title, description and structured data, so crawlers and no-script visitors get the content. The Worker serves `dist/` as Cloudflare static assets.
+- **Worker and API.** Hono handles only `/api/*`, `/admin`, `/admin/*` and `/resume.pdf`; everything else is a file. Same origin as the site, so no CORS. Routes are listed in [API design](api-design.md).
+- **D1 database.** Chats, messages, feedback, events, the notes with their vectors, saved answers and saved evaluation runs ([database design](database-design.md)).
+- **Durable Object `Guard`.** The rate-limit counters and the spend total.
+- **R2 bucket.** The résumé PDF, served at `/resume.pdf`, kept out of git.
+- **Retrieval.** A script turns the content modules and a short list of approved facts into notes, embeds them with Gemini and loads them into D1. A question is embedded, the closest notes are found, and the model answers from them and cites their ids ([retrieval](rag.md), [ADR-010](../decisions/ADR-010-retrieval-and-evaluation.md)).
+- **Models.** A thin provider interface with a Gemini adapter (answers and embeddings), a Workers AI adapter (optional fallback, off) and a mock for tests.
+- **Protection.** Turnstile on session creation, a signed `chat` cookie, per-chat and per-network limits, a spending cap and a kill switch ([ADR-009](../decisions/ADR-009-data-and-abuse-protection.md), [protection](../deployment/protection.md)).
+- **Owner page.** `/admin`, behind Cloudflare Access, with six tabs: overview, page analytics (Cloudflare's own traffic numbers), AI usage, questions, answer quality and cost and safety ([analytics](../deployment/analytics.md)).
+- **Knowledge source.** One content source feeds both the rendered pages and the retrieval notes, so they cannot drift.
 
-## Request Boundaries
+The file layout is in the repository's `apps/web/` folder: `src/` (the website), `worker/` (the API), `e2e/`, `eval/`, `scripts/` and `public/`.
 
-Browsers request public pages with no authentication. The paid chat endpoint requires the anonymous chat cookie, a verified bot check on the first message, the origin check, and the rate and budget admission before any provider is called. Clients receive text, citations that name cards on the page, and nothing executable.
+## Request boundaries
 
-Because the API is under the site's own domain, there is no cross-origin traffic and no extra hostname. Keep requests short and stream answers so the first words arrive quickly.
+Browsers request public pages with no authentication. The paid chat endpoint needs the anonymous chat cookie (issued after a bot check), the origin check, and rate and budget admission before any model is called. Clients receive text, citations that name cards on the page, and nothing executable. `/admin` and `/api/admin/*` need an Access login and the Worker checks the token again.
 
-## State and Navigation
+Because the API is on the site's own domain there is no cross-origin traffic. Answers stream over server-sent events so the first words arrive quickly.
 
-Use stable project IDs and canonical routes. Keep assistant state in focused React components. Each case study is its own static HTML page, so it has its own title and social preview tags and needs no client-side router or rewrite rule; section links use plain `#` anchors. The chat transcript is stored on the server under an anonymous id and mirrored in the browser, so a refresh restores it; the visitor is told this and can delete it.
+## State and navigation
 
-## Failure Behavior
+Project ids and routes are stable. Each case study is its own static page, so there is no client-side router and no rewrite rule; section links use `#` anchors. Chat state lives in focused React components. On a phone the chat is a page of its own (`/chat/`) and the launcher shrinks to the mascot while scrolling. The transcript is stored on the server under an anonymous id and mirrored in the browser, so a refresh restores it; the visitor is told this and can delete it.
 
-Quota-store failure: deny paid requests. Provider failure: return a clear recoverable error and keep publication navigation available. Unsupported speech: offer text. Invalid action or unknown citation: discard it and do not move the page. Global budget exhausted: disable new paid requests until reset or owner intervention.
+## Failure behavior
+
+- A failing quota store denies paid requests; the static site keeps working.
+- If the model path fails, the guide says it cannot answer just now and points to the projects and the contact block. Nothing is stored for that reply, and there is no weaker second guide.
+- An invalid action or unknown citation is dropped.
+- When the daily or monthly cap is reached, new paid answers stop until the next UTC day or month; the kill switch does the same on demand.
+- If Cloudflare's analytics refuse a query, the owner page shows that panel as unavailable and the rest still loads.

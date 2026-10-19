@@ -12,14 +12,15 @@ The memorable moments are two: the flow chart for each project, and the guide's 
 
 | Page | Path | What it holds |
 | --- | --- | --- |
-| Home | `/` | Hero with the portrait, the technology strip, the most recent role, the four featured projects as cards. |
+| Home | `/` | The introduction with the portrait, the résumé button and profile links, then the engineering experience as a timeline and the two degrees. |
 | Projects | `/projects/` | Every project as a row with its figure; filter tabs (All, Backend, Cloud, AI, Systems); the smaller projects. |
 | Case study | `/projects/testpilot/` | Problem, how it works (with the figure), what was built, measured results as a table, a sticky facts panel. |
-| Experience | `/experience/` | Work history as a timeline with logos, and the two degrees. |
 | Contact | `/contact/` | Email with a copy button, profiles, a booking card, and links back into the site. |
+| Privacy and credits | `/privacy/` | What the site saves, who handles it, and who made the parts that are not Yash's. |
+| Chat | `/chat/` | The guide as a page of its own, for phones. Not indexed. |
 | Not found | `/404.html` | A way home. |
 
-Every page shares one frame (`layout/PageFrame.tsx`): the work-in-progress note, the sticky header, the footer, the dot grid and the guide.
+Every page shares one frame (`layout/PageFrame.tsx`): the sticky header, the footer and the guide. The work-in-progress note and the dot grid are built but switched off (`layout/features.ts`).
 
 ## Palette
 
@@ -55,7 +56,7 @@ Rounded corners (6 to 20 px), a soft two-layer shadow (`shadow-soft`, `shadow-li
 
 All from shadcn/ui (new-york style, owned in `src/components/ui`): Button and Badge (restyled to the palette) and Tabs. Icons are Hugeicons (free set); toggles between two icons (menu and close, play and pause, copy and tick) use Morphicons, which morphs one icon into the other with a spring. Technology logos are copied from theSVG into `public/logos/tech` by `npm run logos:copy`, so they are plain image files loaded only when on screen.
 
-- **Header:** the name, Projects, Contact and GitHub. The current page is underlined. Under 640 px the links fold into a menu. Experience is not here: it is on the home page now (the `/experience/` page still exists for old links and the guide's buttons).
+- **Header:** the name, Projects, Contact and GitHub. The current page is underlined. Under 640 px the links fold into a menu. Experience is not here: it is on the home page, and the old `/experience/` address redirects there.
 - **Project row:** name, what it is and what Yash did, the technologies as one line of text, a folded "About this project" with the longer write-up, and the links the project really has (the case study for TestPilot; a source, demo or deck for the others). The flow chart sits on the right, without its steps list. The home page's project cards and technology strip are switched off in `layout/features.ts`.
 - **Figures:** see below.
 - **Guide:** a floating "Ask the guide" button on every page. On a wide screen it opens a 26 rem panel on the right; the page behind stays usable, so a source button can scroll to the card it cites, and the panel is `inert` while closed. On a phone it goes to the chat page (`/chat/`, not indexed) instead, with a back arrow, so the browser's own back button works. While the page scrolls the button shrinks to just the face (a clip and a slide, no layout change), and a press that starts while it is shrunk opens the chat. A source on another page goes to that page. The suggested questions sit under the conversation, and on a phone they all go once one is tapped. The answers to the four suggested questions are kept in the database (see `worker/lib/answer-cache.ts`) so the model is paid for them once.

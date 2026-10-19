@@ -12,6 +12,6 @@ export const suggestions = [
  * says so plainly and points at the cards and the contact block, which work without the guide.
  */
 export const unavailableAnswer: Answer = {
-  text: 'The guide cannot answer just now. The project, experience and contact pages still work, and Yash can answer anything directly.',
+  text: 'The guide cannot answer just now. The project and contact pages still work, and Yash can answer anything directly.',
   cites: ['contact'],
 };

@@ -4,38 +4,39 @@
 
 ```mermaid
 flowchart TD
-  Home[Header, portrait and introduction] --> About[Introduction and portrait]
-  About --> Featured[Project cards with traces]
-  Featured --> Archive[Filtered project archive]
-  Featured --> Case[Case study]
-  Archive --> Case
-  Case --> Contact[Contact desk]
-  Home --> Contact
-  Contact --> Choices[Email / LinkedIn / GitHub / scheduling]
+  Home[Home: introduction, experience, degrees] --> Projects[Projects: a flow chart each]
+  Projects --> Case[Case study]
+  Home --> Contact[Contact]
+  Projects --> Contact
+  Case --> Contact
+  Contact --> Choices[Email / LinkedIn / GitHub / booking]
+  Home --> Chat[Chat page, on phones]
 ```
 
-The header shows the owner's name. On desktop the hero puts the portrait on the left and the conversation on the right, with a guide chat: a bar at the bottom right that widens into an input bar (a full-screen chat on phones); answers appear beside the portrait. Visual rules are in the [design language](design-language.md).
+The header shows the owner's name, Projects, Contact and GitHub. The home page opens with a short introduction, the résumé button and profile links, then the engineering experience and the degrees. A wide screen has a guide panel on the right; a phone has a launcher that opens the chat as a page of its own. Visual rules are in the [design language](design-language.md).
 
 ## Assistant
 
-Automatic text greeting → visitor opens guide → typed question or explicit microphone activation → listening/thinking → concise answer with citations → scroll and spotlight → visitor may open case study or ask for more depth.
+The visitor opens the guide, asks a typed question or taps a suggestion, sees a short thinking state, then a concise answer with source buttons. A source button scrolls to and highlights the card on the page, or opens the page that has it. The visitor can ask for more, delete the chat, or rate an answer.
 
-The persistent control is dismissible. Desktop uses an inset panel; narrow screens use an expandable bottom sheet with safe-area and virtual-keyboard handling. Avoid covering contact actions or locking the page scroll unnecessarily. Return focus to the launcher after closing. Announce status using a restrained live region.
+On wide screens the panel is a column that leaves the page scrollable. On phones the chat is `/chat/`: the launcher shrinks to the mascot while the page scrolls, a tap opens the chat, and the back arrow returns to where the visitor was. After a suggestion is tapped on a phone, the other suggestions go away. Return focus to the launcher when the panel closes. Announce status with a restrained live region.
 
 ## States
 
 | State | UI behavior |
 | --- | --- |
-| Idle/greeting | Brief text, suggested portfolio questions, no automatic paid inference or audio. |
-| Listening | Explicit microphone indicator, stop control, text alternative. |
-| Thinking | Progress label and cancellation; prevent accidental duplicate submission. |
-| Answering | Text first; optional audio with stop/mute controls. |
-| Navigating | Highlight known project; respect reduced motion; preserve visitor control. |
-| Rate-limited | Explain reset/fallback; static suggested answers may remain available. |
-| Failed | Specific recoverable error; keep the transcript and typed input usable. |
+| Idle | A short line saying what the guide answers from, suggested questions, no automatic paid answer. The mascot sleeps after 40 seconds. |
+| Thinking | The mascot looks thoughtful and a progress label shows; a second submission is held until the answer finishes. |
+| Answering | The text streams in; the mascot talks; the source buttons appear at the end. |
+| Not about Yash | A fixed one-line reply, with no contact card. |
+| Not in the notes | A plain statement, then a pointer to the contact page. |
+| Rate-limited or resting | An explanation of when to try again; the rest of the site works. |
+| Failed | A recoverable message; the transcript and the typed text are kept. |
 
-## Desktop and Mobile
+Voice was designed but not built ([voice sequence](sequence-diagrams/voice.md)).
 
-Desktop supports two-column rows and comfortable line lengths; mobile stacks content in its semantic order. Traces wrap and shrink rather than scroll. The tools list becomes a single column. Test mouse, keyboard, touch, orientation, and screen readers.
+## Desktop and mobile
 
-See [design language](design-language.md), [wireframes](wireframes/README.md), and [assistant sequence](sequence-diagrams/assistant.md).
+Desktop supports two-column rows and comfortable line lengths; mobile stacks content in its semantic order. The flow charts turn from left to right to top to bottom below 540 px. The résumé button says Downloading… while it waits. Test with mouse, keyboard, touch, orientation and a screen reader.
+
+See [design language](design-language.md), [wireframes](wireframes/README.md) and the [assistant sequence](sequence-diagrams/assistant.md).

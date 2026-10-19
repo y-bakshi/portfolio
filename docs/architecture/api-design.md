@@ -1,6 +1,6 @@
 # API Design
 
-Status: the Worker, `/api/health`, the shared guards (request id, origin check, body limit, error format) and the stored anonymous chat (`/api/session`, `/api/chat` GET, POST and DELETE, `/api/feedback`, answered by the keyword guide) are implemented. The remaining routes are added phase by phase on the `feature/guide-chat` branch; this page is the contract they follow.
+Status: implemented and live. The routes below, the shared guards (request id, origin check, body limit, error format), the stored anonymous chat answered by the retrieval guide, and the owner routes all exist. This page is the contract they follow.
 
 The API is a Hono app inside the same Cloudflare Worker that serves the site (`apps/web/worker/`). Only addresses under `/api` run code (`assets.run_worker_first`); every other address is served as a static file, so the API is same-origin: no CORS and the same cookie.
 
@@ -15,12 +15,15 @@ The API is a Hono app inside the same Cloudflare Worker that serves the site (`a
 | `DELETE /api/chat`                                | Delete this visitor's chat and its messages.                                            | Chat cookie, origin check.                             |
 | `POST /api/feedback`                              | A thumbs up or down on one answer.                                                      | Chat cookie, ownership check, feedback limit.          |
 | `POST /api/events`                                | A browser-only usage event. Only `cite_clicked` with a known `sourceId`; returns 204.   | Origin check; source id checked against the content.   |
-| `GET /api/admin/summary?days=30`                  | Owner-only usage summary as JSON (1 to 90 days).                                        | Cloudflare Access token, checked in the Worker.        |
-| `GET /admin`, `/admin/app.js`, `/admin/style.css` | The owner page. Strict CSP, `no-store`, `noindex`.                                      | Cloudflare Access token, checked in the Worker.        |
+| `GET /api/admin/summary?days=30`                  | Owner-only usage summary as JSON (1 to 90 days): totals, per-day counts, cost, latency, thumbs, top and weak questions, and breakdowns of source buttons, limits, fallbacks and errors. | Cloudflare Access token, checked in the Worker.        |
+| `GET /api/admin/traffic?days=30`                  | Owner-only site traffic from Cloudflare's own counts (visitors, page views, requests, countries, browsers, top pages, referrers). `{ ok: false, reason }` when not set up or unavailable. Cached for five minutes. | Cloudflare Access token, checked in the Worker.        |
+| `GET /api/admin/evals`                            | Owner-only saved evaluations of the guide, each score held against its target; empty when the table is missing. | Cloudflare Access token, checked in the Worker.        |
+| `GET /admin`, `/admin/app.js`, `/admin/style.css` | The owner page (six tabs). Strict CSP, `no-store`, `noindex`.                           | Cloudflare Access token, checked in the Worker.        |
+| `GET /resume.pdf`                                 | The résumé, read from the R2 bucket and sent as a download. 404 text when no file is stored. | Public; cached for five minutes.                       |
 
 ## Owner routes
 
-The admin routes check the `Cf-Access-Jwt-Assertion` header: RS256 only, keys from the team's certs endpoint (cached for an hour), and `iss` and `aud` must match `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD`. If either variable is missing they refuse every request. `ADMIN_DEV_BYPASS=true` skips the check for requests to `localhost` only. `/admin` is not under `/api`, so `assets.run_worker_first` lists `/admin` and `/admin/*` too. Setup: [analytics](../deployment/analytics.md).
+The admin routes check the `Cf-Access-Jwt-Assertion` header: RS256 only, keys from the team's certs endpoint (cached for an hour), and `iss` and `aud` must match `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD`. If either variable is missing they refuse every request. `ADMIN_DEV_BYPASS=true` skips the check for requests to `localhost` only. `/admin` and `/resume.pdf` are not under `/api`, so `assets.run_worker_first` lists `/admin`, `/admin/*` and `/resume.pdf` too. Setup: [analytics](../deployment/analytics.md).
 
 ## Rules for every route
 
@@ -36,7 +39,7 @@ The admin routes check the `Cf-Access-Jwt-Assertion` header: RS256 only, keys fr
 { "message": "How does TestPilot use RAG?" }
 ```
 
-The response is `text/event-stream` with these events: `meta` (message ids), `token` (a piece of the answer), `done` (the full answer, `cites`, the usage allowance) and `error`. `cites` holds ids of cards on the page (a project, role or degree), checked against the content registry; the client shows them as "Show on the page" buttons. If the answer cannot be grounded, the text says it is not in the notes and `cites` is empty.
+The response is `text/event-stream` with these events: `meta` (message ids), `token` (a piece of the answer), `done` (the full answer, `cites`, the usage allowance) and `error`. `cites` holds ids of cards on the page (a project, role or degree), checked against the content registry; the client shows them as "Show on the page" buttons. If the answer cannot be grounded, the text says it is not in the notes and `cites` holds the contact card (see [retrieval](rag.md)). A question that is not about Yash at all gets a fixed reply with no cites.
 
 `GET /api/chat` returns `{ messages: [{ id, role, text, cites, createdAt }] }`, oldest first.
 

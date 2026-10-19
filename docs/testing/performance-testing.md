@@ -1,24 +1,24 @@
 # Performance Testing
 
-All numbers are proposed targets; baseline measurements are pending.
+All numbers are proposed targets. No Lighthouse or k6 run has been recorded yet; the guide's latency is measured by the evaluation (about 1.1 s at the 95th percentile on the last live run) and by the owner page.
 
 ## Publication
 
 Test the homepage, a diagram-heavy case study, and project archive using a production build. Run at least three comparable Lighthouse sessions with documented browser version, network/CPU settings, cache state, and viewport. Report median and spread. Measure both narrow touch layouts and desktop layouts.
 
-Target compressed initial transfer ≤500 KB and initial JS ≤100 KB excluding deferred assistant/audio. Target Core Web Vitals p75 LCP ≤2.5 s, INP ≤200 ms, CLS ≤0.1 once field data is available. Do not load high-resolution portraits, textures, voice libraries, or below-the-fold diagrams prematurely.
+Target compressed initial transfer ≤500 KB and initial JS ≤100 KB excluding the deferred guide. Target Core Web Vitals p75 LCP ≤2.5 s, INP ≤200 ms, CLS ≤0.1 once field data is available. Do not load high-resolution portraits, textures, voice libraries, or below-the-fold diagrams prematurely.
 
 ## API Load Scenarios
 
-Use k6 when the backend exists. Default to stub providers and isolated quota data. Proposed scenarios:
+Use k6 against a local Worker (`npm run worker:dev`) with the mock provider and `LIMITS_DEV_BYPASS` off. Never aim a load test at production or a paid model. Proposed scenarios:
 
 1. Warm baseline: 5 concurrent visitors for 5 minutes; measure chat p50/p95/p99 and errors.
 2. Short burst: 20 concurrent visitors for 30 seconds; verify queue/error behavior and bounded spend.
 3. Quota contention: simultaneous calls from one session/network at the remaining limit.
-4. Cold start: first request after scale-to-zero, reported separately from warm latency.
-5. Dependency failure: timeouts, Firestore failure, and model errors; verify fallback and reservations.
+4. Cold start: the first request after a quiet period, reported separately from warm latency.
+5. Dependency failure: timeouts, a failing D1 or Durable Object, and model errors; verify the fallback reply and that reservations are released.
 
-Warm response target is p95 ≤8 s; cold-start results determine UI and hosting adjustments. Measure full response rather than claiming first-token latency for the proposed JSON API.
+Warm response target is p95 ≤8 s; cold-start results determine UI and hosting adjustments. Answers stream, so also report the time to the first word.
 
 ## Cost Experiment
 

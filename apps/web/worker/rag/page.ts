@@ -16,8 +16,6 @@ export function pageContext(path: unknown): string | null {
   if (clean === '/') return 'The visitor is on the home page.';
   if (/^\/projects\/?$/.test(clean))
     return 'The visitor is on the page that lists all of the projects.';
-  if (/^\/experience\/?$/.test(clean))
-    return 'The visitor is on the experience page, which lists Yash’s jobs and degrees.';
   if (/^\/contact\/?$/.test(clean)) return 'The visitor is on the contact page.';
   return null;
 }

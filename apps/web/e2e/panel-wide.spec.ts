@@ -83,8 +83,9 @@ test('a source on another page opens that page, and the chat is open there too',
   await input(page).press('Enter');
   await ready(page);
   await page.getByRole('button', { name: /Show Arizona State University on the page/i }).click();
-  await expect(page).toHaveURL(/\/experience\/#asu$/);
+  await expect(page).toHaveURL(/\/#asu$/);
   await expect(page.locator('#asu')).toBeInViewport();
-  await expect(bar(page)).toHaveAttribute('aria-expanded', 'true');
+  // the home page opens the panel once the portrait has formed, so allow for that
+  await expect(bar(page)).toHaveAttribute('aria-expanded', 'true', { timeout: 20_000 });
   await ready(page);
 });
