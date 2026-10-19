@@ -1,4 +1,4 @@
-/** A slim note at the very top that says the site is unfinished. Remove it at launch. */
+/** A slim note at the very top that says the site is unfinished. Turned off with features.wipNotice. */
 export function WipNotice() {
   return (
     <div role="note" className="bg-(--wip) px-4 py-1 text-center text-xs font-medium text-ink">

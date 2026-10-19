@@ -37,11 +37,11 @@ describe('every page', () => {
     expect(screen.getByRole('button', { name: /^ask the guide/i })).toBeInTheDocument();
   });
 
-  it('puts the work in progress note above the header', () => {
+  it('has no work in progress note, so the header is the first thing on the page', () => {
     home();
-    const strip = screen.getByRole('note');
-    expect(strip).toHaveTextContent(/work in progress/i);
-    expect(strip.nextElementSibling?.tagName).toBe('HEADER');
+    expect(screen.queryByRole('note')).toBeNull();
+    expect(screen.queryByText(/work in progress/i)).toBeNull();
+    expect(screen.getByRole('banner')).toBeInTheDocument();
   });
 
   it('links to projects and contact in the header, and marks the current page', () => {

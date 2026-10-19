@@ -33,7 +33,7 @@ Every page shares one frame (`layout/PageFrame.tsx`): the work-in-progress note,
 | `--line` | `#BDB09A` | Hairlines and card borders. |
 | `--mark` | `#B89A5A` (gold) | The highlight a "Show on the page" button puts on a card; the lid of the packet in each figure. Not decoration. |
 | `--field` | `#FBF8F1` | The chat input. |
-| `--wip` | `#FFE600` | The work-in-progress note, until launch. |
+| `--wip` | `#FFE600` | The work-in-progress note (off at launch). |
 
 Tailwind reads these through `@theme inline` (`bg-panel`, `text-ink`, `border-line`, and so on) so there is one palette. `styles.test.ts` checks the contrast pairs (4.5:1) and the selection colours.
 
@@ -60,7 +60,7 @@ All from shadcn/ui (new-york style, owned in `src/components/ui`): Button and Ba
 - **Figures:** see below.
 - **Guide:** a floating "Ask the guide" button on every page. On a wide screen it opens a 26 rem panel on the right; the page behind stays usable, so a source button can scroll to the card it cites, and the panel is `inert` while closed. On a phone it goes to the chat page (`/chat/`, not indexed) instead, with a back arrow, so the browser's own back button works. While the page scrolls the button shrinks to just the face (a clip and a slide, no layout change), and a press that starts while it is shrunk opens the chat. A source on another page goes to that page. The suggested questions sit under the conversation, and on a phone they all go once one is tapped. The answers to the four suggested questions are kept in the database (see `worker/lib/answer-cache.ts`) so the model is paid for them once.
 - **Guide face:** a navy blob with two eyes (`Guide/Avatar`). It breathes, blinks and drifts its gaze at rest, looks up and darts its eyes while it thinks, opens and shuts a mouth while it answers, and widens its eyes while someone types. Left alone for 40 seconds with the chat open it falls asleep (eyes shut, floating z's). Tapping it makes it wink, spin dizzily, or burst into sparks, in turn. It is a pure function of time (`engine.ts`), eased between moods, and still under reduced motion. The idea of a radius for each angle, eased between moods, follows the bloub project (MIT); the shapes and numbers are original.
-- **Work-in-progress note:** a thin yellow line above the header, until launch. Remove it, its token and `layout/WipNotice.tsx` then.
+- **Work-in-progress note:** a thin yellow line above the header. Turned off at launch with `features.wipNotice`; delete it, its token and `layout/WipNotice.tsx` if it is not coming back.
 - **Footer:** a navy band with the page links and the credits for the parts that are not Yash's.
 
 ## The figures

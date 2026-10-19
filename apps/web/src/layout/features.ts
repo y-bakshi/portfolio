@@ -6,4 +6,6 @@ export const features = {
   techStrip: false,
   /** The four featured projects on the home page. The projects page has all of them. */
   selectedWork: false,
+  /** The slim yellow note at the top that says the site is unfinished (src/layout/WipNotice.tsx). */
+  wipNotice: false,
 } as const;
