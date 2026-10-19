@@ -1,6 +1,6 @@
 # ADR-003: Visitor Access and API Protection
 
-Status: proposed implementation design; not implemented. Date: 2026-09-28.
+Status: superseded by [ADR-009](ADR-009-data-and-abuse-protection.md). Firebase App Check was never built; Cloudflare Turnstile, a signed session cookie and limits in a Durable Object do the job. The reasoning below about anonymous sessions and about never storing raw addresses still holds. Date: 2026-09-28.
 
 ## Context
 

@@ -23,7 +23,7 @@ Unless explicitly labeled implemented, contracts and operational settings in the
 | Local development | [Setup](development/setup.md) |
 | Verification | [Testing strategy](testing/testing-strategy.md) |
 | Operations | [Deployment](deployment/deployment.md), [infrastructure](deployment/infrastructure.md), [analytics](deployment/analytics.md) |
-| Technical decisions | [Previous frontend decision](decisions/ADR-001-frontend-framework.md), [current frontend decision](decisions/ADR-004-react-vite-frontend.md), [database](decisions/ADR-002-database-choice.md), [authentication](decisions/ADR-003-authentication.md) |
+| Technical decisions | Current: [React and Vite](decisions/ADR-004-react-vite-frontend.md) (partly superseded), [Cloudflare hosting](decisions/ADR-006-cloudflare-hosting.md), [Tailwind and shadcn redesign](decisions/ADR-007-tailwind-shadcn-redesign.md), [API on the Worker](decisions/ADR-008-api-on-the-worker.md), [data and abuse protection](decisions/ADR-009-data-and-abuse-protection.md), [retrieval and evaluation](decisions/ADR-010-retrieval-and-evaluation.md). Superseded: [Astro frontend](decisions/ADR-001-frontend-framework.md), [Firestore](decisions/ADR-002-database-choice.md), [App Check](decisions/ADR-003-authentication.md), [ask-first design](decisions/ADR-005-ask-first-design-direction.md) (partly) |
 | Delivery order | [Roadmap](roadmap.md) |
 
 Keep requirements, diagrams, API contracts, and tests synchronized as implementation progresses. Agent instructions and private working briefs remain excluded from version control; this folder contains the shareable technical specification.

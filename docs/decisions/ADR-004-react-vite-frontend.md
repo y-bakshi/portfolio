@@ -1,5 +1,7 @@
 # ADR-004: React + Vite Frontend
 
+> Partly superseded: Tailwind CSS came back with shadcn/ui ([ADR-007](ADR-007-tailwind-shadcn-redesign.md)), hosting moved from Firebase to Cloudflare ([ADR-006](ADR-006-cloudflare-hosting.md)), and the FastAPI backend was replaced by an API in the site's Worker ([ADR-008](ADR-008-api-on-the-worker.md)). React, TypeScript, Vite and the multi-page build still stand. The "Update" section below is kept as history.
+
 Status: accepted; scaffold implemented. Date: 2026-10-01.
 
 ## Context

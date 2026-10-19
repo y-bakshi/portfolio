@@ -26,4 +26,9 @@ Serve the build folder from Cloudflare Workers static assets, on a domain regist
 ## Consequences
 
 - The site address is set once in `apps/web/vite.site.ts`.
-- Some older documents still mention Firebase Hosting and Cloud Run. They describe the unbuilt backend and should be revised when it is designed.
+- Some older documents still mention Firebase Hosting and Cloud Run. They describe the abandoned backend plan.
+
+## Update, October 2026
+
+- The backend was built as an API in the same Worker ([ADR-008](ADR-008-api-on-the-worker.md)), with its data and protection in [ADR-009](ADR-009-data-and-abuse-protection.md). The Worker now also runs a daily cleanup job.
+- The "pull requests get preview addresses" point no longer holds. `workers_dev` and `preview_urls` are off in `wrangler.jsonc`, because a preview address would run the real Worker, with the real database and key. Branch previews can come back once they sit behind Cloudflare Access.
