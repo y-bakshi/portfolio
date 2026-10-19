@@ -32,6 +32,27 @@ describe('the résumé download', () => {
     expect(res.headers.get('content-disposition')).toContain('Yash_Bakshi_SWE.pdf');
   });
 
+  it('opens the same file in the browser at /cv, for a link from a QR code', async () => {
+    const res = await createApp().request(
+      `${SITE}/cv`,
+      undefined,
+      withFiles(() => file),
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toBe('application/pdf');
+    expect(res.headers.get('content-disposition')).toBe('inline; filename="Yash_Bakshi_SWE.pdf"');
+    expect(await res.text()).toBe('pdf-bytes');
+  });
+
+  it('says so at /cv too when no file is stored', async () => {
+    const res = await createApp().request(
+      `${SITE}/cv`,
+      undefined,
+      withFiles(() => null),
+    );
+    expect(res.status).toBe(404);
+  });
+
   it('says so, without an error page, when no file is stored', async () => {
     const res = await createApp().request(
       `${SITE}/resume.pdf`,

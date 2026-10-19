@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { defaultDeps, type Deps } from './deps';
 import type { Env } from './env';
@@ -61,19 +61,25 @@ export function createApp(deps: Partial<Deps> = {}) {
     return c.json(body);
   });
 
-  /** The résumé lives in storage, not in the repository, so it can change without a deploy. */
-  app.get('/resume.pdf', async (c) => {
+  /**
+   * The résumé lives in storage, not in the repository, so it can change without a deploy. At
+   * /resume.pdf it is a download; at /cv the browser opens it, which suits a link from a QR code.
+   */
+  const résumé = (disposition: 'attachment' | 'inline') => async (c: Context<AppEnv>) => {
     const file = await c.env.FILES?.get('resume.pdf');
     if (!file) return c.text('The résumé is not available right now.', 404);
     return new Response(file.body as unknown as ReadableStream, {
       headers: {
         'content-type': 'application/pdf',
-        'content-disposition': 'attachment; filename="Yash_Bakshi_SWE.pdf"',
+        'content-disposition': `${disposition}; filename="Yash_Bakshi_SWE.pdf"`,
         'cache-control': 'public, max-age=300',
+        'x-content-type-options': 'nosniff',
         etag: file.httpEtag,
       },
     });
-  });
+  };
+  app.get('/resume.pdf', résumé('attachment'));
+  app.get('/cv', résumé('inline'));
 
   registerChatRoutes(app, { ...defaultDeps, ...deps });
 
