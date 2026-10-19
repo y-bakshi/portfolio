@@ -53,7 +53,7 @@ export function PageFrame({
       {features.dotGrid && <DotGrid />}
       {/* a short page still puts the footer at the bottom of the window */}
       <div className="flex min-h-dvh flex-col">
-        <WipNotice />
+        {features.wipNotice && <WipNotice />}
         <SiteHeader current={current} />
         <main id="main" className="relative z-[1] flex-1">
           {children}
