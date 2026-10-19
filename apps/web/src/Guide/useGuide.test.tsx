@@ -1,7 +1,8 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Home from '../App';
 import { CHAT_KEY, UI_KEY } from './storage';
+import { useGuide } from './useGuide';
 import { SAVED_NOTICE } from './copy';
 import { answerStream, fakeApi, sse } from '../test/fake-api';
 
@@ -235,5 +236,27 @@ describe('the stored guide chat', () => {
       window.dispatchEvent(new StorageEvent('storage', { key: CHAT_KEY, newValue: null }));
     });
     await waitFor(() => expect(screen.queryByText('Other tab answer')).toBeNull());
+  });
+});
+
+describe('reopening a chat after a link to part of the page', () => {
+  afterEach(() => {
+    window.history.replaceState(null, '', '/');
+    sessionStorage.clear();
+  });
+
+  const reopened = () => {
+    sessionStorage.setItem(UI_KEY, JSON.stringify({ v: 1, open: true, draft: '' }));
+    return renderHook(() => useGuide(false));
+  };
+
+  it('waits for the portrait when the page opens at the top', () => {
+    window.history.replaceState(null, '', '/');
+    expect(reopened().result.current.open).toBe(false);
+  });
+
+  it('does not wait for it when the link lands on a section, because the portrait is off screen', () => {
+    window.history.replaceState(null, '', '/#asu');
+    expect(reopened().result.current.open).toBe(true);
   });
 });

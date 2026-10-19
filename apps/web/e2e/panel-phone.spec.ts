@@ -91,7 +91,7 @@ test('a source on another page opens that page, so the card shows', async ({ pag
   await input(page).press('Enter');
   await ready(page);
   await page.getByRole('button', { name: /Show Arizona State University on the page/i }).click();
-  await expect(page).toHaveURL(/\/experience\/#asu$/);
+  await expect(page).toHaveURL(/\/#asu$/);
   await expect(page.locator('#asu')).toBeInViewport();
 });
 

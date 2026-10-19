@@ -10,7 +10,8 @@ describe('pageContext', () => {
   it('describes the other pages', () => {
     expect(pageContext('/')).toMatch(/home page/);
     expect(pageContext('/projects/')).toMatch(/lists all of the projects/);
-    expect(pageContext('/experience/')).toMatch(/experience page/);
+    // the old experience page is gone, so the guide knows nothing of it
+    expect(pageContext('/experience/')).toBeNull();
     expect(pageContext('/contact/index.html')).toMatch(/contact page/);
   });
 

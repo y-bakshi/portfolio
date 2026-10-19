@@ -22,9 +22,16 @@ export function ProjectRow({ p, marked }: { p: Project; marked: string | null })
       data-marked={marked === p.id || undefined}
     >
       <div className="space-y-3">
-        <h2 id={`${p.id}-name`} className="display text-4xl">
-          {p.name}
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 id={`${p.id}-name`} className="display text-4xl">
+            {p.name}
+          </h2>
+          {p.award && (
+            <span role="img" aria-label={p.award} title={p.award} className="text-3xl leading-none">
+              🏆
+            </span>
+          )}
+        </div>
         <div className="space-y-0.5 text-[1.02rem] text-ink">
           <p>{p.line}</p>
           <p>{p.role}</p>

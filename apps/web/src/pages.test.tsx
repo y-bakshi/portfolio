@@ -3,7 +3,6 @@ import Home from './App';
 import AllProjects from './AllProjects';
 import CaseStudy from './CaseStudy';
 import ContactPage from './ContactPage';
-import ExperiencePage from './ExperiencePage';
 import NotFound from './NotFound';
 import PrivacyPage from './PrivacyPage';
 import { credits } from './layout/credits';
@@ -23,7 +22,6 @@ describe('every page', () => {
     ['home', Home],
     ['projects', AllProjects],
     ['case study', CaseStudy],
-    ['experience', ExperiencePage],
     ['contact', ContactPage],
     ['not found', NotFound],
   ])('the %s page has one h1, the landmarks, a skip link and the guide', (_name, Page) => {
@@ -120,6 +118,16 @@ describe('home page', () => {
 });
 
 describe('projects page', () => {
+  it('puts a trophy beside CityWatch, and only beside a project with an award', () => {
+    render(<AllProjects />);
+    const trophy = screen.getByRole('img', { name: /won the aws ideathon 2026/i });
+    expect(trophy).toHaveTextContent('🏆');
+    expect(document.getElementById('citywatch')).toContainElement(trophy);
+    expect(screen.getAllByRole('img', { name: /won /i })).toHaveLength(
+      projects.filter((p) => p.award).length,
+    );
+  });
+
   it('shows every project and the coursework', () => {
     render(<AllProjects />);
     expect(
@@ -199,9 +207,9 @@ describe('case study page', () => {
   });
 });
 
-describe('experience page', () => {
+describe('experience on the home page', () => {
   it('shows every role and degree with an id the guide can cite', () => {
-    render(<ExperiencePage />);
+    render(<Home />);
     for (const e of [...roles, ...education]) {
       const el = document.getElementById(e.id);
       expect(el, e.id).toHaveTextContent(e.org);

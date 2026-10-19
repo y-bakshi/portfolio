@@ -30,8 +30,8 @@ describe('prerendered pages', () => {
     expect(html.match(/<h1/g)).toHaveLength(1);
   });
 
-  it('put every role and degree in the experience page', () => {
-    const html = renderPage('experience/index.html');
+  it('put every role and degree in the home page', () => {
+    const html = renderPage('index.html');
     for (const e of [...roles, ...education]) {
       expect(html, e.id).toContain(e.title);
       for (const point of e.points ?? [])

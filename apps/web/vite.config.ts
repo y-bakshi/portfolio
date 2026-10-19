@@ -28,7 +28,6 @@ export default defineConfig({
       input: {
         main: 'index.html',
         projects: 'projects/index.html',
-        experience: 'experience/index.html',
         contact: 'contact/index.html',
         testpilot: 'projects/testpilot/index.html',
         chat: 'chat/index.html',

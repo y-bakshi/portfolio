@@ -38,14 +38,6 @@ export const pageMeta: PageMeta[] = [
     name: 'TestPilot case study',
   },
   {
-    path: '/experience/',
-    file: 'experience/index.html',
-    title: 'Experience | Yash Bakshi',
-    description:
-      'Work history and education of Yash Bakshi: a software engineering internship at Thryv, technical team lead at InfoCenter, ServiceNow development at Tata Consultancy Services, and an MS at Arizona State University.',
-    name: 'Experience',
-  },
-  {
     path: '/contact/',
     file: 'contact/index.html',
     title: 'Contact | Yash Bakshi',

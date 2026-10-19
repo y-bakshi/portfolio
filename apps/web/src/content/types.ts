@@ -7,6 +7,8 @@ export type Project = {
   /** One of the four strongest projects, shown first and in full on the projects screen. */
   featured?: boolean;
   name: string;
+  /** A prize this project won, shown as a trophy beside its name. */
+  award?: string;
   line: string;
   detail: string;
   role: string;

@@ -30,7 +30,10 @@ export function useGuide(portraitFormed = true, page = false) {
   // a chat open before a refresh opens again on a wide screen; a phone has a page for it instead
   const pendingOpen = useRef(saved.current.open && !page && !isMobile);
   useEffect(() => {
-    if (portraitFormed && pendingOpen.current) {
+    // a link that lands part way down the page (a source button, say) has the portrait off screen, so
+    // it never forms: do not wait for it, or the chat the visitor had open would stay shut
+    const landedOnSection = window.location.hash.length > 1;
+    if ((portraitFormed || landedOnSection) && pendingOpen.current) {
       pendingOpen.current = false;
       restoredOpen.current = true; // restored, not opened by the visitor, so it takes no focus
       setOpen(true);
