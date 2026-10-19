@@ -19,7 +19,7 @@ The API is a Hono app inside the same Cloudflare Worker that serves the site (`a
 | `GET /api/admin/traffic?days=30`                  | Owner-only site traffic from Cloudflare's own counts (visitors, page views, requests, countries, browsers, top pages, referrers). `{ ok: false, reason }` when not set up or unavailable. Cached for five minutes. | Cloudflare Access token, checked in the Worker.        |
 | `GET /api/admin/evals`                            | Owner-only saved evaluations of the guide, each score held against its target; empty when the table is missing. | Cloudflare Access token, checked in the Worker.        |
 | `GET /admin`, `/admin/app.js`, `/admin/style.css` | The owner page (six tabs). Strict CSP, `no-store`, `noindex`.                           | Cloudflare Access token, checked in the Worker.        |
-| `GET /resume.pdf`                                 | The résumé, read from the R2 bucket and sent as a download. 404 text when no file is stored. | Public; cached for five minutes.                       |
+| `GET /resume.pdf`                                 | The résumé, read from the R2 bucket and sent as a download named `Yash_Bakshi_SWE.pdf`. 404 text when no file is stored. | Public; cached for five minutes.                       |
 
 ## Owner routes
 

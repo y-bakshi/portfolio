@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 
 // the file is served by the Worker from storage (worker/app.ts), so it is not in the repository
 export const RESUME_HREF = '/resume.pdf';
-const SAVED_NAME = 'Yash_Bakshi_Resume.pdf';
+const SAVED_NAME = 'Yash_Bakshi_SWE.pdf';
 
 type State = 'idle' | 'downloading' | 'done' | 'failed';
 

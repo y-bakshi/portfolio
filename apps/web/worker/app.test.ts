@@ -29,7 +29,7 @@ describe('the résumé download', () => {
     );
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toBe('application/pdf');
-    expect(res.headers.get('content-disposition')).toContain('Yash_Bakshi_Resume.pdf');
+    expect(res.headers.get('content-disposition')).toContain('Yash_Bakshi_SWE.pdf');
   });
 
   it('says so, without an error page, when no file is stored', async () => {

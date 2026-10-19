@@ -68,7 +68,7 @@ export function createApp(deps: Partial<Deps> = {}) {
     return new Response(file.body as unknown as ReadableStream, {
       headers: {
         'content-type': 'application/pdf',
-        'content-disposition': 'attachment; filename="Yash_Bakshi_Resume.pdf"',
+        'content-disposition': 'attachment; filename="Yash_Bakshi_SWE.pdf"',
         'cache-control': 'public, max-age=300',
         etag: file.httpEtag,
       },
