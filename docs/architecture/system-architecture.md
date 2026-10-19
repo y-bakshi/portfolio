@@ -7,10 +7,10 @@ A React and TypeScript front end, built with Vite and styled with Tailwind v4 an
 ## Components
 
 - **Front end.** Vite builds several real HTML pages (home, projects, a case study, experience, contact, privacy, chat, 404) into `dist/`. A prerender step draws each to static HTML with its own title, description and structured data, so crawlers and no-script visitors get the content. The Worker serves `dist/` as Cloudflare static assets.
-- **Worker and API.** Hono handles only `/api/*`, `/admin`, `/admin/*` and `/resume.pdf`; everything else is a file. Same origin as the site, so no CORS. Routes are listed in [API design](api-design.md).
+- **Worker and API.** Hono handles only `/api/*`, `/admin`, `/admin/*`, `/resume.pdf` and `/cv`; everything else is a file. Same origin as the site, so no CORS. Routes are listed in [API design](api-design.md).
 - **D1 database.** Chats, messages, feedback, events, the notes with their vectors, saved answers and saved evaluation runs ([database design](database-design.md)).
 - **Durable Object `Guard`.** The rate-limit counters and the spend total.
-- **R2 bucket.** The résumé PDF, served at `/resume.pdf`, kept out of git.
+- **R2 bucket.** The résumé PDF, served at `/resume.pdf` (download) and `/cv` (opens in the browser), kept out of git.
 - **Retrieval.** A script turns the content modules and a short list of approved facts into notes, embeds them with Gemini and loads them into D1. A question is embedded, the closest notes are found, and the model answers from them and cites their ids ([retrieval](rag.md), [ADR-010](../decisions/ADR-010-retrieval-and-evaluation.md)).
 - **Models.** A thin provider interface with a Gemini adapter (answers and embeddings), a Workers AI adapter (optional fallback, off) and a mock for tests.
 - **Protection.** Turnstile on session creation, a signed `chat` cookie, per-chat and per-network limits, a spending cap and a kill switch ([ADR-009](../decisions/ADR-009-data-and-abuse-protection.md), [protection](../deployment/protection.md)).

@@ -21,7 +21,7 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
-    "run_worker_first": ["/api/*", "/admin", "/admin/*", "/resume.pdf"],
+    "run_worker_first": ["/api/*", "/admin", "/admin/*", "/resume.pdf", "/cv", "/cv/"],
   },
   // The model-backed guide (docs/architecture/rag.md). Turn it on in this order:
   //   1. uncomment "ai" below (Workers AI: embeddings and the fallback chat model)
