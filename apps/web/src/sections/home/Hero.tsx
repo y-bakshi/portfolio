@@ -30,7 +30,7 @@ export function Hero({ isMobile, onFormed }: { isMobile: boolean; onFormed: () =
           </span>
         </h1>
         <p className="mt-4 text-xl text-ink">
-          software engineer, finishing an MS at Arizona State University
+          software engineer, finishing my MS at Arizona State University
         </p>
         <p className="mt-5 max-w-[30rem] text-lg text-muted">
           Backend by trade, full-stack by passion. I build AI applications, backend services and
