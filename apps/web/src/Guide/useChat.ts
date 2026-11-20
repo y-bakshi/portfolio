@@ -47,6 +47,8 @@ export function useChat() {
   const statusRef = useRef(status);
   statusRef.current = status;
   const triedSession = useRef(false);
+  /** True once the server has shown a saved chat for this browser, so its cookie is known to work. */
+  const serverHasChat = useRef(false);
   /** True once the visitor has asked or cleared anything, after which the server copy must not overwrite. */
   const touched = useRef(false);
 
@@ -72,6 +74,7 @@ export function useChat() {
     loadChat()
       .then((messages) => {
         // an empty server copy changes nothing: the visitor may have cookies blocked
+        if (messages.length > 0) serverHasChat.current = true;
         if (current && !touched.current && messages.length > 0) showMessages(messages);
       })
       .catch(() => {});
@@ -117,18 +120,22 @@ export function useChat() {
 
     let final: Current;
     try {
-      // the first message of a visit asks for the chat cookie before anything is stored
-      if (!triedSession.current && !history.some((e) => e.id)) await startSession();
+      // The first message of a visit asks for the chat cookie, unless the server has just shown this
+      // browser a chat of its own. The copy saved in the browser cannot say: its answers carry ids
+      // even after the cookie has expired or been cleared, and asking without a cookie is refused.
+      if (!triedSession.current && !serverHasChat.current) await startSession();
       triedSession.current = true;
-      const result = await askStream(
-        q,
-        (piece) => {
-          if (!live() || reduce) return;
-          setStatus('answering');
-          writer.push(piece);
-        },
-        window.location.pathname,
-      );
+      const onPiece = (piece: string) => {
+        if (!live() || reduce) return;
+        setStatus('answering');
+        writer.push(piece);
+      };
+      const result = await askStream(q, onPiece, window.location.pathname).catch(async (error) => {
+        // refused for want of a session (the cookie went missing mid-visit): start one and try once more
+        if (!(error instanceof ApiFailure) || error.status !== 403) throw error;
+        await startSession();
+        return askStream(q, onPiece, window.location.pathname);
+      });
       final = {
         text: result.text,
         cites: result.cites,

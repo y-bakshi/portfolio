@@ -239,6 +239,97 @@ describe('the stored guide chat', () => {
   });
 });
 
+describe('asking with a saved chat in the browser but no cookie', () => {
+  const oldChat = JSON.stringify({
+    v: 1,
+    messages: [
+      { id: 'old-u', role: 'user', text: 'Old question', cites: [], rating: null },
+      { id: 'old-a', role: 'assistant', text: 'Old answer', cites: [], rating: null },
+    ],
+  });
+  const order = (api: ReturnType<typeof fakeApi>) =>
+    api.mock.calls.map(([url, init]) => `${init?.method ?? 'GET'} ${url}`);
+
+  it('starts a new session first, because the server has no chat for this browser', async () => {
+    localStorage.setItem(CHAT_KEY, oldChat);
+    const api = fakeApi({
+      'GET /api/chat': transcript([]),
+      'POST /api/session': ok,
+      'POST /api/chat': () => answerStream('A fresh answer.', []),
+    });
+    const user = userEvent.setup();
+    render(<Home />);
+    await user.click(bar());
+    await waitFor(() => expect(calls(api, 'GET /api/chat')).toHaveLength(1));
+    await user.type(input(), 'New question{Enter}');
+    expect(
+      await screen.findByText('A fresh answer.', { selector: '[data-answer]' }),
+    ).toBeInTheDocument();
+    const seen = order(api);
+    expect(seen.indexOf('POST /api/session')).toBeGreaterThan(-1);
+    expect(seen.indexOf('POST /api/session')).toBeLessThan(seen.indexOf('POST /api/chat'));
+  });
+
+  it('does not ask again for a session when the server showed this browser its chat', async () => {
+    localStorage.setItem(CHAT_KEY, oldChat);
+    const api = fakeApi({
+      'GET /api/chat': transcript(stored),
+      'POST /api/chat': () => answerStream('Another answer.', []),
+    });
+    const user = userEvent.setup();
+    render(<Home />);
+    await user.click(bar());
+    await screen.findByText('Saved answer', { selector: '[data-answer]' });
+    await user.type(input(), 'Next question{Enter}');
+    expect(
+      await screen.findByText('Another answer.', { selector: '[data-answer]' }),
+    ).toBeInTheDocument();
+    expect(calls(api, 'POST /api/session')).toHaveLength(0);
+  });
+
+  it('starts a session and tries once more when a question is refused for want of one', async () => {
+    let refused = false;
+    const api = fakeApi({
+      'GET /api/chat': transcript(stored),
+      'POST /api/session': ok,
+      'POST /api/chat': () => {
+        if (!refused) {
+          refused = true;
+          return Response.json({ error: { code: 'forbidden' } }, { status: 403 });
+        }
+        return answerStream('Answered after retrying.', []);
+      },
+    });
+    const user = userEvent.setup();
+    render(<Home />);
+    await user.click(bar());
+    await screen.findByText('Saved answer', { selector: '[data-answer]' });
+    await user.type(input(), 'Question{Enter}');
+    expect(
+      await screen.findByText('Answered after retrying.', { selector: '[data-answer]' }),
+    ).toBeInTheDocument();
+    expect(calls(api, 'POST /api/session')).toHaveLength(1);
+    expect(calls(api, 'POST /api/chat')).toHaveLength(2);
+  });
+
+  it('does not loop when the refusal comes back again', async () => {
+    const api = fakeApi({
+      'GET /api/chat': transcript(stored),
+      'POST /api/session': ok,
+      'POST /api/chat': () => Response.json({ error: { code: 'forbidden' } }, { status: 403 }),
+    });
+    const user = userEvent.setup();
+    render(<Home />);
+    await user.click(bar());
+    await screen.findByText('Saved answer', { selector: '[data-answer]' });
+    await user.type(input(), 'Question{Enter}');
+    expect(
+      await screen.findByText(/cannot answer just now/i, { selector: '[data-answer]' }),
+    ).toBeInTheDocument();
+    expect(calls(api, 'POST /api/chat')).toHaveLength(2);
+  });
+});
+
 describe('reopening a chat after a link to part of the page', () => {
   afterEach(() => {
     window.history.replaceState(null, '', '/');
