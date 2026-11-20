@@ -46,9 +46,6 @@ export function useChat() {
   const timers = useRef<number[]>([]);
   const statusRef = useRef(status);
   statusRef.current = status;
-  const triedSession = useRef(false);
-  /** True once the server has shown a saved chat for this browser, so its cookie is known to work. */
-  const serverHasChat = useRef(false);
   /** True once the visitor has asked or cleared anything, after which the server copy must not overwrite. */
   const touched = useRef(false);
 
@@ -74,7 +71,6 @@ export function useChat() {
     loadChat()
       .then((messages) => {
         // an empty server copy changes nothing: the visitor may have cookies blocked
-        if (messages.length > 0) serverHasChat.current = true;
         if (current && !touched.current && messages.length > 0) showMessages(messages);
       })
       .catch(() => {});
@@ -120,21 +116,19 @@ export function useChat() {
 
     let final: Current;
     try {
-      // The first message of a visit asks for the chat cookie, unless the server has just shown this
-      // browser a chat of its own. The copy saved in the browser cannot say: its answers carry ids
-      // even after the cookie has expired or been cleared, and asking without a cookie is refused.
-      if (!triedSession.current && !serverHasChat.current) await startSession();
-      triedSession.current = true;
       const onPiece = (piece: string) => {
         if (!live() || reduce) return;
         setStatus('answering');
         writer.push(piece);
       };
-      const result = await askStream(q, onPiece, window.location.pathname).catch(async (error) => {
-        // refused for want of a session (the cookie went missing mid-visit): start one and try once more
-        if (!(error instanceof ApiFailure) || error.status !== 403) throw error;
+      const ask = () => askStream(q, onPiece, window.location.pathname);
+      // The server knows whether this browser has passed the bot check lately (a new visitor, or a
+      // check that lapsed after a day, has not), and says so with a code. Nothing here guesses from
+      // the copy saved in the browser, which says nothing about the cookie. Run the check and ask once more.
+      const result = await ask().catch(async (error) => {
+        if (!(error instanceof ApiFailure) || error.code !== 'verification_required') throw error;
         await startSession();
-        return askStream(q, onPiece, window.location.pathname);
+        return ask();
       });
       final = {
         text: result.text,

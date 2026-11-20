@@ -15,10 +15,12 @@ export type ProtectOptions = {
   visitorId?: (request: Request) => string | null;
 };
 
-/** The chat id is the part of the cookie before any signature dot. */
+/** The chat id inside the cookie: the first part of the older value, the second of a `v2.` one. */
 function chatIdFromCookie(request: Request): string | null {
   const match = /(?:^|;\s*)chat=([^;]+)/.exec(request.headers.get('cookie') ?? '');
-  return match ? decodeURIComponent(match[1]).split('.')[0] : null;
+  if (!match) return null;
+  const parts = decodeURIComponent(match[1]).split('.');
+  return (parts[0] === 'v2' ? parts[1] : parts[0]) ?? null;
 }
 
 /** "about a minute", "about 12 minutes", "about 3 hours": enough to know when to come back. */

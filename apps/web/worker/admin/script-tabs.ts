@@ -68,6 +68,8 @@ function renderCost(s) {
     ['Fallback rate', pct(s.fallbackRate)]
   ]);
   var b = s.breakdowns || {};
+  ranking(byId('checks-needed'), b.checksNeeded, 'None.');
+  ranking(byId('checks-failed'), b.checksFailed, 'None.');
   ranking(byId('limits'), b.rateLimits, 'No limits were hit.');
   ranking(byId('fallbacks'), b.fallbacks, 'No fallbacks.');
   ranking(byId('errors'), b.errors, 'No errors.');

@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
 import type { Answerer } from '../lib/answerer';
-import { cookieOf, json, parseSse, setup, SITE, stub } from '../test/harness';
+import { cookieFor, cookieOf, idOf, json, parseSse, setup, SITE, stub } from '../test/harness';
 
 describe('POST /api/chat', () => {
   it('creates the chat and cookie on the first message and streams meta, tokens and done', async () => {
@@ -34,7 +34,8 @@ describe('POST /api/chat', () => {
     await first.text();
     const cookie = cookieOf(first)!;
     const second = await ask('Second question', cookie);
-    expect(second.headers.get('set-cookie')).toBeNull();
+    // asking is using the cookie, so it is written again, naming the same chat
+    expect(idOf(cookieOf(second)!)).toBe(idOf(cookie));
     await second.text();
     expect((await rows('chats')).results).toHaveLength(1);
 
@@ -84,13 +85,15 @@ describe('POST /api/chat', () => {
       },
     };
     const { post, rows } = setup({ answerer });
+    const cookie = await cookieFor();
     await (
-      await post('/api/chat', {
-        message: 'what is this project about',
-        page: '/projects/testpilot/',
-      })
+      await post(
+        '/api/chat',
+        { message: 'what is this project about', page: '/projects/testpilot/' },
+        cookie,
+      )
     ).text();
-    await (await post('/api/chat', { message: 'hello', page: '/not/a/page' })).text();
+    await (await post('/api/chat', { message: 'hello', page: '/not/a/page' }, cookie)).text();
     expect(seen[0]).toBe(
       'The visitor is reading the case study page for TestPilot.\nwhat is this project about',
     );
@@ -134,8 +137,8 @@ describe('POST /api/chat', () => {
         },
       }),
     };
-    const { ask, rows } = setup({ answerer, admission: { admit } });
-    await (await ask('q')).text();
+    const { askBare, rows } = setup({ answerer, admission: { admit } });
+    await (await askBare('q', await cookieFor())).text();
     expect((admit.mock.calls[0] as unknown[])[2]).toEqual({ kind: 'chat', maxCostMicroUsd: 5000 });
     expect(settle).toHaveBeenCalledWith(77);
     expect(release).not.toHaveBeenCalled();
@@ -171,12 +174,12 @@ describe('POST /api/chat', () => {
         throw new Error('model down: secret detail');
       },
     };
-    const { ask, rows } = setup({
+    const { askBare, rows } = setup({
       answerer,
       admission: { admit: async () => ({ ok: true, settle, release }) },
     });
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    const text = await (await ask('q')).text();
+    const text = await (await askBare('q', await cookieFor())).text();
     const events = parseSse(text);
     expect(events.map((e) => e.event)).toEqual(['meta', 'error']);
     expect(events[1].data.code).toBe('internal');
@@ -201,7 +204,11 @@ describe('POST /api/chat', () => {
     const { app, env, rows } = setup({ answerer });
     const res = await app.request(
       `${SITE}/api/chat`,
-      { method: 'POST', headers: json, body: JSON.stringify({ message: 'q' }) },
+      {
+        method: 'POST',
+        headers: { ...json, cookie: await cookieFor() },
+        body: JSON.stringify({ message: 'q' }),
+      },
       env,
       { waitUntil: (p: Promise<unknown>) => waited.push(p), passThroughOnException() {} } as never,
     );

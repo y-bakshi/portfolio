@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_BODY_BYTES } from '../app';
 import type { Admission } from '../lib/admission';
-import { json, setup, stub } from '../test/harness';
+import { cookieFor, json, setup, stub } from '../test/harness';
 
 describe('POST /api/chat input and refusals', () => {
   it.each([
@@ -51,8 +51,8 @@ describe('POST /api/chat input and refusals', () => {
     const admission: Admission = {
       admit: async () => ({ ok: false, error: new ApiError(429, 'rate_limited', 'Too many.') }),
     };
-    const { ask, rows } = setup({ admission });
-    const res = await ask('hi');
+    const { askBare, rows } = setup({ admission });
+    const res = await askBare('hi', await cookieFor());
     expect(res.status).toBe(429);
     expect((await rows('messages')).results).toHaveLength(0);
   });

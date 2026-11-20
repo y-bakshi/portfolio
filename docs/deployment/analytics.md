@@ -38,7 +38,7 @@ The Worker checks the Access token itself, so a mistake in the Access policy doe
 - **AI usage:** chats, questions, answers, cost, latency p50 and p95, thumbs, fallback rate, rate limits, and per-day charts.
 - **Questions:** top questions, low confidence ("what to write next") and which source buttons were pressed.
 - **Answer quality:** the saved evaluations against the 64 labelled questions: context recall and precision, faithfulness, correctness, relevancy, citation accuracy, gap handling and more, with pass or fail against the live targets, a recent-runs table and the failures to read. A run is marked out of date when the notes or the prompt changed after it. Recall, precision and correctness need labels, so they cannot be measured on visitor traffic; they come from offline runs.
-- **Cost and safety:** spend, cost per answer, which limits were hit, why answers fell back, and errors.
+- **Cost and safety:** spend, cost per answer, which limits were hit, how often a question was turned away for want of a bot check and how often a check failed (a rise means sessions or Turnstile are broken), why answers fell back, and errors.
 
 ## Owner setup: page analytics (once)
 

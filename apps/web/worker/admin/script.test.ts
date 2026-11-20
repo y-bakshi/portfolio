@@ -19,6 +19,8 @@ const summary = {
   breakdowns: {
     sources: [{ key: 'testpilot', count: 4 }],
     rateLimits: [{ key: 'minute', count: 1 }],
+    checksNeeded: [{ key: 'no_cookie', count: 3 }],
+    checksFailed: [{ key: 'no_token', count: 2 }],
     fallbacks: [],
     errors: [],
   },
@@ -98,6 +100,8 @@ describe('owner page script', () => {
     expect(document.getElementById('top')!.textContent).toContain('<img src=x');
     expect(document.getElementById('sources')!.textContent).toContain('testpilot');
     expect(document.getElementById('limits')!.textContent).toContain('minute');
+    expect(document.getElementById('checks-needed')!.textContent).toContain('no_cookie');
+    expect(document.getElementById('checks-failed')!.textContent).toContain('no_token');
   });
 
   it('shows the traffic, and says when a breakdown is not available', async () => {

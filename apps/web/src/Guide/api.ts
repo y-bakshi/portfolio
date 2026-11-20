@@ -4,6 +4,7 @@
  * plain "cannot answer" message without caring what went wrong.
  */
 import type { Rating, SavedMessage } from './storage';
+import { createSseParser } from './sse';
 import { getTurnstileToken } from './turnstile';
 
 /** The API could not do what was asked: it was unreachable, slow, refused, or answered badly. */
@@ -11,8 +12,10 @@ export class ApiFailure extends Error {
   constructor(
     message: string,
     readonly status?: number,
-    /** The server's own words for a limit or a pause, which tell the visitor when to come back. */
+    /** The server's own words for a limit, a pause or a bot check, which tell the visitor what to do. */
     readonly notice?: string,
+    /** The server's code for the refusal, such as `verification_required`, which the page can act on. */
+    readonly code?: string,
   ) {
     super(message);
   }
@@ -41,14 +44,17 @@ function watchdog(controller: AbortController, ms: number) {
   };
 }
 
-/** The message in a limit or pause response, when it has one. */
-async function noticeFrom(res: Response): Promise<string | undefined> {
+/** The code and message in an error response, when it has them. */
+async function errorFrom(res: Response): Promise<{ code?: string; message?: string }> {
   try {
-    const body = (await res.json()) as { error?: { message?: unknown } };
-    const message = body.error?.message;
-    return typeof message === 'string' && message.length < 300 ? message : undefined;
+    const body = (await res.json()) as { error?: { code?: unknown; message?: unknown } };
+    const { code, message } = body.error ?? {};
+    return {
+      code: typeof code === 'string' && code.length < 60 ? code : undefined,
+      message: typeof message === 'string' && message.length < 300 ? message : undefined,
+    };
   } catch {
-    return undefined;
+    return {};
   }
 }
 
@@ -64,8 +70,15 @@ async function send(path: string, init: RequestInit, controller: AbortController
       },
     });
     if (!res.ok) {
-      const notice = res.status === 429 || res.status === 503 ? await noticeFrom(res) : undefined;
-      throw new ApiFailure(`The API answered ${res.status}.`, res.status, notice);
+      const body = [403, 429, 503].includes(res.status) ? await errorFrom(res) : {};
+      // a limit or a pause says when to come back; a bot check says what to do. Other 403s say nothing.
+      const speaks = res.status !== 403 || body.code?.startsWith('verification_');
+      throw new ApiFailure(
+        `The API answered ${res.status}.`,
+        res.status,
+        speaks ? body.message : undefined,
+        body.code,
+      );
     }
     return res;
   } catch (error) {
@@ -124,38 +137,7 @@ export const sendFeedback = (messageId: string, value: Rating) =>
     body: JSON.stringify({ messageId, value }),
   });
 
-export type SseEvent = { event: string; data: unknown };
-
-/**
- * Reads server-sent events from text that arrives in arbitrary pieces. A piece may end in the
- * middle of an event or even of a word, so unfinished text is kept until the blank line that ends it.
- */
-export function createSseParser(onEvent: (event: SseEvent) => void) {
-  let buffer = '';
-  const emit = (block: string) => {
-    let event = 'message';
-    const data: string[] = [];
-    for (const line of block.split('\n')) {
-      if (line.startsWith('event:')) event = line.slice(6).trim();
-      else if (line.startsWith('data:')) data.push(line.slice(5).replace(/^ /, ''));
-    }
-    if (data.length === 0) return;
-    try {
-      onEvent({ event, data: JSON.parse(data.join('\n')) });
-    } catch {
-      // a broken event is skipped; the stream carries on
-    }
-  };
-  return (chunk: string) => {
-    buffer += chunk.replace(/\r\n/g, '\n');
-    let end = buffer.indexOf('\n\n');
-    while (end !== -1) {
-      emit(buffer.slice(0, end));
-      buffer = buffer.slice(end + 2);
-      end = buffer.indexOf('\n\n');
-    }
-  };
-}
+export { createSseParser, type SseEvent } from './sse';
 
 const asText = (v: unknown) => (typeof v === 'string' ? v : '');
 

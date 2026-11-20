@@ -14,6 +14,10 @@ The chat endpoint is public and each answer costs money, so it is guarded by a b
 
 For local work, put `HMAC_SECRET=anything` in `apps/web/.dev.vars`. Leave `TURNSTILE_SECRET` out and the check is skipped.
 
+## How the bot check and the chat cookie fit together
+
+The chat cookie keeps a visitor's chat; the bot check is a separate claim recorded in it (`verifiedUntil`, a day after it passed). Only `POST /api/session` runs the check. A question with no check on record gets a 403 `verification_required` before any limit or spend is touched, and the page runs the check and asks again. If the guide suddenly cannot answer for everyone, open the owner page, Cost and safety, and look at "Bot check asked for again" and "Bot checks that failed": a rise there points at sessions or at Turnstile, not at the model. See [ADR-009](../decisions/ADR-009-data-and-abuse-protection.md).
+
 ## Changing the caps
 
 Spending caps are in millionths of a US dollar. Defaults: 5,000,000 a month (5 dollars) and 500,000 a day. Set `BUDGET_MONTH_MICRO_USD` and `BUDGET_DAY_MICRO_USD` under `vars` in `wrangler.jsonc` and deploy. Request limits (3 a minute and 20 a day per chat, 40 a day per network, and the session and feedback limits) are one table in `worker/lib/limits.ts`.

@@ -3,6 +3,7 @@ import { createApp } from '../app';
 import type { Deps } from '../deps';
 import type { Env } from '../env';
 import type { Answerer } from '../lib/answerer';
+import { createSession } from '../lib/session';
 import { testDb } from './sqlite-d1';
 
 export const SITE = 'https://yashbakshi.com';
@@ -34,9 +35,24 @@ export function setup(deps: Partial<Deps> = {}) {
     );
   const post = (path: string, body: unknown, cookie?: string) =>
     call(path, { method: 'POST', headers: json, body: JSON.stringify(body) }, cookie);
-  const ask = (message: string, cookie?: string) => post('/api/chat', { message }, cookie);
+  /** Asks a question exactly as given: with the cookie it is handed, or with none. */
+  const askBare = (message: string, cookie?: string) => post('/api/chat', { message }, cookie);
+  /** Asks a question the way the page does: with no cookie it first passes the check and gets one. */
+  const ask = async (message: string, cookie?: string) =>
+    askBare(message, cookie ?? cookieOf(await post('/api/session', {})));
   const rows = (table: string) => env.DB.prepare(`SELECT * FROM ${table}`).all();
-  return { env, app, call, post, ask, rows };
+  return { env, app, call, post, ask, askBare, rows };
+}
+
+/** A Cookie header for a chat whose bot check has just passed, made without calling any route. */
+export async function cookieFor() {
+  return `chat=${(await createSession(SECRET)).value}`;
+}
+
+/** The chat id inside a `chat=...` cookie, whichever format it is in. */
+export function idOf(cookie: string) {
+  const parts = cookie.replace(/^chat=/, '').split('.');
+  return (parts[0] === 'v2' ? parts[1] : parts[0]) as string;
 }
 
 /** The `chat=...` pair from a response, as a Cookie request header. */

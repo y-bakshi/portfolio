@@ -11,6 +11,10 @@ export const EVENT_TYPES = [
   'rate_limited',
   'fallback_used',
   'error',
+  /** A question arrived with no valid bot check on record, so the page was told to run it. */
+  'check_needed',
+  /** A bot check was attempted and did not pass. */
+  'check_failed',
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
@@ -35,6 +39,8 @@ const KEYS: Record<EventType, Record<string, Kind>> = {
   rate_limited: { scope: 'code' },
   fallback_used: { reason: 'code' },
   error: { code: 'code' },
+  check_needed: { reason: 'code' },
+  check_failed: { reason: 'code' },
 };
 
 /** Ids, model names and error codes look like `gemini-2.5-flash` or `rag/low_score`, not sentences. */

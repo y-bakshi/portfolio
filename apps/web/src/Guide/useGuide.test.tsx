@@ -48,7 +48,8 @@ describe('the stored guide chat', () => {
     ).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Good answer' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Show TestPilot on the page' })).toBeInTheDocument();
-    expect(calls(api, 'POST /api/session')).toHaveLength(1);
+    // the server accepted the question, so no bot check was needed and no session was asked for
+    expect(calls(api, 'POST /api/session')).toHaveLength(0);
     expect(JSON.parse(calls(api, 'POST /api/chat')[0][1]!.body as string)).toEqual({
       message: 'How does TestPilot use RAG?',
       page: '/',
@@ -239,7 +240,7 @@ describe('the stored guide chat', () => {
   });
 });
 
-describe('asking with a saved chat in the browser but no cookie', () => {
+describe('the bot check, which the server asks for', () => {
   const oldChat = JSON.stringify({
     v: 1,
     messages: [
@@ -249,13 +250,17 @@ describe('asking with a saved chat in the browser but no cookie', () => {
   });
   const order = (api: ReturnType<typeof fakeApi>) =>
     api.mock.calls.map(([url, init]) => `${init?.method ?? 'GET'} ${url}`);
+  const needsCheck = (message = 'Please complete the quick check.') =>
+    Response.json({ error: { code: 'verification_required', message } }, { status: 403 });
 
-  it('starts a new session first, because the server has no chat for this browser', async () => {
+  it('runs the check and asks again when the server says there is none on record, whatever the saved chat says', async () => {
+    // the browser kept an old chat, with ids, but its cookie is gone: the situation that used to fail
     localStorage.setItem(CHAT_KEY, oldChat);
+    let asked = 0;
     const api = fakeApi({
       'GET /api/chat': transcript([]),
       'POST /api/session': ok,
-      'POST /api/chat': () => answerStream('A fresh answer.', []),
+      'POST /api/chat': () => (++asked === 1 ? needsCheck() : answerStream('A fresh answer.', [])),
     });
     const user = userEvent.setup();
     render(<Home />);
@@ -265,12 +270,14 @@ describe('asking with a saved chat in the browser but no cookie', () => {
     expect(
       await screen.findByText('A fresh answer.', { selector: '[data-answer]' }),
     ).toBeInTheDocument();
-    const seen = order(api);
-    expect(seen.indexOf('POST /api/session')).toBeGreaterThan(-1);
-    expect(seen.indexOf('POST /api/session')).toBeLessThan(seen.indexOf('POST /api/chat'));
+    expect(order(api).filter((c) => c.startsWith('POST'))).toEqual([
+      'POST /api/chat',
+      'POST /api/session',
+      'POST /api/chat',
+    ]);
   });
 
-  it('does not ask again for a session when the server showed this browser its chat', async () => {
+  it('does not ask for a session at all when the server accepts the question', async () => {
     localStorage.setItem(CHAT_KEY, oldChat);
     const api = fakeApi({
       'GET /api/chat': transcript(stored),
@@ -285,20 +292,14 @@ describe('asking with a saved chat in the browser but no cookie', () => {
       await screen.findByText('Another answer.', { selector: '[data-answer]' }),
     ).toBeInTheDocument();
     expect(calls(api, 'POST /api/session')).toHaveLength(0);
+    expect(calls(api, 'POST /api/chat')).toHaveLength(1);
   });
 
-  it('starts a session and tries once more when a question is refused for want of one', async () => {
-    let refused = false;
+  it('does not loop when the server asks again after the check, and says what to do', async () => {
     const api = fakeApi({
       'GET /api/chat': transcript(stored),
       'POST /api/session': ok,
-      'POST /api/chat': () => {
-        if (!refused) {
-          refused = true;
-          return Response.json({ error: { code: 'forbidden' } }, { status: 403 });
-        }
-        return answerStream('Answered after retrying.', []);
-      },
+      'POST /api/chat': () => needsCheck('Please complete the quick check, then ask again.'),
     });
     const user = userEvent.setup();
     render(<Home />);
@@ -306,27 +307,45 @@ describe('asking with a saved chat in the browser but no cookie', () => {
     await screen.findByText('Saved answer', { selector: '[data-answer]' });
     await user.type(input(), 'Question{Enter}');
     expect(
-      await screen.findByText('Answered after retrying.', { selector: '[data-answer]' }),
+      await screen.findByText(/complete the quick check, then ask again/i, {
+        selector: '[data-answer]',
+      }),
     ).toBeInTheDocument();
-    expect(calls(api, 'POST /api/session')).toHaveLength(1);
     expect(calls(api, 'POST /api/chat')).toHaveLength(2);
+    expect(calls(api, 'POST /api/session')).toHaveLength(1);
   });
 
-  it('does not loop when the refusal comes back again', async () => {
-    const api = fakeApi({
-      'GET /api/chat': transcript(stored),
-      'POST /api/session': ok,
+  it("says so, in the server's words, when the check itself does not pass", async () => {
+    fakeApi({
+      'GET /api/chat': transcript([]),
+      'POST /api/session': () =>
+        Response.json(
+          { error: { code: 'verification_failed', message: 'The quick check did not pass.' } },
+          { status: 403 },
+        ),
+      'POST /api/chat': () => needsCheck(),
+    });
+    const user = userEvent.setup();
+    render(<Home />);
+    await user.click(bar());
+    await user.type(input(), 'Question{Enter}');
+    expect(
+      await screen.findByText('The quick check did not pass.', { selector: '[data-answer]' }),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the plain message for a refusal that has nothing to do with the check', async () => {
+    fakeApi({
+      'GET /api/chat': transcript([]),
       'POST /api/chat': () => Response.json({ error: { code: 'forbidden' } }, { status: 403 }),
     });
     const user = userEvent.setup();
     render(<Home />);
     await user.click(bar());
-    await screen.findByText('Saved answer', { selector: '[data-answer]' });
     await user.type(input(), 'Question{Enter}');
     expect(
       await screen.findByText(/cannot answer just now/i, { selector: '[data-answer]' }),
     ).toBeInTheDocument();
-    expect(calls(api, 'POST /api/chat')).toHaveLength(2);
   });
 });
 
