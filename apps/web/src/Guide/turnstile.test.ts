@@ -5,6 +5,7 @@ type Options = {
   sitekey: string;
   callback: (token: string) => void;
   'error-callback': () => void;
+  'before-interactive-callback': () => void;
 };
 
 /** A fake of Cloudflare's widget, put on the window so no script is loaded. */
@@ -52,6 +53,42 @@ describe('getTurnstileToken', () => {
     const pending = getTurnstileToken('site-key');
     await vi.advanceTimersByTimeAsync(10_001);
     expect(await pending).toBeNull();
+  });
+
+  it('waits a minute for a visitor to tick the box once Cloudflare shows one', async () => {
+    vi.useFakeTimers();
+    let tick!: (token: string) => void;
+    fakeWidget((o) => {
+      o['before-interactive-callback']();
+      tick = o.callback;
+    });
+    const pending = getTurnstileToken('site-key');
+    // far past the invisible check's ten seconds, and still waiting
+    await vi.advanceTimersByTimeAsync(40_000);
+    tick('ticked');
+    expect(await pending).toBe('ticked');
+  });
+
+  it('still gives up if the box is never ticked', async () => {
+    vi.useFakeTimers();
+    fakeWidget((o) => o['before-interactive-callback']());
+    const pending = getTurnstileToken('site-key');
+    await vi.advanceTimersByTimeAsync(60_001);
+    expect(await pending).toBeNull();
+  });
+
+  it('does not throw when the widget is already gone while cleaning up', async () => {
+    window.turnstile = {
+      render: (_host, options) => {
+        queueMicrotask(() => (options as unknown as Options).callback('late'));
+        return 'widget-1';
+      },
+      execute: () => {},
+      remove: () => {
+        throw new Error('Nothing to reset found for provided container.');
+      },
+    };
+    expect(await getTurnstileToken('site-key')).toBe('late');
   });
 
   it('gives no token when rendering throws', async () => {

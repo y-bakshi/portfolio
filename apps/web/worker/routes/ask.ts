@@ -8,7 +8,15 @@ import { ApiError } from '../lib/http';
 import { CONTACT_LINKS } from '../rag/facts';
 import { pageContext } from '../rag/page';
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, redact } from '../lib/redact';
-import { admit, ensureChat, readJsonObject, track, type Ctx } from './visitor';
+import {
+  admit,
+  openChat,
+  readJsonObject,
+  setSession,
+  track,
+  verifiedSession,
+  type Ctx,
+} from './visitor';
 
 /** The owner's own published addresses: an answer may give them, so they are not masked. */
 const OWNER_EMAILS = [CONTACT_LINKS.emailSchool, CONTACT_LINKS.emailPersonal];
@@ -52,6 +60,8 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
     const message = readMessage(body);
     // where the visitor is reading, said in words; the stored question stays exactly what they typed
     const where = pageContext(body.page);
+    // a visitor with no bot check on record is turned away first, before any limit or spend is touched
+    const session = await verifiedSession(c, deps);
     const admitted = await admit(c, deps, 'chat', MAX_COST_MICRO_USD);
     const db = c.env.DB;
     const started = deps.clock();
@@ -60,7 +70,9 @@ export function registerAskRoute(app: Hono<AppEnv>, deps: Deps) {
     const assistantId = deps.newId();
     let history;
     try {
-      const chatId = await ensureChat(c, deps);
+      const chatId = await openChat(c, deps, session);
+      // asking is using the cookie: it renews, so a regular visitor keeps their chat
+      await setSession(c, session);
       history = { chatId, turns: await recentTurns(db, chatId, HISTORY_TURNS) };
       await appendMessage(db, chatId, { id: userId, role: 'user', text: question }, started);
     } catch (error) {

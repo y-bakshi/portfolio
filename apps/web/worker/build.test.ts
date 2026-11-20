@@ -5,7 +5,7 @@ import type { Deps } from './deps';
 import type { Env } from './env';
 import { capsFrom } from './lib/budget';
 import { createAdmission } from './lib/protect';
-import { cookieOf, json, parseSse, SECRET, SITE } from './test/harness';
+import { cookieOf, idOf, json, parseSse, SECRET, SITE } from './test/harness';
 import { localGuard } from './test/local-guard';
 import { createMockProvider, mockEmbedder } from './llm/mock';
 import { createRagAnswerer } from './rag/answer';
@@ -71,7 +71,7 @@ describe('the wired app', () => {
 
     const recorded = await events();
     expect(recorded.map((e) => e.type)).toEqual(['chat_started', 'question_asked', 'answer_shown']);
-    const chatId = cookie.split('=')[1].split('.')[0];
+    const chatId = idOf(cookie);
     expect(recorded.every((e) => e.chat_id === chatId)).toBe(true);
     expect(JSON.parse(recorded[2].data_json!).latencyMs).toBeTypeOf('number');
 
@@ -147,7 +147,7 @@ describe('the wired app', () => {
     expect(types).toContain('feedback');
     const click = (await events()).find((e) => e.type === 'cite_clicked')!;
     expect(JSON.parse(click.data_json!)).toEqual({ sourceId: 'testpilot' });
-    expect(click.chat_id).toBe(cookie.split('=')[1].split('.')[0]);
+    expect(click.chat_id).toBe(idOf(cookie));
   });
 
   it('keeps the owner view closed to everyone until it is set up', async () => {

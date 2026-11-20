@@ -46,7 +46,6 @@ export function useChat() {
   const timers = useRef<number[]>([]);
   const statusRef = useRef(status);
   statusRef.current = status;
-  const triedSession = useRef(false);
   /** True once the visitor has asked or cleared anything, after which the server copy must not overwrite. */
   const touched = useRef(false);
 
@@ -117,18 +116,20 @@ export function useChat() {
 
     let final: Current;
     try {
-      // the first message of a visit asks for the chat cookie before anything is stored
-      if (!triedSession.current && !history.some((e) => e.id)) await startSession();
-      triedSession.current = true;
-      const result = await askStream(
-        q,
-        (piece) => {
-          if (!live() || reduce) return;
-          setStatus('answering');
-          writer.push(piece);
-        },
-        window.location.pathname,
-      );
+      const onPiece = (piece: string) => {
+        if (!live() || reduce) return;
+        setStatus('answering');
+        writer.push(piece);
+      };
+      const ask = () => askStream(q, onPiece, window.location.pathname);
+      // The server knows whether this browser has passed the bot check lately (a new visitor, or a
+      // check that lapsed after a day, has not), and says so with a code. Nothing here guesses from
+      // the copy saved in the browser, which says nothing about the cookie. Run the check and ask once more.
+      const result = await ask().catch(async (error) => {
+        if (!(error instanceof ApiFailure) || error.code !== 'verification_required') throw error;
+        await startSession();
+        return ask();
+      });
       final = {
         text: result.text,
         cites: result.cites,

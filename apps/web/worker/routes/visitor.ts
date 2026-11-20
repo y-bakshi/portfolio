@@ -6,10 +6,11 @@ import { chatExists, createChat, touchChat } from '../lib/chats';
 import { recordEvent, type EventType } from '../lib/events';
 import { ApiError } from '../lib/http';
 import {
-  createSession,
+  encodeSession,
   isSecureRequest,
   serializeSessionCookie,
-  sessionFromHeader,
+  sessionFromCookie,
+  type Session,
 } from '../lib/session';
 
 export type Ctx = Context<AppEnv>;
@@ -21,32 +22,52 @@ function secretOf(c: Ctx): string {
   return secret;
 }
 
-/** The id of this visitor's chat, or null when they have no valid cookie. */
-export const chatIdOf = (c: Ctx) => sessionFromHeader(c.req.header('cookie'), secretOf(c));
+/** This visitor's session, or null when they have no valid chat cookie. */
+export const sessionOf = (c: Ctx, deps: Deps) =>
+  sessionFromCookie(c.req.header('cookie'), secretOf(c), Math.floor(deps.clock() / 1000));
 
-/**
- * The visitor's chat id. A visitor with no valid cookie gets a new chat and the cookie that names
- * it. A valid cookie whose chat was deleted (for example by retention) gets the chat back.
- */
-export async function ensureChat(c: Ctx, deps: Deps): Promise<string> {
-  const now = deps.clock();
-  const known = await chatIdOf(c);
-  if (known) {
-    if (await chatExists(c.env.DB, known)) await touchChat(c.env.DB, known, now);
-    else await createChat(c.env.DB, known, now);
-    return known;
-  }
-  // a new visitor has to pass the bot check, whichever route they arrive by: a one-use token cannot
-  // be checked twice, so it is checked here and nowhere else, and a valid cookie shows it was passed
-  if (!(await deps.verifyHuman(c.req.raw, c.env))) {
-    throw new ApiError(403, 'forbidden', 'The check that you are a person did not pass.');
-  }
-  const { id, value } = await createSession(secretOf(c));
-  await createChat(c.env.DB, id, now);
+/** The id of this visitor's chat, or null when they have no valid cookie. */
+export async function chatIdOf(c: Ctx, deps: Deps) {
+  return (await sessionOf(c, deps))?.chatId ?? null;
+}
+
+/** Writes the session into the cookie, which also starts its life over (it renews each time it is used). */
+export async function setSession(c: Ctx, session: Session) {
+  const value = await encodeSession(session, secretOf(c));
   c.header('set-cookie', serializeSessionCookie(value, isSecureRequest(c.req.url)), {
     append: true,
   });
-  return id;
+}
+
+/** Makes sure the chat the session names exists (a retention sweep may have removed it) and marks it used. */
+export async function openChat(c: Ctx, deps: Deps, session: Session): Promise<string> {
+  const now = deps.clock();
+  if (await chatExists(c.env.DB, session.chatId)) await touchChat(c.env.DB, session.chatId, now);
+  else await createChat(c.env.DB, session.chatId, now);
+  return session.chatId;
+}
+
+/**
+ * For a question: the visitor's session, when it names a chat and a bot check passed within the last
+ * day. Otherwise a refusal with a code the page acts on: it runs the check and asks again. The chat
+ * is not touched here, so a refused request costs nothing.
+ */
+export async function verifiedSession(c: Ctx, deps: Deps): Promise<Session> {
+  const session = await sessionOf(c, deps);
+  const nowSec = Math.floor(deps.clock() / 1000);
+  if (session && session.verifiedUntil > nowSec) return session;
+  await track(
+    c,
+    deps,
+    'check_needed',
+    { reason: session ? 'lapsed' : 'no_cookie' },
+    session?.chatId,
+  );
+  throw new ApiError(
+    403,
+    'verification_required',
+    'Please complete the quick check to confirm you are a person, then ask again.',
+  );
 }
 
 /** Asks admission for permission, and throws its refusal as the API error. */

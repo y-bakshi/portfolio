@@ -4,7 +4,10 @@
  * time as VITE_TURNSTILE_SITE_KEY. Without a key there is no check and no token.
  */
 const SCRIPT_URL = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+/** How long the invisible check may take. */
 const TIMEOUT_MS = 10000;
+/** How long a visitor has to tick the box once Cloudflare shows one. */
+const INTERACTIVE_TIMEOUT_MS = 60000;
 
 type Widget = {
   render(host: HTMLElement, options: Record<string, unknown>): string;
@@ -52,19 +55,29 @@ export async function getTurnstileToken(
     host.style.cssText = 'position:fixed;right:16px;bottom:96px;z-index:50';
     document.body.appendChild(host);
     let id: string | undefined;
+    let timer: ReturnType<typeof setTimeout>;
     const finish = (token: string | null) => {
       clearTimeout(timer);
-      if (id !== undefined) widget.remove(id);
+      try {
+        if (id !== undefined) widget.remove(id);
+      } catch {
+        // the widget was already gone, which is fine
+      }
       host.remove();
       resolve(token);
     };
-    const timer = setTimeout(() => finish(null), TIMEOUT_MS);
+    timer = setTimeout(() => finish(null), TIMEOUT_MS);
     try {
       id = widget.render(host, {
         sitekey: key,
         execution: 'execute',
         appearance: 'interaction-only',
         callback: (token: string) => finish(token),
+        // Cloudflare decided the visitor must tick a box: wait for them instead of giving up at once
+        'before-interactive-callback': () => {
+          clearTimeout(timer);
+          timer = setTimeout(() => finish(null), INTERACTIVE_TIMEOUT_MS);
+        },
         'error-callback': () => finish(null),
         'timeout-callback': () => finish(null),
       });

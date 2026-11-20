@@ -2,6 +2,10 @@
 export type ApiErrorCode =
   | 'bad_request'
   | 'forbidden'
+  /** The visitor has no bot check on record, or it has lapsed: the page should run the check and try again. */
+  | 'verification_required'
+  /** The bot check was attempted and did not pass. */
+  | 'verification_failed'
   | 'not_found'
   | 'payload_too_large'
   | 'rate_limited'

@@ -85,6 +85,12 @@ export const ADMIN_HTML = `<!doctype html>
       ${tab(
         'cost',
         `<section class="stats" id="cost-stats" aria-label="Spend"></section>
+      ${panel(
+        'Bot check asked for again',
+        `<p class="note">Questions that arrived with no bot check on record, by reason. A few are normal: a new visitor, or a check that lapsed after a day. A sudden rise means something is wrong with sessions.</p>
+        <ol id="checks-needed" class="list"></ol>`,
+      )}
+      ${panel('Bot checks that failed', '<ol id="checks-failed" class="list"></ol>')}
       ${panel('Limits that were hit', '<ol id="limits" class="list"></ol>')}
       ${panel('Why answers fell back', '<ol id="fallbacks" class="list"></ol>')}
       ${panel('Errors', '<ol id="errors" class="list"></ol>')}`,

@@ -1,5 +1,5 @@
 /** The privacy page's words. They describe what the site's code really does; change them when the code changes. */
-export const PRIVACY_UPDATED = 'October 2026';
+export const PRIVACY_UPDATED = 'November 2026';
 
 /** One line, also shown in the footer of every page. */
 export const privacyShort =
@@ -18,7 +18,7 @@ export const privacySections: PrivacySection[] = [
   {
     title: 'The cookie and your browser’s storage',
     body: [
-      'The guide sets one cookie, called “chat”. It holds a random number that ties you to your own chat, so a reload brings your conversation back. It lasts 30 days, is sent only to this site, and is not used to follow you around the web.',
+      'The guide sets one cookie, called “chat”. It holds a random number that ties you to your own chat, so a reload brings your conversation back, and the time until which the quick check that you are a person counts, which is a day. It lasts 90 days from the last time you use the guide and no more than 180 days in all, is sent only to this site, and is not used to follow you around the web.',
       'Your browser also keeps a copy of your recent chat and an unsent draft, so the page can show them at once. This stays on your device.',
     ],
   },

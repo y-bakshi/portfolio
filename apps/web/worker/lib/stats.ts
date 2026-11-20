@@ -23,7 +23,16 @@ export type Summary = {
   topQuestions: Question[];
   lowConfidence: WeakQuestion[];
   /** How often each kind of event carried a code: which source buttons were pressed, which limits fired, why answers fell back. */
-  breakdowns: { sources: Tally[]; rateLimits: Tally[]; fallbacks: Tally[]; errors: Tally[] };
+  breakdowns: {
+    sources: Tally[];
+    rateLimits: Tally[];
+    fallbacks: Tally[];
+    errors: Tally[];
+    /** Questions turned away for want of a bot check on record, and why. */
+    checksNeeded: Tally[];
+    /** Bot checks that did not pass, and why. */
+    checksFailed: Tally[];
+  };
 };
 
 /** Nearest-rank percentile of already sorted numbers, or null when there are none. */
@@ -155,6 +164,8 @@ export async function getSummary(
     rateLimits: await tally('rate_limited', 'scope'),
     fallbacks: await tally('fallback_used', 'reason'),
     errors: await tally('error', 'code'),
+    checksNeeded: await tally('check_needed', 'reason'),
+    checksFailed: await tally('check_failed', 'reason'),
   };
 
   const questions = count('question_asked');
